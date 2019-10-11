@@ -1,4 +1,4 @@
-package digitalocean
+package hcloud
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/digitalocean/godo"
 	"github.com/hashicorp/packer/common/uuid"
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
+	"github.com/hetznercloud/hcloud-go/hcloud"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -26,37 +26,36 @@ type stepCreateSSHKey struct {
 }
 
 func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("client").(*godo.Client)
+	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packer.Ui)
 	c := state.Get("config").(*Config)
-
-	ui.Say("Creating temporary ssh key for droplet...")
+	ui.Say("Creating temporary ssh key for server...")
 
 	priv, err := rsa.GenerateKey(rand.Reader, 2014)
 
 	// ASN.1 DER encoded form
-	priv_der := x509.MarshalPKCS1PrivateKey(priv)
-	priv_blk := pem.Block{
+	privDER := x509.MarshalPKCS1PrivateKey(priv)
+	privBLK := pem.Block{
 		Type:    "RSA PRIVATE KEY",
 		Headers: nil,
-		Bytes:   priv_der,
+		Bytes:   privDER,
 	}
 
 	// Set the private key in the config for later
-	c.Comm.SSHPrivateKey = pem.EncodeToMemory(&priv_blk)
+	c.Comm.SSHPrivateKey = pem.EncodeToMemory(&privBLK)
 
 	// Marshal the public key into SSH compatible format
 	// TODO properly handle the public key error
 	pub, _ := ssh.NewPublicKey(&priv.PublicKey)
-	pub_sshformat := string(ssh.MarshalAuthorizedKey(pub))
+	pubSSHFormat := string(ssh.MarshalAuthorizedKey(pub))
 
-	// The name of the public key on DO
+	// The name of the public key on the Hetzner Cloud
 	name := fmt.Sprintf("packer-%s", uuid.TimeOrderedUUID())
 
 	// Create the key!
-	key, _, err := client.Keys.Create(context.TODO(), &godo.KeyCreateRequest{
+	key, _, err := client.SSHKey.Create(ctx, hcloud.SSHKeyCreateOpts{
 		Name:      name,
-		PublicKey: pub_sshformat,
+		PublicKey: pubSSHFormat,
 	})
 	if err != nil {
 		err := fmt.Errorf("Error creating temporary SSH key: %s", err)
@@ -84,7 +83,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 		defer f.Close()
 
 		// Write the key out
-		if _, err := f.Write(pem.EncodeToMemory(&priv_blk)); err != nil {
+		if _, err := f.Write(pem.EncodeToMemory(&privBLK)); err != nil {
 			state.Put("error", fmt.Errorf("Error saving debug key: %s", err))
 			return multistep.ActionHalt
 		}
@@ -97,21 +96,20 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 			}
 		}
 	}
-
 	return multistep.ActionContinue
 }
 
 func (s *stepCreateSSHKey) Cleanup(state multistep.StateBag) {
-	// If no key name is set, then we never created it, so just return
+	// If no key id is set, then we never created it, so just return
 	if s.keyId == 0 {
 		return
 	}
 
-	client := state.Get("client").(*godo.Client)
+	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packer.Ui)
 
 	ui.Say("Deleting temporary ssh key...")
-	_, err := client.Keys.DeleteByID(context.TODO(), s.keyId)
+	_, err := client.SSHKey.Delete(context.TODO(), &hcloud.SSHKey{ID: s.keyId})
 	if err != nil {
 		log.Printf("Error cleaning up ssh key: %s", err)
 		ui.Error(fmt.Sprintf(
