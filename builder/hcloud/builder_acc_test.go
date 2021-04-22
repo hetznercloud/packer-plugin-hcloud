@@ -1,24 +1,32 @@
 package hcloud
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"testing"
 
-	builderT "github.com/hashicorp/packer-plugin-sdk/acctest"
+	"github.com/hashicorp/packer-plugin-sdk/acctest"
 )
 
 func TestBuilderAcc_basic(t *testing.T) {
-	builderT.Test(t, builderT.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
-		Builder:  &Builder{},
-		Template: testBuilderAccBasic,
-	})
-}
-
-func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("HCLOUD_TOKEN"); v == "" {
-		t.Fatal("HCLOUD_TOKEN must be set for acceptance tests")
+		t.Skip("HCLOUD_TOKEN must be set for acceptance tests")
 	}
+
+	testCase := &acctest.PluginTestCase{
+		Name:     "hcloud_basic_test",
+		Template: testBuilderAccBasic,
+		Check: func(buildCommand *exec.Cmd, logfile string) error {
+			if buildCommand.ProcessState != nil {
+				if buildCommand.ProcessState.ExitCode() != 0 {
+					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
+				}
+			}
+			return nil
+		},
+	}
+	acctest.TestPlugin(t, testCase)
 }
 
 const testBuilderAccBasic = `
