@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"packer-plugin-scaffolding/builder/scaffolding"
-	scaffoldingData "packer-plugin-scaffolding/datasource/scaffolding"
-	scaffoldingPP "packer-plugin-scaffolding/post-processor/scaffolding"
-	scaffoldingProv "packer-plugin-scaffolding/provisioner/scaffolding"
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 	"github.com/hashicorp/packer-plugin-sdk/version"
+
+	hcloud "github.com/hashicorp/packer-plugin-hcloud/builder/hcloud"
 )
 
 var (
@@ -28,10 +26,7 @@ var (
 
 func main() {
 	pps := plugin.NewSet()
-	pps.RegisterBuilder("my-builder", new(scaffolding.Builder))
-	pps.RegisterProvisioner("my-provisioner", new(scaffoldingProv.Provisioner))
-	pps.RegisterPostProcessor("my-post-processor", new(scaffoldingPP.PostProcessor))
-	pps.RegisterDatasource("my-datasource", new(scaffoldingData.Datasource))
+	pps.RegisterBuilder(plugin.DEFAULT_NAME, new(hcloud.Builder))
 	pps.SetVersion(PluginVersion)
 	err := pps.Run()
 	if err != nil {
