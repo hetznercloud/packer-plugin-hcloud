@@ -167,8 +167,8 @@ func setRescue(ctx context.Context, client *hcloud.Client, server *hcloud.Server
 			return "", err
 		}
 	}
+
 	if rescue != "" {
-		rescueChanged = true
 		if rescue == "freebsd64" {
 			sshKeys = nil // freebsd64 doesn't allow ssh keys so we will remove them here
 		}
@@ -184,6 +184,7 @@ func setRescue(ctx context.Context, client *hcloud.Client, server *hcloud.Server
 		}
 		return res.RootPassword, nil
 	}
+
 	if rescueChanged {
 		action, _, err := client.Server.Reset(ctx, server)
 		if err != nil {

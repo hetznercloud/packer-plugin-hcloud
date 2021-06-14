@@ -11,6 +11,7 @@ import (
 
 type stepCreateSnapshot struct{}
 
+//nolint: gosimple
 func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
