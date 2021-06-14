@@ -135,7 +135,7 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 	} else if c.UserDataFile != "" {
 		if _, err := os.Stat(c.UserDataFile); err != nil {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New(fmt.Sprintf("user_data_file not found: %s", c.UserDataFile)))
+				errs, fmt.Errorf("user_data_file not found: %s", c.UserDataFile))
 		}
 	}
 
