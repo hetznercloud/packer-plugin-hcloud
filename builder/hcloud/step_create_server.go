@@ -127,11 +127,6 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
-		if c.RescueMode == "freebsd64" {
-			// We will set this only on freebsd
-			ui.Say("Using Root Password instead of SSH Keys...")
-			c.Comm.SSHPassword = rootPassword
-		}
 	}
 
 	return multistep.ActionContinue
@@ -169,9 +164,6 @@ func setRescue(ctx context.Context, client *hcloud.Client, server *hcloud.Server
 	}
 
 	if rescue != "" {
-		if rescue == "freebsd64" {
-			sshKeys = nil // freebsd64 doesn't allow ssh keys so we will remove them here
-		}
 		res, _, err := client.Server.EnableRescue(ctx, server, hcloud.ServerEnableRescueOpts{
 			Type:    hcloud.ServerRescueType(rescue),
 			SSHKeys: sshKeys,
