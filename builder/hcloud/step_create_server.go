@@ -106,7 +106,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 	if c.RescueMode != "" {
 		ui.Say("Enabling Rescue Mode...")
-		rootPassword, err := setRescue(ctx, client, serverCreateResult.Server, c.RescueMode, sshKeys)
+		_, err := setRescue(ctx, client, serverCreateResult.Server, c.RescueMode, sshKeys)
 		if err != nil {
 			err := fmt.Errorf("Error enabling rescue mode: %s", err)
 			state.Put("error", err)
