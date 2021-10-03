@@ -40,12 +40,11 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 			if err1 == nil {
 				return multistep.ActionContinue
 			} else {
-				err := fmt.Errorf("Error creating snapshot: %s", err)
+				err := fmt.Errorf("Error creating snapshot: %s", err1)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt
 			}
-
 		}
 	}
 }
