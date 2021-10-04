@@ -19,9 +19,12 @@ func TestStepPreValidate(t *testing.T) {
 	fakeSnapNames := []string{"snapshot-old"}
 
 	testCases := []struct {
-		name       string
-		step       stepPreValidate
-		wantAction multistep.StepAction
+		name string
+		// zero value: assert that state OldSnapshotID is NOT present
+		// non-zero value: assert that state OldSnapshotID is present AND has this value
+		wantOldSnapID int
+		step          stepPreValidate
+		wantAction    multistep.StepAction
 	}{
 		{
 			name:       "snapshot name new, success",
@@ -34,9 +37,10 @@ func TestStepPreValidate(t *testing.T) {
 			wantAction: multistep.ActionHalt,
 		},
 		{
-			name:       "snapshot name old with force flag, success",
-			step:       stepPreValidate{SnapshotName: "snapshot-old", Force: true},
-			wantAction: multistep.ActionContinue,
+			name:          "snapshot name old, force flag, success",
+			wantOldSnapID: 1000,
+			step:          stepPreValidate{SnapshotName: "snapshot-old", Force: true},
+			wantAction:    multistep.ActionContinue,
 		},
 	}
 	for _, tc := range testCases {
@@ -55,9 +59,23 @@ func TestStepPreValidate(t *testing.T) {
 			if action := tc.step.Run(context.Background(), state); action != tc.wantAction {
 				t.Errorf("step.Run: want: %v; got: %v", tc.wantAction, action)
 			}
+
+			oldSnap, found := state.GetOk(OldSnapshotID)
+			if found {
+				oldSnapID := oldSnap.(int)
+				if tc.wantOldSnapID == 0 {
+					t.Errorf("OldSnapshotID: got: present with value %d; want: not present", oldSnapID)
+				} else if oldSnapID != tc.wantOldSnapID {
+					t.Errorf("OldSnapshotID: got: %d; want: %d", oldSnapID, tc.wantOldSnapID)
+				}
+			} else if tc.wantOldSnapID != 0 {
+				t.Errorf("OldSnapshotID: got: not present; want: present, with value %d",
+					tc.wantOldSnapID)
+			}
+
 			select {
 			case err := <-errors:
-				t.Fatalf("server: got: %s", err)
+				t.Errorf("server: got: %s", err)
 			default:
 			}
 		})

@@ -21,11 +21,6 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
 
-	if s.Force {
-		ui.Say("Force flag found, skipping prevalidating snapshot name")
-		return multistep.ActionContinue
-	}
-
 	ui.Say(fmt.Sprintf("Prevalidating snapshot name: %s", s.SnapshotName))
 
 	// We would like to ask only for snapshots with a certain name using
@@ -42,14 +37,21 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 
 	for _, snap := range snapshots {
 		if snap.Description == s.SnapshotName {
-			err := fmt.Errorf("Error: snapshot name: '%s' is used by existing snapshot with ID %d",
+			snapMsg := fmt.Sprintf("snapshot name: '%s' is used by existing snapshot with ID %d",
 				s.SnapshotName, snap.ID)
+			if s.Force {
+				ui.Say(snapMsg + ". Force flag specified, will safely overwrite this snapshot")
+				state.Put(OldSnapshotID, snap.ID)
+				return multistep.ActionContinue
+			}
+			err := fmt.Errorf("Error: " + snapMsg)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 	}
 
+	// no snapshot with the same name found
 	return multistep.ActionContinue
 }
 

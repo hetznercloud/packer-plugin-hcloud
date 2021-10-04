@@ -21,6 +21,7 @@ const (
 	Pass FailCause = iota
 	FailCreateImage
 	FailWatchProgress
+	FailDeleteImage
 )
 
 func TestStepCreateSnapshot(t *testing.T) {
@@ -29,7 +30,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 
 	testCases := []struct {
 		name       string
-
+		oldSnapID  int       // zero value: no old snap will be injected
 		failCause  FailCause // zero value: pass
 		wantAction multistep.StepAction
 	}{
@@ -47,6 +48,17 @@ func TestStepCreateSnapshot(t *testing.T) {
 			failCause:  FailWatchProgress,
 			wantAction: multistep.ActionHalt,
 		},
+		{
+			name:       "delete old snapshot, success",
+			oldSnapID:  33,
+			wantAction: multistep.ActionContinue,
+		},
+		{
+			name:       "delete old snapshot, failure",
+			oldSnapID:  33,
+			failCause:  FailDeleteImage,
+			wantAction: multistep.ActionHalt,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -60,11 +72,14 @@ func TestStepCreateSnapshot(t *testing.T) {
 			if testing.Verbose() {
 				state.Put("ui", packersdk.TestUi(t))
 			} else {
-			// do not output to stdout or console
-			state.Put("ui", &packersdk.MockUi{})
+				// do not output to stdout or console
+				state.Put("ui", &packersdk.MockUi{})
 			}
 			state.Put("config", &config)
 			state.Put("server_id", serverID)
+			if tc.oldSnapID != 0 {
+				state.Put(OldSnapshotID, tc.oldSnapID)
+			}
 
 			if action := step.Run(context.Background(), state); action != tc.wantAction {
 				t.Errorf("step.Run: want: %v; got: %v", tc.wantAction, action)
@@ -125,6 +140,13 @@ func setupStepCreateSnapshot(
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			response = schema.ActionGetResponse{Action: action}
+		} else if r.Method == http.MethodDelete && r.URL.Path == "/images/33" {
+			if failCause == FailDeleteImage {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			w.WriteHeader(http.StatusNoContent)
+			return
 		}
 
 		if response != nil {
