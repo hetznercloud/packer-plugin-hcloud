@@ -24,31 +24,30 @@ const (
 )
 
 func TestStepCreateSnapshot(t *testing.T) {
+	const serverID = 42
+	const snapName = "dummy-snap"
+
 	testCases := []struct {
 		name       string
-		snapName   string
+
 		failCause  FailCause // zero value: pass
 		wantAction multistep.StepAction
 	}{
 		{
 			name:       "happy path",
-			snapName:   "dummy-snap",
 			wantAction: multistep.ActionContinue,
 		},
 		{
-			name:       "fail create image",
-			snapName:   "dummy-snap",
+			name:       "create image, failure",
 			failCause:  FailCreateImage,
 			wantAction: multistep.ActionHalt,
 		},
 		{
-			name:       "fail watch progress",
-			snapName:   "dummy-snap",
+			name:       "watch progress, failure",
 			failCause:  FailWatchProgress,
 			wantAction: multistep.ActionHalt,
 		},
 	}
-	const serverID = 42
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -57,11 +56,13 @@ func TestStepCreateSnapshot(t *testing.T) {
 			defer teardown()
 
 			step := &stepCreateSnapshot{}
-			config := Config{
-				SnapshotName: tc.snapName,
-			}
+			config := Config{SnapshotName: snapName}
+			if testing.Verbose() {
+				state.Put("ui", packersdk.TestUi(t))
+			} else {
 			// do not output to stdout or console
 			state.Put("ui", &packersdk.MockUi{})
+			}
 			state.Put("config", &config)
 			state.Put("server_id", serverID)
 
@@ -78,7 +79,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 	}
 }
 
-// Configure a httptest server to reply to the request to create a snapshot.
+// Configure a httptest server to reply to the requests done by stepCreateSnapshot.
 // React with the appropriate failCause.
 // Report errors on the errors channel (cannot use testing.T, it runs on a different goroutine).
 // Return a tuple (state, teardown) where:
@@ -94,12 +95,12 @@ func setupStepCreateSnapshot(
 			errors <- fmt.Errorf("fake server: reading request: %s", err)
 			return
 		}
-		reqDump := fmt.Sprintf("fake server: request:\n%s %s\nbody: %s", r.Method, r.URL.Path, string(buf))
+		reqDump := fmt.Sprintf("fake server: request:\n    %s %s\n    body: %s",
+			r.Method, r.URL.Path, string(buf))
 		if testing.Verbose() {
 			fmt.Println(reqDump)
 		}
 
-		w.Header().Set("Content-Type", "application/json")
 		enc := json.NewEncoder(w)
 		var response interface{}
 		action := schema.Action{
@@ -113,6 +114,7 @@ func setupStepCreateSnapshot(
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			response = schema.ServerActionCreateImageResponse{Action: action}
 		} else if r.Method == http.MethodGet && r.URL.Path == "/actions/13" {
@@ -120,6 +122,7 @@ func setupStepCreateSnapshot(
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			response = schema.ActionGetResponse{Action: action}
 		}
