@@ -51,6 +51,10 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 
 	// Build the steps
 	steps := []multistep.Step{
+		&stepPreValidate{
+			Force:        b.config.PackerForce,
+			SnapshotName: b.config.SnapshotName,
+		},
 		&stepCreateSSHKey{
 			Debug:        b.config.PackerDebug,
 			DebugKeyPath: fmt.Sprintf("ssh_key_%s.pem", b.config.PackerBuildName),
