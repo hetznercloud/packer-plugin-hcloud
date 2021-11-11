@@ -16,60 +16,73 @@ import (
 )
 
 func TestStepPreValidate(t *testing.T) {
+	fakeSnapNames := []string{"snapshot-old"}
+
 	testCases := []struct {
-		name          string
-		fakeSnapNames []string
+		name string
+		// zero value: assert that state OldSnapshotID is NOT present
+		// non-zero value: assert that state OldSnapshotID is present AND has this value
+		wantOldSnapID int
 		step          stepPreValidate
 		wantAction    multistep.StepAction
 	}{
 		{
-			"happy path: snapshot name is new",
-			[]string{"snapshot-old"},
-			stepPreValidate{
-				SnapshotName: "snapshot-new",
-			},
-			multistep.ActionContinue,
+			name:       "snapshot name new, success",
+			step:       stepPreValidate{SnapshotName: "snapshot-new"},
+			wantAction: multistep.ActionContinue,
 		},
 		{
-			"want failure: old snapshot name",
-			[]string{"snapshot-old"},
-			stepPreValidate{
-				SnapshotName: "snapshot-old",
-			},
-			multistep.ActionHalt,
+			name:       "snapshot name old, failure",
+			step:       stepPreValidate{SnapshotName: "snapshot-old"},
+			wantAction: multistep.ActionHalt,
 		},
 		{
-			"old snapshot name but force flag",
-			[]string{"snapshot-old"},
-			stepPreValidate{
-				Force:        true,
-				SnapshotName: "snapshot-old",
-			},
-			multistep.ActionContinue,
+			name:          "snapshot name old, force flag, success",
+			wantOldSnapID: 1000,
+			step:          stepPreValidate{SnapshotName: "snapshot-old", Force: true},
+			wantAction:    multistep.ActionContinue,
 		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			errors := make(chan error, 1)
-			state, teardown := setupStepPreValidate(errors, tc.fakeSnapNames)
+			state, teardown := setupStepPreValidate(errors, fakeSnapNames)
 			defer teardown()
 
-			// do not output to stdout or console
-			state.Put("ui", &packersdk.MockUi{})
+			if testing.Verbose() {
+				state.Put("ui", packersdk.TestUi(t))
+			} else {
+				// do not output to stdout or console
+				state.Put("ui", &packersdk.MockUi{})
+			}
 
 			if action := tc.step.Run(context.Background(), state); action != tc.wantAction {
 				t.Errorf("step.Run: want: %v; got: %v", tc.wantAction, action)
 			}
+
+			oldSnap, found := state.GetOk(OldSnapshotID)
+			if found {
+				oldSnapID := oldSnap.(int)
+				if tc.wantOldSnapID == 0 {
+					t.Errorf("OldSnapshotID: got: present with value %d; want: not present", oldSnapID)
+				} else if oldSnapID != tc.wantOldSnapID {
+					t.Errorf("OldSnapshotID: got: %d; want: %d", oldSnapID, tc.wantOldSnapID)
+				}
+			} else if tc.wantOldSnapID != 0 {
+				t.Errorf("OldSnapshotID: got: not present; want: present, with value %d",
+					tc.wantOldSnapID)
+			}
+
 			select {
 			case err := <-errors:
-				t.Fatalf("server: got: %s", err)
+				t.Errorf("server: got: %s", err)
 			default:
 			}
 		})
 	}
 }
 
-// Configure a httptest server to return the list of fakeSnapNames.
+// Configure a httptest server to reply to the requests done by stepPrevalidate.
 // Report errors on the errors channel (cannot use testing.T, it runs on a different goroutine).
 // Return a tuple (state, teardown) where:
 // - state (containing the client) is ready to be passed to the step.Run() method.
@@ -81,7 +94,8 @@ func setupStepPreValidate(errors chan<- error, fakeSnapNames []string) (*multist
 			errors <- fmt.Errorf("fake server: reading request: %s", err)
 			return
 		}
-		reqDump := fmt.Sprintf("fake server: request:\n%s %s\nbody: %s", r.Method, r.URL.Path, string(buf))
+		reqDump := fmt.Sprintf("fake server: request:\n    %s %s\n    body: %s",
+			r.Method, r.URL.Path, string(buf))
 		if testing.Verbose() {
 			fmt.Println(reqDump)
 		}
