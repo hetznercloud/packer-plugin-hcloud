@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/packer-plugin-sdk v0.2.9
 	github.com/hetznercloud/hcloud-go v1.25.0
 	github.com/mitchellh/mapstructure v1.4.1
-	github.com/zclconf/go-cty v1.9.1
+	github.com/zclconf/go-cty v1.10.0
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 )
 
