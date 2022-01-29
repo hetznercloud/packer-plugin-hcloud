@@ -3,8 +3,8 @@ package hcloud
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"net"
+	"strconv"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -20,7 +20,7 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 	c := state.Get("config").(*Config)
 	serverid := state.Get("server_id").(int)
 	srv := &hcloud.Server{ID: serverid}
-	network_id ,err := strconv.Atoi(c.Network)
+	network_id, err := strconv.Atoi(c.Network)
 	nw := &hcloud.Network{ID: network_id}
 	var ip net.IP
 	var aliasIPs []net.IP
@@ -30,7 +30,7 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 
 	if c.IP != "" {
 		ip = net.ParseIP(c.IP)
-	}	
+	}
 
 	// Check if Alias IP is set and convert string to net.IP
 	if len(c.AliasIPs) != 0 {
@@ -38,7 +38,7 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 			aliasip := net.ParseIP(a)
 			aliasIPs = append(aliasIPs, aliasip)
 		}
-	}	
+	}
 
 	// get network
 	// networks_new0, _, err := client.Network.Get(ctx, "1130670")
@@ -59,11 +59,11 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 		return multistep.ActionHalt
 	}
 
-    // override ssh host - set connect_with_private_ip to use your set ip_address to connect	
+	// override ssh host - set connect_with_private_ip to use your set ip_address to connect
 	if c.ConnectWithPrivateIP == true {
 		state.Put("server_ip", c.IP)
-	}	
-	
+	}
+
 	return multistep.ActionContinue
 }
 

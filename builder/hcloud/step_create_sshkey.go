@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 	"github.com/hetznercloud/hcloud-go/hcloud"
-	"github.com/hashicorp/packer-plugin-sdk/communicator"
 )
 
 type stepCreateSSHKey struct {
-	Comm         *communicator.Config
+	Comm  *communicator.Config
 	keyId int
 }
 
@@ -45,7 +45,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	state.Put("ssh_key_id", key.ID)
 
 	return multistep.ActionContinue
-}	
+}
 
 func (s *stepCreateSSHKey) Cleanup(state multistep.StateBag) {
 	// If no key id is set, then we never created it, so just return

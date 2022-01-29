@@ -34,15 +34,15 @@ type Config struct {
 	Image       string       `mapstructure:"image"`
 	ImageFilter *imageFilter `mapstructure:"image_filter"`
 
-	SnapshotName   string            `mapstructure:"snapshot_name"`
-	SnapshotLabels map[string]string `mapstructure:"snapshot_labels"`
-	UserData       string            `mapstructure:"user_data"`
-	UserDataFile   string            `mapstructure:"user_data_file"`
-	SSHKeys        []string          `mapstructure:"ssh_keys"`
-	Network        string            `mapstructure:"network"`
-	IP             string            `mapstructure:"ip_address"`
-	AliasIPs       []string          `mapstructure:"alias_ips"`
-	ConnectWithPrivateIP bool        `mapstructure:"connect_with_private_ip"`
+	SnapshotName         string            `mapstructure:"snapshot_name"`
+	SnapshotLabels       map[string]string `mapstructure:"snapshot_labels"`
+	UserData             string            `mapstructure:"user_data"`
+	UserDataFile         string            `mapstructure:"user_data_file"`
+	SSHKeys              []string          `mapstructure:"ssh_keys"`
+	Network              string            `mapstructure:"network"`
+	IP                   string            `mapstructure:"ip_address"`
+	AliasIPs             []string          `mapstructure:"alias_ips"`
+	ConnectWithPrivateIP bool              `mapstructure:"connect_with_private_ip"`
 
 	RescueMode string `mapstructure:"rescue"`
 

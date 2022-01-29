@@ -68,8 +68,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		&stepCreateSSHKey{},
 		&stepCreateServer{},
 		multistep.If(b.config.Network != "",
-			&stepAttachNetwork{
-			},
+			&stepAttachNetwork{},
 		),
 		&communicator.StepConnect{
 			Config:    &b.config.Comm,
