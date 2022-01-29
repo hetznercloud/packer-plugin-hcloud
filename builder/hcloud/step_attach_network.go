@@ -23,6 +23,9 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 	network_id, err := strconv.Atoi(c.Network)
 	if err != nil {
 		err = fmt.Errorf("Error conversiong network_id: %s", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
 	}
 	nw := &hcloud.Network{ID: network_id}
 	var ip net.IP
