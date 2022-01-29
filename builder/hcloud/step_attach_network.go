@@ -46,13 +46,6 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 		}
 	}
 
-	// get network
-	// networks_new0, _, err := client.Network.Get(ctx, "1130670")
-	// ui.Say(fmt.Sprintf("network: ", networks_new0))
-
-	// syntax for create server and attach to network directly
-	// net_id := []*hcloud.Network{{ID: network_id}}
-
 	_, _, err = client.Server.AttachToNetwork(ctx, srv, hcloud.ServerAttachToNetworkOpts{
 		Network:  nw,
 		IP:       ip,
