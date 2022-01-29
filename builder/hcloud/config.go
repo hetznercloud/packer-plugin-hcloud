@@ -39,6 +39,10 @@ type Config struct {
 	UserData       string            `mapstructure:"user_data"`
 	UserDataFile   string            `mapstructure:"user_data_file"`
 	SSHKeys        []string          `mapstructure:"ssh_keys"`
+	Network        string            `mapstructure:"network"`
+	IP             string            `mapstructure:"ip_address"`
+	AliasIPs       []string          `mapstructure:"alias_ips"`
+	ConnectWithPrivateIP bool        `mapstructure:"connect_with_private_ip"`
 
 	RescueMode string `mapstructure:"rescue"`
 
