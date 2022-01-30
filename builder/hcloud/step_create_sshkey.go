@@ -42,7 +42,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	log.Printf("temporary ssh key name: %s", name)
 
 	// Remember some state for the future
-	state.Put("ssh_key_id", key.ID)
+	state.Put("ssh_key_id", s.keyId)
 
 	return multistep.ActionContinue
 }

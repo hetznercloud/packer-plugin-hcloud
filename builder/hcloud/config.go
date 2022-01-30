@@ -143,6 +143,13 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 		}
 	}
 
+	if c.Comm.SSHPrivateKeyFile != "" {
+		if c.Comm.SSHKeyPairName == "" {
+			errs = packersdk.MultiErrorAppend(
+				errs, errors.New("you have to set ssh_keypair_name if you intend to use ssh_private_key_file"))
+		}
+	}
+
 	if errs != nil && len(errs.Errors) > 0 {
 		return nil, errs
 	}

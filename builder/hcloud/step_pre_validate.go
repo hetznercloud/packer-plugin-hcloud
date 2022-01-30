@@ -15,11 +15,13 @@ import (
 type stepPreValidate struct {
 	Force        bool
 	SnapshotName string
+	keyId        int
 }
 
 func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
+	c := state.Get("config").(*Config)
 
 	ui.Say(fmt.Sprintf("Prevalidating snapshot name: %s", s.SnapshotName))
 
@@ -51,7 +53,21 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 	}
 
-	// no snapshot with the same name found
+	if c.Comm.SSHKeyPairName != "" && c.Comm.SSHPrivateKeyFile != "" {
+		sshKey, _, err := client.SSHKey.Get(ctx, c.Comm.SSHKeyPairName)
+		if err != nil {
+			ui.Error(err.Error())
+			state.Put("error", fmt.Errorf("Error fetching SSH key: %s", err))
+			return multistep.ActionHalt
+		}
+		if sshKey == nil {
+			state.Put("error", fmt.Errorf("Could not find key: %s", c.Comm.SSHKeyPairName))
+			return multistep.ActionHalt
+		}
+		s.keyId = sshKey.ID
+		state.Put("ssh_key_id", s.keyId)
+		return multistep.ActionContinue
+	}
 	return multistep.ActionContinue
 }
 
