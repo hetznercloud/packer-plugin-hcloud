@@ -50,11 +50,20 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	// override ssh host - set connect_with_private_ip to use your set ip_address to connect
+	// override ssh host
 	if c.ConnectWithPrivateIP == true {
-		state.Put("server_ip", c.IP)
+		server, _, err := client.Server.GetByID(ctx, serverid)
+		if err != nil {
+			state.Put("error", fmt.Errorf("Could not Server to retrieve private IP: %s", err))
+			return multistep.ActionHalt
+		}
+		if err == nil {
+			n := server.PrivateNet
+			for _, x := range n {
+				state.Put("server_ip", x.IP.String())
+			}
+		}
 	}
-
 	return multistep.ActionContinue
 }
 
