@@ -3,6 +3,7 @@ package hcloud
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -16,6 +17,7 @@ type stepPreValidate struct {
 	Force        bool
 	SnapshotName string
 	keyId        int
+	net_id       int
 }
 
 func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -66,7 +68,44 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 		s.keyId = sshKey.ID
 		state.Put("ssh_key_id", s.keyId)
-		return multistep.ActionContinue
+	}
+
+	// check if input of Network matches existing network - output network_id
+	if c.Network != "" {
+		// check if input can be converted to string
+		network_id, err := strconv.Atoi(c.Network)
+		// Lookup by Name
+		if err != nil {
+			network, _, err := client.Network.GetByName(ctx, c.Network)
+			if err != nil {
+				ui.Error(err.Error())
+				state.Put("error", fmt.Errorf("Error fetching Network ID: %s", err))
+				return multistep.ActionHalt
+			}
+			if network == nil {
+				state.Put("error", fmt.Errorf("Could not find network: %s", err))
+				return multistep.ActionHalt
+			}
+			s.net_id = network.ID
+			state.Put("network_id", s.net_id)
+		}
+		// Lookup by ID
+		if err == nil {
+			network, _, err := client.Network.GetByID(ctx, network_id)
+
+			if err != nil {
+				ui.Error(err.Error())
+				state.Put("error", fmt.Errorf("Error fetching Network ID: %s", err))
+				return multistep.ActionHalt
+			}
+			if network == nil {
+				state.Put("error", fmt.Errorf("Could not find network: %s", err))
+				return multistep.ActionHalt
+			}
+			s.net_id = network.ID
+			state.Put("network_id", s.net_id)
+		}
+
 	}
 	return multistep.ActionContinue
 }
