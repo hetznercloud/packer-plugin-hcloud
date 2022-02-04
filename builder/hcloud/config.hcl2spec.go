@@ -85,6 +85,7 @@ type FlatConfig struct {
 	AliasIPs                  []string          `mapstructure:"alias_ips" cty:"alias_ips" hcl:"alias_ips"`
 	ConnectWithPrivateIP      *bool             `mapstructure:"connect_with_private_ip" cty:"connect_with_private_ip" hcl:"connect_with_private_ip"`
 	RescueMode                *string           `mapstructure:"rescue" cty:"rescue" hcl:"rescue"`
+	Subnet                    *string           `mapstructure:"rescue" cty:"subnet" hcl:"subnet"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -174,6 +175,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"alias_ips":                    &hcldec.AttrSpec{Name: "alias_ips", Type: cty.List(cty.String), Required: false},
 		"connect_with_private_ip":      &hcldec.AttrSpec{Name: "connect_with_private_ip", Type: cty.Bool, Required: false},
 		"rescue":                       &hcldec.AttrSpec{Name: "rescue", Type: cty.String, Required: false},
+		"subnet":                       &hcldec.AttrSpec{Name: "subnet", Type: cty.String, Required: false},
 	}
 	return s
 }

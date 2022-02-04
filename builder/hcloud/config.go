@@ -43,6 +43,7 @@ type Config struct {
 	IP                   string            `mapstructure:"ip_address"`
 	AliasIPs             []string          `mapstructure:"alias_ips"`
 	ConnectWithPrivateIP bool              `mapstructure:"connect_with_private_ip"`
+	Subnet               string            `mapstructure:"subnet"`
 
 	RescueMode string `mapstructure:"rescue"`
 

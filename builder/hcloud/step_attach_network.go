@@ -18,6 +18,7 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 	ui := state.Get("ui").(packersdk.Ui)
 	c := state.Get("config").(*Config)
 	serverid := state.Get("server_id").(int)
+	srv_ip := state.Get("srv_ip").(string)
 	srv := &hcloud.Server{ID: serverid}
 	network_id := state.Get("network_id").(int)
 	nw := &hcloud.Network{ID: network_id}
@@ -29,6 +30,10 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 
 	if c.IP != "" {
 		ip = net.ParseIP(c.IP)
+	}
+
+	if c.Subnet != "" && c.IP != "" {
+		ip = net.ParseIP(srv_ip)
 	}
 
 	// Check if Alias IP is set and convert string to net.IP
