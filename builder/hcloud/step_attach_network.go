@@ -32,7 +32,7 @@ func (s *stepAttachNetwork) Run(ctx context.Context, state multistep.StateBag) m
 		ip = net.ParseIP(c.IP)
 	}
 
-	if c.Subnet != "" && c.IP != "" {
+	if c.Subnet != "" && c.IP == "" {
 		ip = net.ParseIP(srv_ip)
 	}
 

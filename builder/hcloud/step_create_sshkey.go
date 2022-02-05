@@ -24,6 +24,22 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 
 	name := fmt.Sprintf("packer-%s", uuid.TimeOrderedUUID())
 
+	if c.Comm.SSHKeyPairName != "" && c.Comm.SSHPrivateKeyFile != "" {
+		sshKey, _, err := client.SSHKey.Get(ctx, c.Comm.SSHKeyPairName)
+		if err != nil {
+			ui.Error(err.Error())
+			state.Put("error", fmt.Errorf("Error fetching SSH key: %s", err))
+			return multistep.ActionHalt
+		}
+		if sshKey == nil {
+			state.Put("error", fmt.Errorf("Could not find key: %s", c.Comm.SSHKeyPairName))
+			return multistep.ActionHalt
+		}
+		s.keyId = sshKey.ID
+		state.Put("ssh_key_id", s.keyId)
+		return multistep.ActionContinue
+	}
+
 	// Create the key!
 	key, _, err := client.SSHKey.Create(ctx, hcloud.SSHKeyCreateOpts{
 		Name:      name,
@@ -48,8 +64,10 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 }
 
 func (s *stepCreateSSHKey) Cleanup(state multistep.StateBag) {
-	// If no key id is set, then we never created it, so just return
-	if s.keyId == 0 {
+	c := state.Get("config").(*Config)
+	// If no key id or a SSHKey Pair is set, then we never created it, so just return
+	if s.keyId == 0 || c.Comm.SSHKeyPairName != "" {
+
 		return
 	}
 
