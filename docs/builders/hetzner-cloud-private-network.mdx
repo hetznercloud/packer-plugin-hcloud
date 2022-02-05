@@ -15,10 +15,96 @@ This chart breaks down what Packer does if you set private network options:
 | X       | X      |            | X         | X                       | attach the Instance to a subnet within the Network, Private IP assignment to the first available IP, Specify AliasIPs, connect to Private Address |
 | X       | X      |            |           | X                       | attach the Instance to a subnet within the Network, Private IP assignment to the first available IP, connect to Private Address                   |
 
+### Summary
 
 To use the Private Network specify the Network name or ID.  
-To connect to the Private Network set connect_with_private_ip to true.  
-If you don't specify the ip_address the IP Assignment is the first available IP Address within the Network,
-if you just set the network without the subnet, the subnet gets choosen randomly.  
-The subnet needs to be set as CIDR Format i.E "10.1.1.0/24".
 
+To connect to the Private Network set connect_with_private_ip to true.  
+
+If you don't specify the ip_address the IP Assignment is the first available IP Address within the Network, if you just set the network without the subnet, the subnet gets choosen randomly.  
+
+The subnet identificator is the IPRange and needs to be set as CIDR Format "10.1.1.0/24".
+
+### Example
+
+Attach to a Network named "devnet" - Random IP Assignment - connect to Private IP:
+
+```hcl
+source "hcloud" "debian" {
+  image        = "debian-11"
+  location     = "nbg1"
+  server_type  = "cx11"
+  snapshot_name = "packer-${local.timestamp}"
+  snapshot_labels = {
+    name        = "packer",
+    environment = "devnet"
+  }
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+  network = "devnet"
+  connect_with_private_ip = true
+}
+
+build {
+  source "source.hcloud.debian" {
+
+  }
+}
+```
+
+
+Attach to a Network ID called "1234567" with the subnet "10.1.1.0/24" - Random IP Assignment - connect to Private IP:
+
+```hcl
+source "hcloud" "debian" {
+  image        = "debian-11"
+  location     = "nbg1"
+  server_type  = "cx11"
+  snapshot_name = "packer-${local.timestamp}"
+  snapshot_labels = {
+    name        = "packer",
+    environment = "test-env"
+  }
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+  network = "1234567"
+  connect_with_private_ip = true
+  subnet = "10.1.1.0/24"
+}
+
+build {
+  source "source.hcloud.debian" {
+
+  }
+}
+```
+
+Attach to a Network ID called "production" with the subnet "10.10.0.0/28" - Specific IP Assignment - connect to Private IP.
+IP Adress has to be in the valid IP-Range of the subnet, assign two Alias IPs to the Instance:
+
+```hcl
+source "hcloud" "debian" {
+  image        = "debian-11"
+  location     = "nbg1"
+  server_type  = "cx11"
+  snapshot_name = "packer-${local.timestamp}"
+  snapshot_labels = {
+    name        = "packer",
+    environment = "production"
+  }
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+  network = "production"
+  connect_with_private_ip = true
+  subnet = "10.10.1.0/28"
+  ip_address = "10.10.1.2"
+  alias_ips  = [ "10.10.1.4", "10.10.1.6" ]
+  connect_with_private_ip = true
+}
+
+build {
+  source "source.hcloud.debian" {
+
+  }
+}
+```
