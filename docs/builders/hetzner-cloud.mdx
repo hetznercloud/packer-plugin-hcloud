@@ -64,6 +64,15 @@ builder.
   }
   ```
 
+  ```yaml  
+  source "hcloud" "hetzner" {
+    image_filter {
+      most_recent = true
+      with_selector = ["name==my-image"]
+    }
+  }
+  ```
+
   This selects the most recent image with the label `name==my-image`. NOTE:
   This will fail unless _exactly_ one AMI is returned. In the above example,
   `most_recent` will cause this to succeed by selecting the newest image.
@@ -107,11 +116,34 @@ builder.
   enables simple installation of custom operating systems. `linux64`
   `linux32` or `freebsd64`
 
+- `network` (string) - Attach the server to a Network.
+
+- `ip_address` (string) - Specify the Private IP Address which will be used if
+  you attach the server to a Network. The `network` option has to be provided.
+
+- `alias_ips` (array of strings) - Provide the Server with Alias IPs. 
+  Only in conjunction with `network`.
+
+- `connect_with_private_ip` (bool) - Enable to use the Private Network Interface
+  to connect to the server. Depends on `network`.
+
+- `subnet` (string) - If `network` is specified, a Subnet can be set to specify
+  where the Server get attached to. The identificator is the IPRange - the format
+  is CIDR "10.10.1.0/24"
+
+- `max_snapshots` (int) - Snapshot Lifecycle Management - set the maximum of
+  concurrent Snapshots with the same Label.
+  So if you set it to `max_snapshots` = 2 a total of 2 Snapshots with the same
+  Label can coexists, if you rerun the build, the oldest Snapshots get deleted.
+
+- `skip_image_creation` (bool) - If set to true, no Snapshot will be created.
+
 ## Basic Example
 
 Here is a basic example. It is completely valid as soon as you enter your own
 access tokens:
 
+JSON - Format:
 ```json
 {
   "builders": [
@@ -126,3 +158,49 @@ access tokens:
   ]
 }
 ```
+
+HCL - Format:
+
+```yaml
+variable "hcloud_token" {
+  type    = string
+  default = "${env("HCLOUD_TOKEN")}"
+}
+
+source "hcloud" "hetzner" {
+  image        = "ubuntu-20.04"
+  location     = "nbg1"
+  server_type  = "cx11"
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+  network = "development"
+}
+
+build {
+  sources = ["source.hcloud.hetzner"]
+}
+
+HCL Format with Label Selector:
+
+```yaml
+variable "hcloud_token" {
+  type    = string
+  default = "${env("HCLOUD_TOKEN")}"
+}
+
+source "hcloud" "hetzner" {
+  image_filter {
+    most_recent = true
+    with_selector = ["name==my-image"]
+  }
+  location     = "nbg1"
+  server_type  = "cx11"
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+}
+
+build {
+  sources = ["source.hcloud.hetzner"]
+}
+```
+

@@ -2,10 +2,53 @@
 
 This chart breaks down what Packer does if you set any of the below SSH options:
 
-| ssh_password | ssh_private_key_file | ssh_keypair_name | temporary_key_pair_name | Packer will...                                                                             |
-| ------------ | -------------------- | ---------------- | ----------------------- | ------------------------------------------------------------------------------------------ |
-| X            | -                    | -                | -                       | ssh authenticating with username and given password                                        |
-| -            | X                    | -                | -                       | ssh authenticating with private key file                                                   |
-| -            | X                    | X                | -                       | ssh authenticating with given private key file and "attaching" the keypair to the instance |
-| -            | -                    | -                | X                       | Create a temporary ssh keypair with a particular name, clean it up                         |
-| -            | -                    | -                | -                       | Create a temporary ssh keypair with a default name, clean it up                            |
+| ssh_password | ssh_private_key_file | ssh_keypair_name | temporary_key_pair_name | Packer will...                                                                                                                 |
+| ------------ | -------------------- | ---------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| X            | -                    | -                | -                       | ssh authenticating with username and given password                                                                            |
+| -            | X                    | -                | -                       | ssh authenticating with private key file only valid with 'ssh_keypair_name`                                                    |
+| -            | X                    | X                | -                       | SSH authenticating with given private key file and "attaching" the matching keypair within the Hetzner Project to the instance |
+| -            | -                    | -                | X                       | Create a temporary ssh keypair with a particular name, clean it up                                                             |
+| -            | -                    | -                | -                       | Create a temporary ssh keypair with a default name, clean it up                                                                |
+
+### Example
+
+SSH authenticating with given private key file and "attaching" the matching keypair within the Hetzner Project to the instance:
+
+```hcl
+source "hcloud" "debian" {
+  image        = "debian-11"
+  location     = "nbg1"
+  server_type  = "cx11"
+  snapshot_name = "packer-${local.timestamp}"
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+  ssh_private_key_file = "/home/packer/.ssh/packer"
+  ssh_keypair_name = "packer"
+}
+
+build {
+  source "source.hcloud.debian" {
+
+  }
+}
+```
+
+Change `temporary_key_pair_name` and `temporary_key_pair_type` to "ed25519":
+```hcl
+source "hcloud" "debian" {
+  image        = "debian-11"
+  location     = "nbg1"
+  server_type  = "cx11"
+  snapshot_name = "packer-${local.timestamp}"
+  token = "${var.hcloud_token}"
+  ssh_username = "root"
+  temporary_key_pair_name = "tmp_packer_key"
+  temporary_key_pair_type = "ed25519"
+}
+
+build {
+  source "source.hcloud.debian" {
+
+  }
+}
+```
