@@ -1,0 +1,24 @@
+## How to use the Private Network
+
+This chart breaks down what Packer does if you set private network options:
+
+| network | subnet | ip_address | alias_ips | connect_with_private_ip | Packer will...                                                                             |
+| ------- | ------ | ---------- | --------- |------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| X       | -      | -          | -         | -                       | attach the Instance to a Network, Private IP assignment to the first available IP, connect to public IP                                           |
+| X       | X      | -          | -         | -                       | attach the Instance to a subnet within the Network, Private IP assignment to the first available IP, connect to public IP                         |
+| X       | X      | X          | -         | -                       | attach the Instance to a subnet within the Network, Specify Private IP assignment, connect to public IP                                           |
+| X       | X      | X          | X         | -                       | attach the Instance to a subnet within the Network, Specify Private IP assignment and AliasIPs, connect to public IP                              |
+| X       | X      | X          | X         | X                       | attach the Instance to a subnet within the Network, Specify Private IP assignment and AliasIPs, connect to ip_address                             |
+| X       |        | X          | X         | X                       | attach the Instance to a Network, Specify Private IP assignment and AliasIPs, connect to ip_address                                               |
+| X       |        | X          |           | X                       | attach the Instance to a Network, Specify Private IP assignment, connect to ip_address                                                            |
+| X       |        |            |           | X                       | attach the Instance to a Network, Private IP assignment to the first available IP, connect to Private Address                                     |
+| X       | X      |            | X         | X                       | attach the Instance to a subnet within the Network, Private IP assignment to the first available IP, Specify AliasIPs, connect to Private Address |
+| X       | X      |            |           | X                       | attach the Instance to a subnet within the Network, Private IP assignment to the first available IP, connect to Private Address                   |
+
+
+To use the Private Network specify the Network name or ID.  
+To connect to the Private Network set connect_with_private_ip to true.  
+If you don't specify the ip_address the IP Assignment is the first available IP Address within the Network,
+if you just set the network without the subnet, the subnet gets choosen randomly.  
+The subnet needs to be set as CIDR Format i.E "10.1.1.0/24".
+
