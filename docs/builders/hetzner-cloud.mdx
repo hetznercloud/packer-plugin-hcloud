@@ -64,7 +64,7 @@ builder.
   }
   ```
 
-  ```yaml  
+  ```hcl  
   source "hcloud" "hetzner" {
     image_filter {
       most_recent = true
@@ -161,7 +161,7 @@ JSON - Format:
 
 HCL - Format:
 
-```yaml
+```hcl
 variable "hcloud_token" {
   type    = string
   default = "${env("HCLOUD_TOKEN")}"
@@ -182,7 +182,7 @@ build {
 
 HCL Format with Label Selector:
 
-```yaml
+```hcl
 variable "hcloud_token" {
   type    = string
   default = "${env("HCLOUD_TOKEN")}"

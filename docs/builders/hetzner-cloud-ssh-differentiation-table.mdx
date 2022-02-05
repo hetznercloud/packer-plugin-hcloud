@@ -5,7 +5,7 @@ This chart breaks down what Packer does if you set any of the below SSH options:
 | ssh_password | ssh_private_key_file | ssh_keypair_name | temporary_key_pair_name | Packer will...                                                                                                                 |
 | ------------ | -------------------- | ---------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | X            | -                    | -                | -                       | ssh authenticating with username and given password                                                                            |
-| -            | X                    | -                | -                       | ssh authenticating with private key file only valid with 'ssh_keypair_name`                                                    |
+| -            | X                    | -                | -                       | ssh authenticating with private key file only valid with `ssh_keypair_name`                                                    |
 | -            | X                    | X                | -                       | SSH authenticating with given private key file and "attaching" the matching keypair within the Hetzner Project to the instance |
 | -            | -                    | -                | X                       | Create a temporary ssh keypair with a particular name, clean it up                                                             |
 | -            | -                    | -                | -                       | Create a temporary ssh keypair with a default name, clean it up                                                                |
@@ -33,7 +33,7 @@ build {
 }
 ```
 
-Change `temporary_key_pair_name` and `temporary_key_pair_type` to "ed25519":
+Change `temporary_key_pair_name` and `temporary_key_pair_type` from default RSA to "ed25519":
 ```hcl
 source "hcloud" "debian" {
   image        = "debian-11"
