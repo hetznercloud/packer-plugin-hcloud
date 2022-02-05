@@ -85,6 +85,8 @@ type FlatConfig struct {
 	AliasIPs                  []string          `mapstructure:"alias_ips" cty:"alias_ips" hcl:"alias_ips"`
 	ConnectWithPrivateIP      *bool             `mapstructure:"connect_with_private_ip" cty:"connect_with_private_ip" hcl:"connect_with_private_ip"`
 	Subnet                    *string           `mapstructure:"subnet" cty:"subnet" hcl:"subnet"`
+	MaxSnapshots              *int              `mapstructure:"max_snapshots" cty:"max_snapshots" hcl:"max_snapshots"`
+	SkipImageCreation         *bool             `mapstructure:"skip_image_creation" cty:"skip_image_creation" hcl:"skip_image_creation"`
 	RescueMode                *string           `mapstructure:"rescue" cty:"rescue" hcl:"rescue"`
 }
 
@@ -175,6 +177,8 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"alias_ips":                    &hcldec.AttrSpec{Name: "alias_ips", Type: cty.List(cty.String), Required: false},
 		"connect_with_private_ip":      &hcldec.AttrSpec{Name: "connect_with_private_ip", Type: cty.Bool, Required: false},
 		"subnet":                       &hcldec.AttrSpec{Name: "subnet", Type: cty.String, Required: false},
+		"max_snapshots":                &hcldec.AttrSpec{Name: "max_snapshots", Type: cty.Number, Required: false},
+		"skip_image_creation":          &hcldec.AttrSpec{Name: "skip_image_creation", Type: cty.Bool, Required: false},
 		"rescue":                       &hcldec.AttrSpec{Name: "rescue", Type: cty.String, Required: false},
 	}
 	return s

@@ -44,7 +44,8 @@ type Config struct {
 	AliasIPs             []string          `mapstructure:"alias_ips"`
 	ConnectWithPrivateIP bool              `mapstructure:"connect_with_private_ip"`
 	Subnet               string            `mapstructure:"subnet"`
-
+	MaxSnapshots         int               `mapstructure:"max_snapshots"`
+	SkipImageCreation	 bool              `mapstructure:"skip_image_creation"`
 	RescueMode string `mapstructure:"rescue"`
 
 	ctx interpolate.Context
@@ -148,6 +149,20 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 		if c.Comm.SSHKeyPairName == "" {
 			errs = packersdk.MultiErrorAppend(
 				errs, errors.New("you have to set ssh_keypair_name if you intend to use ssh_private_key_file"))
+		}
+	}
+
+	if c.IP != "" {
+		if c.Network == "" {
+			errs = packersdk.MultiErrorAppend(
+				errs, errors.New("you have to set a network if you specify a ip_address"))
+		}
+	}
+
+	if c.Subnet != "" {
+		if c.Network == "" {
+			errs = packersdk.MultiErrorAppend(
+				errs, errors.New("you have to set a network if you specify a subnet"))
 		}
 	}
 
