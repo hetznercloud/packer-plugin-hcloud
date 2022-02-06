@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
-	
+
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hetznercloud/hcloud-go/hcloud"
@@ -22,12 +22,10 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	c := state.Get("config").(*Config)
 	serverID := state.Get("server_id").(int)
 
-
 	if c.SkipImageCreation == true {
 		ui.Say("Skip creation of snapshot ...")
 		return multistep.ActionContinue
 	}
-
 
 	if c.MaxSnapshots != 0 {
 		opts := hcloud.ImageListOpts{Type: []hcloud.ImageType{hcloud.ImageTypeSnapshot}}

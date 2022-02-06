@@ -45,8 +45,8 @@ type Config struct {
 	ConnectWithPrivateIP bool              `mapstructure:"connect_with_private_ip"`
 	Subnet               string            `mapstructure:"subnet"`
 	MaxSnapshots         int               `mapstructure:"max_snapshots"`
-	SkipImageCreation	 bool              `mapstructure:"skip_image_creation"`
-	RescueMode string `mapstructure:"rescue"`
+	SkipImageCreation    bool              `mapstructure:"skip_image_creation"`
+	RescueMode           string            `mapstructure:"rescue"`
 
 	ctx interpolate.Context
 }

@@ -17,7 +17,6 @@ import (
 //
 type stepPreValidateNetwork struct {
 	net_id int
-	srv_ip string
 }
 
 func (s *stepPreValidateNetwork) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -90,9 +89,7 @@ func (s *stepPreValidateNetwork) Run(ctx context.Context, state multistep.StateB
 					for _, x := range server.PrivateNet {
 						server_ip_array = append(server_ip_array, x.IP)
 						if len(x.Aliases) != 0 {
-							for _, y := range x.Aliases {
-								server_ip_array = append(server_ip_array, y)
-							}
+							server_ip_array = append(server_ip_array, x.Aliases...)
 						}
 					}
 				}
