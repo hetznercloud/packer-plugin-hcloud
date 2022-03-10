@@ -69,6 +69,11 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		ui.Message(fmt.Sprintf("Using image %s with ID %d", image.Description, image.ID))
 	}
 
+	var networks []*hcloud.Network
+	for _, k := range c.Networks {
+		networks = append(networks, &hcloud.Network{ID: k})
+	}
+
 	serverCreateOpts := hcloud.ServerCreateOpts{
 		Name:       c.ServerName,
 		ServerType: &hcloud.ServerType{Name: c.ServerType},
@@ -76,6 +81,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		SSHKeys:    sshKeys,
 		Location:   &hcloud.Location{Name: c.Location},
 		UserData:   userData,
+		Networks:   networks,
 	}
 
 	if c.UpgradeServerType != "" {
@@ -83,6 +89,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	serverCreateResult, _, err := client.Server.Create(ctx, serverCreateOpts)
+
 	if err != nil {
 		err := fmt.Errorf("Error creating server: %s", err)
 		state.Put("error", err)
