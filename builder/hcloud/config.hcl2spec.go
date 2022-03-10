@@ -81,6 +81,7 @@ type FlatConfig struct {
 	UserData                  *string           `mapstructure:"user_data" cty:"user_data" hcl:"user_data"`
 	UserDataFile              *string           `mapstructure:"user_data_file" cty:"user_data_file" hcl:"user_data_file"`
 	SSHKeys                   []string          `mapstructure:"ssh_keys" cty:"ssh_keys" hcl:"ssh_keys"`
+	Networks                  []int64           `mapstructure:"networks" cty:"networks" hcl:"networks"`
 	RescueMode                *string           `mapstructure:"rescue" cty:"rescue" hcl:"rescue"`
 }
 
@@ -167,6 +168,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"user_data":                    &hcldec.AttrSpec{Name: "user_data", Type: cty.String, Required: false},
 		"user_data_file":               &hcldec.AttrSpec{Name: "user_data_file", Type: cty.String, Required: false},
 		"ssh_keys":                     &hcldec.AttrSpec{Name: "ssh_keys", Type: cty.List(cty.String), Required: false},
+		"networks":                     &hcldec.AttrSpec{Name: "networks", Type: cty.List(cty.Number), Required: false},
 		"rescue":                       &hcldec.AttrSpec{Name: "rescue", Type: cty.String, Required: false},
 	}
 	return s
