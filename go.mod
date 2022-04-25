@@ -3,7 +3,7 @@ module github.com/hashicorp/packer-plugin-hcloud
 go 1.17
 
 require (
-	github.com/hashicorp/hcl/v2 v2.11.1
+	github.com/hashicorp/hcl/v2 v2.12.0
 	github.com/hashicorp/packer-plugin-sdk v0.2.11
 	github.com/hetznercloud/hcloud-go v1.25.0
 	github.com/mitchellh/mapstructure v1.4.1
