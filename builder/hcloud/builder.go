@@ -55,10 +55,17 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			Force:        b.config.PackerForce,
 			SnapshotName: b.config.SnapshotName,
 		},
-		&stepCreateSSHKey{
-			Debug:        b.config.PackerDebug,
-			DebugKeyPath: fmt.Sprintf("ssh_key_%s.pem", b.config.PackerBuildName),
+		&communicator.StepSSHKeyGen{
+			CommConf:            &b.config.Comm,
+			SSHTemporaryKeyPair: b.config.Comm.SSH.SSHTemporaryKeyPair,
 		},
+		multistep.If(b.config.PackerDebug && b.config.Comm.SSHPrivateKeyFile == "",
+			&communicator.StepDumpSSHKey{
+				Path: fmt.Sprintf("ssh_key_%s.pem", b.config.PackerBuildName),
+				SSH:  &b.config.Comm.SSH,
+			},
+		),
+		&stepCreateSSHKey{},
 		&stepCreateServer{},
 		&communicator.StepConnect{
 			Config:    &b.config.Comm,

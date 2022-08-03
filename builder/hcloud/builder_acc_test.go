@@ -35,9 +35,10 @@ const testBuilderAccBasic = `
 		"type": "test",
 		"location": "nbg1",
 		"server_type": "cx11",
-		"image": "ubuntu-18.04",
+		"image": "ubuntu-22.04",
 		"user_data": "",
-		"user_data_file": ""
+		"user_data_file": "",
+		"ssh_username": "root"
 	}]
 }
 `
