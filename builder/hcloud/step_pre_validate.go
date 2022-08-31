@@ -11,7 +11,6 @@ import (
 
 // StepPreValidate provides an opportunity to pre-validate any configuration for
 // the build before actually doing any time consuming work
-//
 type stepPreValidate struct {
 	Force        bool
 	SnapshotName string

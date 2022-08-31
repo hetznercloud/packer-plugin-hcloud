@@ -13,7 +13,7 @@ const OldSnapshotID = "old_snapshot_id"
 
 type stepCreateSnapshot struct{}
 
-//nolint: gosimple
+//nolint:gosimple,goimports
 func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
