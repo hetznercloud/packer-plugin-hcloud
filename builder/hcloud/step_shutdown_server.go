@@ -11,7 +11,7 @@ import (
 
 type stepShutdownServer struct{}
 
-//nolint: gosimple
+//nolint:gosimple,goimports
 func (s *stepShutdownServer) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
