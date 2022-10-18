@@ -114,17 +114,16 @@ builder.
 Here is a basic example. It is completely valid as soon as you enter your own
 access tokens:
 
-```json
-{
-  "builders": [
-    {
-      "type": "hcloud",
-      "token": "YOUR API KEY",
-      "image": "ubuntu-22.04",
-      "location": "nbg1",
-      "server_type": "cx11",
-      "ssh_username": "root"
-    }
-  ]
+```hcl
+source "hcloud" "basic_example" {
+	token = "YOUR API TOKEN"
+  image = "ubuntu-22.04"
+	location = "nbg1"
+	server_type = "cx11"
+	ssh_username = "root"
+}
+
+build {
+	sources  = ["source.hcloud.basic_example"]
 }
 ```
