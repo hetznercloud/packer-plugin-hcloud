@@ -55,12 +55,10 @@ builder.
 - `image_filter` (object) - Filters used to populate the `filter`
   field. Example:
 
-  ```json
-  {
-    "image_filter": {
-      "with_selector": ["name==my-image"],
-      "most_recent": true
-    }
+  ```hcl
+  image_filter {
+  	most_recent   = true
+	with_selector = ["name==my-image"]
   }
   ```
 
@@ -117,7 +115,7 @@ access tokens:
 ```hcl
 source "hcloud" "basic_example" {
 	token = "YOUR API TOKEN"
-  image = "ubuntu-22.04"
+	image = "ubuntu-22.04"
 	location = "nbg1"
 	server_type = "cx11"
 	ssh_username = "root"
