@@ -73,6 +73,7 @@ type FlatConfig struct {
 	ServerName                *string           `mapstructure:"server_name" cty:"server_name" hcl:"server_name"`
 	Location                  *string           `mapstructure:"location" cty:"location" hcl:"location"`
 	ServerType                *string           `mapstructure:"server_type" cty:"server_type" hcl:"server_type"`
+	UpgradeServerType         *string           `mapstructure:"upgrade_server_type" cty:"upgrade_server_type" hcl:"upgrade_server_type"`
 	Image                     *string           `mapstructure:"image" cty:"image" hcl:"image"`
 	ImageFilter               *FlatimageFilter  `mapstructure:"image_filter" cty:"image_filter" hcl:"image_filter"`
 	SnapshotName              *string           `mapstructure:"snapshot_name" cty:"snapshot_name" hcl:"snapshot_name"`
@@ -158,6 +159,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"server_name":                  &hcldec.AttrSpec{Name: "server_name", Type: cty.String, Required: false},
 		"location":                     &hcldec.AttrSpec{Name: "location", Type: cty.String, Required: false},
 		"server_type":                  &hcldec.AttrSpec{Name: "server_type", Type: cty.String, Required: false},
+		"upgrade_server_type":          &hcldec.AttrSpec{Name: "upgrade_server_type", Type: cty.String, Required: false},
 		"image":                        &hcldec.AttrSpec{Name: "image", Type: cty.String, Required: false},
 		"image_filter":                 &hcldec.BlockSpec{TypeName: "image_filter", Nested: hcldec.ObjectSpec((*FlatimageFilter)(nil).HCL2Spec())},
 		"snapshot_name":                &hcldec.AttrSpec{Name: "snapshot_name", Type: cty.String, Required: false},
