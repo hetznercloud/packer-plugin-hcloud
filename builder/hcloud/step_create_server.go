@@ -65,14 +65,20 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		ui.Message(fmt.Sprintf("Using image %s with ID %d", image.Description, image.ID))
 	}
 
-	serverCreateResult, _, err := client.Server.Create(ctx, hcloud.ServerCreateOpts{
+	serverCreateOpts := hcloud.ServerCreateOpts{
 		Name:       c.ServerName,
 		ServerType: &hcloud.ServerType{Name: c.ServerType},
 		Image:      image,
 		SSHKeys:    sshKeys,
 		Location:   &hcloud.Location{Name: c.Location},
 		UserData:   userData,
-	})
+	}
+
+	if c.UpgradeServerType != "" {
+		serverCreateOpts.StartAfterCreate = hcloud.Bool(false)
+	}
+
+	serverCreateResult, _, err := client.Server.Create(ctx, serverCreateOpts)
 	if err != nil {
 		err := fmt.Errorf("Error creating server: %s", err)
 		state.Put("error", err)
@@ -98,6 +104,45 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	for _, nextAction := range serverCreateResult.NextActions {
 		if err := waitForAction(ctx, client, nextAction); err != nil {
 			err := fmt.Errorf("Error creating server: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+	}
+
+	if c.UpgradeServerType != "" {
+		ui.Say("Changing server-type...")
+		serverChangeTypeAction, _, err := client.Server.ChangeType(ctx, serverCreateResult.Server, hcloud.ServerChangeTypeOpts{
+			ServerType:  &hcloud.ServerType{Name: c.UpgradeServerType},
+			UpgradeDisk: false,
+		})
+
+		if err != nil {
+			err := fmt.Errorf("Error changing server-type: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+
+		if err := waitForAction(ctx, client, serverChangeTypeAction); err != nil {
+			err := fmt.Errorf("Error changing server-type: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+
+		ui.Say("Starting server...")
+		serverPoweronAction, _, err := client.Server.Poweron(ctx, serverCreateResult.Server)
+
+		if err != nil {
+			err := fmt.Errorf("Error starting server: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+
+		if err := waitForAction(ctx, client, serverPoweronAction); err != nil {
+			err := fmt.Errorf("Error starting server: %s", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
