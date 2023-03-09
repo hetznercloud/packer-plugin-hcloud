@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hetznercloud/hcloud-go/hcloud"
+
+	"github.com/hashicorp/packer-plugin-hcloud/version"
 )
 
 // The unique id for the builder
@@ -20,8 +22,6 @@ type Builder struct {
 	runner       multistep.Runner
 	hcloudClient *hcloud.Client
 }
-
-var pluginVersion = "1.0.0"
 
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
@@ -39,7 +39,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		hcloud.WithToken(b.config.HCloudToken),
 		hcloud.WithEndpoint(b.config.Endpoint),
 		hcloud.WithPollInterval(b.config.PollInterval),
-		hcloud.WithApplication("hcloud-packer", pluginVersion),
+		hcloud.WithApplication("hcloud-packer", version.PluginVersion.String()),
 	}
 	b.hcloudClient = hcloud.NewClient(opts...)
 	// Set up the state
