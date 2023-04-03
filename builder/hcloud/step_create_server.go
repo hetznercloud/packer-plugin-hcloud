@@ -58,8 +58,9 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	if c.Image != "" {
 		image = &hcloud.Image{Name: c.Image}
 	} else {
+		serverType := state.Get("serverType").(*hcloud.ServerType)
 		var err error
-		image, err = getImageWithSelectors(ctx, client, c)
+		image, err = getImageWithSelectors(ctx, client, c, serverType)
 		if err != nil {
 			ui.Error(err.Error())
 			state.Put("error", err)
@@ -245,13 +246,14 @@ func waitForAction(ctx context.Context, client *hcloud.Client, action *hcloud.Ac
 	return nil
 }
 
-func getImageWithSelectors(ctx context.Context, client *hcloud.Client, c *Config) (*hcloud.Image, error) {
+func getImageWithSelectors(ctx context.Context, client *hcloud.Client, c *Config, serverType *hcloud.ServerType) (*hcloud.Image, error) {
 	var allImages []*hcloud.Image
 
 	var selector = strings.Join(c.ImageFilter.WithSelector, ",")
 	opts := hcloud.ImageListOpts{
-		ListOpts: hcloud.ListOpts{LabelSelector: selector},
-		Status:   []hcloud.ImageStatus{hcloud.ImageStatusAvailable},
+		ListOpts:     hcloud.ListOpts{LabelSelector: selector},
+		Status:       []hcloud.ImageStatus{hcloud.ImageStatusAvailable},
+		Architecture: []hcloud.Architecture{serverType.Architecture},
 	}
 
 	allImages, err := client.Image.AllWithOpts(ctx, opts)
