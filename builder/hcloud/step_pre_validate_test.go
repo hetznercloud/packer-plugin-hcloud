@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -121,6 +122,15 @@ func setupStepPreValidate(errors chan<- error, fakeSnapNames []string) (*multist
 			response = &schema.ImageListResponse{Images: images}
 		}
 
+		if r.Method == http.MethodGet && r.URL.Path == "/server_types" && r.URL.RawQuery == "name=cx11" {
+			w.WriteHeader(http.StatusOK)
+			serverTypes := []schema.ServerType{{
+				Name:         "cx11",
+				Architecture: "x86",
+			}}
+			response = &schema.ServerTypeListResponse{ServerTypes: serverTypes}
+		}
+
 		if response != nil {
 			if err := enc.Encode(response); err != nil {
 				errors <- fmt.Errorf("fake server: encoding reply: %s", err)
@@ -134,8 +144,14 @@ func setupStepPreValidate(errors chan<- error, fakeSnapNames []string) (*multist
 	}))
 
 	state := multistep.BasicStateBag{}
-	client := hcloud.NewClient(hcloud.WithEndpoint(ts.URL))
+
+	client := hcloud.NewClient(hcloud.WithEndpoint(ts.URL), hcloud.WithDebugWriter(os.Stderr))
 	state.Put("hcloudClient", client)
+
+	config := &Config{
+		ServerType: "cx11",
+	}
+	state.Put("config", config)
 
 	teardown := func() {
 		ts.Close()
