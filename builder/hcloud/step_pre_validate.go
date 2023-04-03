@@ -22,6 +22,48 @@ type stepPreValidate struct {
 func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
+	c := state.Get("config").(*Config)
+
+	ui.Say("Prevalidating server types")
+	serverType, _, err := client.ServerType.Get(ctx, c.ServerType)
+	if err != nil {
+		err = fmt.Errorf("Error: getting server type: %w", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+	if serverType == nil {
+		err = fmt.Errorf("Error: server type '%s' not found", c.ServerType)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+	state.Put("serverType", serverType)
+
+	if c.UpgradeServerType != "" {
+		upgradeServerType, _, err := client.ServerType.Get(ctx, c.UpgradeServerType)
+		if err != nil {
+			err = fmt.Errorf("Error: getting upgrade server type: %w", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+		if serverType == nil {
+			err = fmt.Errorf("Error: upgrade server type '%s' not found", c.UpgradeServerType)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+
+		if serverType.Architecture != upgradeServerType.Architecture {
+			// This is also validated by API, but if we validate it here, its faster and we never have to create
+			// a server in the first place. Saving users to first hour of billing.
+			err = fmt.Errorf("Error: server_type and upgrade_server_type have incompatible architectures")
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+	}
 
 	ui.Say(fmt.Sprintf("Prevalidating snapshot name: %s", s.SnapshotName))
 
