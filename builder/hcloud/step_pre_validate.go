@@ -70,7 +70,10 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	// We would like to ask only for snapshots with a certain name using
 	// ImageListOpts{Name: s.SnapshotName}, but snapshots do not have name, they
 	// only have description. Thus we are obliged to ask for _all_ the snapshots.
-	opts := hcloud.ImageListOpts{Type: []hcloud.ImageType{hcloud.ImageTypeSnapshot}}
+	opts := hcloud.ImageListOpts{
+		Type:         []hcloud.ImageType{hcloud.ImageTypeSnapshot},
+		Architecture: []hcloud.Architecture{serverType.Architecture},
+	}
 	snapshots, err := client.Image.AllWithOpts(ctx, opts)
 	if err != nil {
 		err := fmt.Errorf("Error: getting snapshot list: %s", err)
@@ -81,8 +84,8 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 
 	for _, snap := range snapshots {
 		if snap.Description == s.SnapshotName {
-			snapMsg := fmt.Sprintf("snapshot name: '%s' is used by existing snapshot with ID %d",
-				s.SnapshotName, snap.ID)
+			snapMsg := fmt.Sprintf("snapshot name: '%s' is used by existing snapshot with ID %d (arch=%s)",
+				s.SnapshotName, snap.ID, serverType.Architecture)
 			if s.Force {
 				ui.Say(snapMsg + ". Force flag specified, will safely overwrite this snapshot")
 				state.Put(OldSnapshotID, snap.ID)
