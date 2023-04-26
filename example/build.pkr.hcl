@@ -3,41 +3,40 @@
 
 packer {
   required_plugins {
-    scaffolding = {
-      version = ">=v0.1.0"
-      source  = "github.com/hashicorp/scaffolding"
+    hcloud = {
+      version = ">=v1.0.5"
+      source  = "github.com/hashicorp/hcloud"
     }
   }
 }
 
-source "scaffolding-my-builder" "foo-example" {
-  mock = local.foo
+variable "hcloud_token" {
+  type      = string
+  default   = "${env("HCLOUD_TOKEN")}"
+  sensitive = true
 }
 
-source "scaffolding-my-builder" "bar-example" {
-  mock = local.bar
+source "hcloud" "example" {
+  image       = "ubuntu-22.04"
+  location    = "hel1"
+  server_name = "hcloud-example"
+  server_type = "cx11"
+  snapshot_labels = {
+    app = "hcloud-example"
+  }
+  snapshot_name = "hcloud-example"
+  ssh_username  = "root"
+  token         = var.hcloud_token
 }
 
 build {
-  sources = [
-    "source.scaffolding-my-builder.foo-example",
-  ]
+  sources = ["source.hcloud.example"]
 
-  source "source.scaffolding-my-builder.bar-example" {
-    name = "bar"
+  provisioner "shell" {
+    inline = ["cloud-init status --wait"]
   }
 
-  provisioner "scaffolding-my-provisioner" {
-    only = ["scaffolding-my-builder.foo-example"]
-    mock = "foo: ${local.foo}"
-  }
-
-  provisioner "scaffolding-my-provisioner" {
-    only = ["scaffolding-my-builder.bar"]
-    mock = "bar: ${local.bar}"
-  }
-
-  post-processor "scaffolding-my-post-processor" {
-    mock = "post-processor mock-config"
+  provisioner "shell" {
+    inline = ["echo \"Hello World!\" > /var/log/packer.log"]
   }
 }
