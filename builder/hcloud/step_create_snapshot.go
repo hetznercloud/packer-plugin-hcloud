@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hetznercloud/hcloud-go/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
 const OldSnapshotID = "old_snapshot_id"
@@ -21,7 +21,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
 	c := state.Get("config").(*Config)
-	serverID := state.Get("server_id").(int)
+	serverID := state.Get("server_id").(int64)
 
 	ui.Say("Creating snapshot ...")
 	ui.Say("This can take some time")
@@ -52,7 +52,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	if !found {
 		return multistep.ActionContinue
 	}
-	oldSnapID := oldSnap.(int)
+	oldSnapID := oldSnap.(int64)
 
 	// The pre validate step has been invoked with -force AND found an existing
 	// snapshot with the same name.

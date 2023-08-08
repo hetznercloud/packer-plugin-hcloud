@@ -14,8 +14,8 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hetznercloud/hcloud-go/hcloud"
-	"github.com/hetznercloud/hcloud-go/hcloud/schema"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
 type FailCause int
@@ -28,12 +28,12 @@ const (
 )
 
 func TestStepCreateSnapshot(t *testing.T) {
-	const serverID = 42
+	const serverID = int64(42)
 	const snapName = "dummy-snap"
 
 	testCases := []struct {
 		name       string
-		oldSnapID  int       // zero value: no old snap will be injected
+		oldSnapID  int64     // zero value: no old snap will be injected
 		failCause  FailCause // zero value: pass
 		wantAction multistep.StepAction
 	}{
