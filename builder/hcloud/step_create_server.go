@@ -12,18 +12,18 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hetznercloud/hcloud-go/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
 type stepCreateServer struct {
-	serverId int
+	serverId int64
 }
 
 func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("hcloudClient").(*hcloud.Client)
 	ui := state.Get("ui").(packersdk.Ui)
 	c := state.Get("config").(*Config)
-	sshKeyId := state.Get("ssh_key_id").(int)
+	sshKeyId := state.Get("ssh_key_id").(int64)
 
 	// Create the server based on configuration
 	ui.Say("Creating server...")

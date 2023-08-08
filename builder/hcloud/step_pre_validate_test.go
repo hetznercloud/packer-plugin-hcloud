@@ -15,8 +15,8 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hetznercloud/hcloud-go/hcloud"
-	"github.com/hetznercloud/hcloud-go/hcloud/schema"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
 func TestStepPreValidate(t *testing.T) {
@@ -26,7 +26,7 @@ func TestStepPreValidate(t *testing.T) {
 		name string
 		// zero value: assert that state OldSnapshotID is NOT present
 		// non-zero value: assert that state OldSnapshotID is present AND has this value
-		wantOldSnapID int
+		wantOldSnapID int64
 		step          stepPreValidate
 		wantAction    multistep.StepAction
 	}{
@@ -66,7 +66,7 @@ func TestStepPreValidate(t *testing.T) {
 
 			oldSnap, found := state.GetOk(OldSnapshotID)
 			if found {
-				oldSnapID := oldSnap.(int)
+				oldSnapID := oldSnap.(int64)
 				if tc.wantOldSnapID == 0 {
 					t.Errorf("OldSnapshotID: got: present with value %d; want: not present", oldSnapID)
 				} else if oldSnapID != tc.wantOldSnapID {
@@ -113,7 +113,7 @@ func setupStepPreValidate(errors chan<- error, fakeSnapNames []string) (*multist
 			images := make([]schema.Image, 0, len(fakeSnapNames))
 			for i, fakeDesc := range fakeSnapNames {
 				img := schema.Image{
-					ID:          1000 + i,
+					ID:          int64(1000 + i),
 					Type:        string(hcloud.ImageTypeSnapshot),
 					Description: fakeDesc,
 				}

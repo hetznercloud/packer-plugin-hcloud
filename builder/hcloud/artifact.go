@@ -9,7 +9,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/hetznercloud/hcloud-go/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
 type Artifact struct {
@@ -17,7 +17,7 @@ type Artifact struct {
 	snapshotName string
 
 	// The ID of the image
-	snapshotId int
+	snapshotId int64
 
 	// The hcloudClient for making API calls
 	hcloudClient *hcloud.Client
@@ -36,7 +36,7 @@ func (*Artifact) Files() []string {
 }
 
 func (a *Artifact) Id() string {
-	return strconv.Itoa(a.snapshotId)
+	return strconv.FormatInt(a.snapshotId, 10)
 }
 
 func (a *Artifact) String() string {

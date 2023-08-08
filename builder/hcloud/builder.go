@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hetznercloud/hcloud-go/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 
 	"github.com/hashicorp/packer-plugin-hcloud/version"
 )
@@ -96,7 +96,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 
 	artifact := &Artifact{
 		snapshotName: state.Get("snapshot_name").(string),
-		snapshotId:   state.Get("snapshot_id").(int),
+		snapshotId:   state.Get("snapshot_id").(int64),
 		hcloudClient: b.hcloudClient,
 		StateData:    map[string]interface{}{"generated_data": state.Get("generated_data")},
 	}
