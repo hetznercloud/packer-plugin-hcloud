@@ -26,6 +26,6 @@ $ packer plugins install github.com/hashicorp/hcloud
 
 #### Builders
 
-- [hcloud](/packer/integrations/hashicorp/hcloud/latest/components/builder/hetzner-cloud) - The hcloud builder
+- [hcloud](/packer/integrations/hashicorp/hcloud/latest/components/builder/hcloud) - The hcloud builder
   lets you create custom images on Hetzner Cloud by launching an instance, provisioning it, then
   export it as an image for later reuse.
