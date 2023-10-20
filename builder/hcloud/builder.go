@@ -102,7 +102,13 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		snapshotName: state.Get(StateSnapshotName).(string),
 		snapshotId:   state.Get(StateSnapshotID).(int64),
 		hcloudClient: b.hcloudClient,
-		StateData:    map[string]interface{}{"generated_data": state.Get(StateGeneratedData)},
+		StateData: map[string]interface{}{
+			"generated_data":  state.Get(StateGeneratedData),
+			"source_image":    b.config.Image,
+			"source_image_id": state.Get(StateSourceImageID),
+			"region":          b.config.Location,
+			"server_type":     b.config.ServerType,
+		},
 	}
 
 	return artifact, nil

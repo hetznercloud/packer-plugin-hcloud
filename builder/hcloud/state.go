@@ -25,6 +25,8 @@ const (
 	StateSnapshotIDOld = "snapshot_id_old"
 	StateSnapshotName  = "snapshot_name"
 	StateSSHKeyID      = "ssh_key_id"
+
+	StateSourceImageID = "source_image_id"
 )
 
 func UnpackState(state multistep.StateBag) (*Config, packersdk.Ui, *hcloud.Client) {
