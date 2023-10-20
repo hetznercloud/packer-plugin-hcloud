@@ -6,6 +6,7 @@ package hcloud
 import (
 	"context"
 	"fmt"
+	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"log"
 	"strconv"
 
@@ -44,6 +45,14 @@ func (a *Artifact) String() string {
 }
 
 func (a *Artifact) State(name string) interface{} {
+	if name == registryimage.ArtifactStateURI {
+		img, err := registryimage.FromArtifact(a, registryimage.WithProvider("hetznercloud"))
+		if err != nil {
+			log.Printf("[DEBUG] error encountered when creating a registry image %v", err)
+			return nil
+		}
+		return img
+	}
 	return a.StateData[name]
 }
 
