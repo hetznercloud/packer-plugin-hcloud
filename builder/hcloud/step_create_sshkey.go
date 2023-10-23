@@ -37,6 +37,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	key, _, err := client.SSHKey.Create(ctx, hcloud.SSHKeyCreateOpts{
 		Name:      name,
 		PublicKey: string(c.Comm.SSHPublicKey),
+		Labels:    c.SSHKeyLabels,
 	})
 	if err != nil {
 		err := fmt.Errorf("Error creating temporary SSH key: %s", err)

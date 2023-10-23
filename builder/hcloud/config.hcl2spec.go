@@ -73,6 +73,7 @@ type FlatConfig struct {
 	ServerName                *string           `mapstructure:"server_name" cty:"server_name" hcl:"server_name"`
 	Location                  *string           `mapstructure:"location" cty:"location" hcl:"location"`
 	ServerType                *string           `mapstructure:"server_type" cty:"server_type" hcl:"server_type"`
+	ServerLabels              map[string]string `mapstructure:"server_labels" cty:"server_labels" hcl:"server_labels"`
 	UpgradeServerType         *string           `mapstructure:"upgrade_server_type" cty:"upgrade_server_type" hcl:"upgrade_server_type"`
 	Image                     *string           `mapstructure:"image" cty:"image" hcl:"image"`
 	ImageFilter               *FlatimageFilter  `mapstructure:"image_filter" cty:"image_filter" hcl:"image_filter"`
@@ -81,6 +82,7 @@ type FlatConfig struct {
 	UserData                  *string           `mapstructure:"user_data" cty:"user_data" hcl:"user_data"`
 	UserDataFile              *string           `mapstructure:"user_data_file" cty:"user_data_file" hcl:"user_data_file"`
 	SSHKeys                   []string          `mapstructure:"ssh_keys" cty:"ssh_keys" hcl:"ssh_keys"`
+	SSHKeyLabels              map[string]string `mapstructure:"sshkey_labels" cty:"sshkey_labels" hcl:"sshkey_labels"`
 	Networks                  []int64           `mapstructure:"networks" cty:"networks" hcl:"networks"`
 	RescueMode                *string           `mapstructure:"rescue" cty:"rescue" hcl:"rescue"`
 }
@@ -160,6 +162,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"server_name":                  &hcldec.AttrSpec{Name: "server_name", Type: cty.String, Required: false},
 		"location":                     &hcldec.AttrSpec{Name: "location", Type: cty.String, Required: false},
 		"server_type":                  &hcldec.AttrSpec{Name: "server_type", Type: cty.String, Required: false},
+		"server_labels":                &hcldec.AttrSpec{Name: "server_labels", Type: cty.Map(cty.String), Required: false},
 		"upgrade_server_type":          &hcldec.AttrSpec{Name: "upgrade_server_type", Type: cty.String, Required: false},
 		"image":                        &hcldec.AttrSpec{Name: "image", Type: cty.String, Required: false},
 		"image_filter":                 &hcldec.BlockSpec{TypeName: "image_filter", Nested: hcldec.ObjectSpec((*FlatimageFilter)(nil).HCL2Spec())},
@@ -168,6 +171,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"user_data":                    &hcldec.AttrSpec{Name: "user_data", Type: cty.String, Required: false},
 		"user_data_file":               &hcldec.AttrSpec{Name: "user_data_file", Type: cty.String, Required: false},
 		"ssh_keys":                     &hcldec.AttrSpec{Name: "ssh_keys", Type: cty.List(cty.String), Required: false},
+		"sshkey_labels":                &hcldec.AttrSpec{Name: "sshkey_labels", Type: cty.Map(cty.String), Required: false},
 		"networks":                     &hcldec.AttrSpec{Name: "networks", Type: cty.List(cty.Number), Required: false},
 		"rescue":                       &hcldec.AttrSpec{Name: "rescue", Type: cty.String, Required: false},
 	}
