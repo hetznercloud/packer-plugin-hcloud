@@ -82,6 +82,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		Location:   &hcloud.Location{Name: c.Location},
 		UserData:   userData,
 		Networks:   networks,
+		Labels:     c.ServerLabels,
 	}
 
 	if c.UpgradeServerType != "" {
@@ -89,7 +90,6 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	serverCreateResult, _, err := client.Server.Create(ctx, serverCreateOpts)
-
 	if err != nil {
 		err := fmt.Errorf("Error creating server: %s", err)
 		state.Put("error", err)
@@ -127,7 +127,6 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			ServerType:  &hcloud.ServerType{Name: c.UpgradeServerType},
 			UpgradeDisk: false,
 		})
-
 		if err != nil {
 			err := fmt.Errorf("Error changing server-type: %s", err)
 			state.Put("error", err)
@@ -144,7 +143,6 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 		ui.Say("Starting server...")
 		serverPoweronAction, _, err := client.Server.Poweron(ctx, serverCreateResult.Server)
-
 		if err != nil {
 			err := fmt.Errorf("Error starting server: %s", err)
 			state.Put("error", err)
@@ -256,7 +254,7 @@ func waitForAction(ctx context.Context, client *hcloud.Client, action *hcloud.Ac
 func getImageWithSelectors(ctx context.Context, client *hcloud.Client, c *Config, serverType *hcloud.ServerType) (*hcloud.Image, error) {
 	var allImages []*hcloud.Image
 
-	var selector = strings.Join(c.ImageFilter.WithSelector, ",")
+	selector := strings.Join(c.ImageFilter.WithSelector, ",")
 	opts := hcloud.ImageListOpts{
 		ListOpts:     hcloud.ListOpts{LabelSelector: selector},
 		Status:       []hcloud.ImageStatus{hcloud.ImageStatusAvailable},
