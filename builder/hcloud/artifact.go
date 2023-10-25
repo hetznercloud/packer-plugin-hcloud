@@ -6,9 +6,10 @@ package hcloud
 import (
 	"context"
 	"fmt"
-	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"log"
 	"strconv"
+
+	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
