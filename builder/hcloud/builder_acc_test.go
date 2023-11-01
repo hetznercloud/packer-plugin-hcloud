@@ -13,12 +13,14 @@ import (
 )
 
 func TestBuilderAcc_basic(t *testing.T) {
-	if v := os.Getenv("HCLOUD_TOKEN"); v == "" {
-		t.Skip("HCLOUD_TOKEN must be set for acceptance tests")
-	}
-
 	testCase := &acctest.PluginTestCase{
-		Name:     "hcloud_basic_test",
+		Name: "hcloud_basic_test",
+		Setup: func() error {
+			if v := os.Getenv("HCLOUD_TOKEN"); v == "" {
+				return fmt.Errorf("HCLOUD_TOKEN must be set for acceptance tests")
+			}
+			return nil
+		},
 		Template: testBuilderAccBasic,
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
