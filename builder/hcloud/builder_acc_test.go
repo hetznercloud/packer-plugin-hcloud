@@ -35,7 +35,7 @@ func TestBuilderAcc_basic(t *testing.T) {
 const testBuilderAccBasic = `
 {
 	"builders": [{
-		"type": "test",
+		"type": "hcloud",
 		"location": "nbg1",
 		"server_type": "cx11",
 		"image": "ubuntu-22.04",
