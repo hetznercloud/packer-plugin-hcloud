@@ -1,5 +1,5 @@
 main
 dist/*
-packer-plugin-scaffolding
+packer-plugin-hcloud
 .docs
 crash.log
