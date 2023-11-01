@@ -1,4 +1,4 @@
-module github.com/hashicorp/packer-plugin-hcloud
+module github.com/hetznercloud/packer-plugin-hcloud
 
 go 1.19
 
