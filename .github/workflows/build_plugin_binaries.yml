@@ -12,10 +12,10 @@ jobs:
   build_darwin:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"
@@ -29,10 +29,10 @@ jobs:
   build_freebsd:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"
@@ -50,10 +50,10 @@ jobs:
   build_linux:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"
@@ -75,10 +75,10 @@ jobs:
   build_netbsd:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"
@@ -96,10 +96,10 @@ jobs:
   build_openbsd:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"
@@ -117,10 +117,10 @@ jobs:
   build_solaris:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"
@@ -130,10 +130,10 @@ jobs:
   build_windows:
     defaults:
       run:
-        working-directory: ~/go/src/github.com/hashicorp/packer-plugin-hcloud
+        working-directory: ~/go/src/github.com/hetznercloud/packer-plugin-hcloud
     runs-on: ubuntu-latest
     container:
-      image: docker.mirror.hashicorp.services/cimg/go:1.20
+      image: cimg/go:1.20
     steps:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - uses: "./.github/actions/build-and-persist-plugin-binary"

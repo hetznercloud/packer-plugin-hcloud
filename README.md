@@ -1,4 +1,5 @@
 # Packer Plugin Hcloud
+
 The `Hcloud` multi-component plugin can be used with HashiCorp [Packer](https://www.packer.io)
 to create custom images. For the full list of available features for this plugin see [docs](docs).
 
@@ -20,21 +21,19 @@ packer {
   required_plugins {
     hcloud = {
       version = ">= 1.1.1"
-      source  = "github.com/hashicorp/hcloud"
+      source  = "github.com/hetznercloud/hcloud"
     }
   }
 }
 ```
 
-
 #### Manual installation
 
-You can find pre-built binary releases of the plugin [here](https://github.com/hashicorp/packer-plugin-hcloud/releases).
+You can find pre-built binary releases of the plugin [here](https://github.com/hetznercloud/packer-plugin-hcloud/releases).
 Once you have downloaded the latest archive corresponding to your target OS,
 uncompress it to retrieve the plugin binary file corresponding to your platform.
 To install the plugin, please follow the Packer documentation on
 [installing a plugin](https://www.packer.io/docs/extending/plugins/#installing-plugins).
-
 
 ### From Sources
 
@@ -45,19 +44,17 @@ binary file can be found in the root directory.
 To install the compiled plugin, please follow the official Packer documentation
 on [installing a plugin](https://www.packer.io/docs/extending/plugins/#installing-plugins).
 
-
 ### Configuration
 
 For more information on how to configure the plugin, please read the
 documentation located in the [`docs/`](docs) directory.
 
-
 ## Contributing
 
-* If you think you've found a bug in the code or you have a question regarding
+- If you think you've found a bug in the code or you have a question regarding
   the usage of this software, please reach out to us by opening an issue in
   this GitHub repository.
-* Contributions to this project are welcome: if you want to add a feature or a
+- Contributions to this project are welcome: if you want to add a feature or a
   fix a bug, please do so by opening a Pull Request in this GitHub repository.
   In case of feature contribution, we kindly ask you to open an issue to
   discuss it beforehand.

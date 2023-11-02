@@ -46,7 +46,7 @@ jobs:
       - name: Notify Release
         uses: ./integration-release-action
         with:
-          integration_identifier: "packer/hashicorp/hcloud"
+          integration_identifier: "packer/hetznercloud/hcloud"
           release_version: ${{ needs.strip-version.outputs.packer-version }}
           release_sha: ${{ github.ref }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

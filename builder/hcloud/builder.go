@@ -14,7 +14,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 
-	"github.com/hashicorp/packer-plugin-hcloud/version"
+	"github.com/hetznercloud/packer-plugin-hcloud/version"
 )
 
 // The unique id for the builder

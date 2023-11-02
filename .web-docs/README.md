@@ -9,7 +9,7 @@ To install this plugin, copy and paste this code into your Packer configuration,
 packer {
   required_plugins {
     hcloud = {
-      source  = "github.com/hashicorp/hcloud"
+      source  = "github.com/hetznercloud/hcloud"
       version = "~> 1"
     }
   }
@@ -19,13 +19,13 @@ packer {
 Alternatively, you can use `packer plugins install` to manage installation of this plugin.
 
 ```sh
-$ packer plugins install github.com/hashicorp/hcloud
+$ packer plugins install github.com/hetznercloud/hcloud
 ```
 
 ### Components
 
 #### Builders
 
-- [hcloud](/packer/integrations/hashicorp/hcloud/latest/components/builder/hcloud) - The hcloud builder
+- [hcloud](/packer/integrations/hetznercloud/hcloud/latest/components/builder/hcloud) - The hcloud builder
   lets you create custom images on Hetzner Cloud by launching an instance, provisioning it, then
   export it as an image for later reuse.

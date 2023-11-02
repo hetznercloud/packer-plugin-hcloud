@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hashicorp/packer-plugin-hcloud/version"
+	"github.com/hetznercloud/packer-plugin-hcloud/builder/hcloud"
+	"github.com/hetznercloud/packer-plugin-hcloud/version"
 
-	hcloud "github.com/hashicorp/packer-plugin-hcloud/builder/hcloud"
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 )
 
