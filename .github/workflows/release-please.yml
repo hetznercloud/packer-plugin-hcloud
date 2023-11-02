@@ -1,0 +1,21 @@
+name: Release-please
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release-please:
+    # The secret HCLOUD_BOT_TOKEN is only available on the main repo, not in forks.
+    if: github.repository == 'hetznercloud/packer-plugin-hcloud'
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.HCLOUD_BOT_TOKEN }}
+          release-type: go
+          package-name: packer-plugin-hcloud
+
+          extra-files: |
+            version/version.go
