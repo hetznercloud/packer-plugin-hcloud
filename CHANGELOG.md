@@ -1,18 +1,109 @@
+# Changelog
+
+## [1.1.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.1.0...v1.1.1) (2023-11-01)
+
+### New Features
+
+- Add networks in config to allow attaching server to private net by @magec in [#45](https://github.com/hetznercloud/packer-plugin-hcloud/pull/45)
+
+### Other Changes
+
+- makefile: remove old docs targets by @lbajolet-hashicorp in [#88](https://github.com/hetznercloud/packer-plugin-hcloud/pull/88)
+- [COMPLIANCE] Add Copyright and License Headers by @hashicorp-copywrite in [#90](https://github.com/hetznercloud/packer-plugin-hcloud/pull/90)
+
+### New Contributors
+
+- @magec made their first contribution in [#45](https://github.com/hetznercloud/packer-plugin-hcloud/pull/45)
+
+## [1.1.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.0.5...v1.1.0) (2023-09-25)
+
+### New Features
+
+- Change server type after create by @MarkusFreitag in [#62](https://github.com/hetznercloud/packer-plugin-hcloud/pull/62)
+- feat: add support for ARM APIs by @apricote in [#75](https://github.com/hetznercloud/packer-plugin-hcloud/pull/75)
+- chore(deps): migrate to hcloud-go v2 by @apricote in [#83](https://github.com/hetznercloud/packer-plugin-hcloud/pull/83)
+
+### Bug fixes
+
+- Update hcloud-go client to use Plugin version information by @apricote in [#70](https://github.com/hetznercloud/packer-plugin-hcloud/pull/70)
+
+### Documentation improvements
+
+- docs: fix references to internal documentation by @lbajolet-hashicorp in [#57](https://github.com/hetznercloud/packer-plugin-hcloud/pull/57)
+- Update docs to be HCL2 by @nebloc in [#55](https://github.com/hetznercloud/packer-plugin-hcloud/pull/55)
+- docs: add example for plugin by @apricote in [#74](https://github.com/hetznercloud/packer-plugin-hcloud/pull/74)
+- doc: remove freebsd64 from rescue system list by @fsrv-xyz in [#73](https://github.com/hetznercloud/packer-plugin-hcloud/pull/73)
+
+### Other Changes
+
+- Update Plugin binary releases to match Packer by @nywilken in [#50](https://github.com/hetznercloud/packer-plugin-hcloud/pull/50)
+- go.mod: run go mod tidy on go.mod/go.sum by @lbajolet-hashicorp in [#51](https://github.com/hetznercloud/packer-plugin-hcloud/pull/51)
+- [COMPLIANCE] Update MPL 2.0 LICENSE by @hashicorp-copywrite in [#53](https://github.com/hetznercloud/packer-plugin-hcloud/pull/53)
+- go.mod: bump go version from 1.17 to 1.18 by @lbajolet-hashicorp in [#60](https://github.com/hetznercloud/packer-plugin-hcloud/pull/60)
+- Fix issues reported by Go checks by @nywilken in [#47](https://github.com/hetznercloud/packer-plugin-hcloud/pull/47)
+- .gitignore: ignore .docs by @lbajolet-hashicorp in [#61](https://github.com/hetznercloud/packer-plugin-hcloud/pull/61)
+- Bump github.com/hashicorp/packer-plugin-sdk from 0.3.1 to 0.4.0 by @dependabot in [#69](https://github.com/hetznercloud/packer-plugin-hcloud/pull/69)
+- [COMPLIANCE] Add Copyright and License Headers by @hashicorp-copywrite in [#66](https://github.com/hetznercloud/packer-plugin-hcloud/pull/66)
+- .gitignore: ignore crash.log by @lbajolet-hashicorp in [#76](https://github.com/hetznercloud/packer-plugin-hcloud/pull/76)
+- cleanup github workflows by @lbajolet-hashicorp in [#78](https://github.com/hetznercloud/packer-plugin-hcloud/pull/78)
+- bump go 1.18 to 1.19 by @lbajolet-hashicorp in [#81](https://github.com/hetznercloud/packer-plugin-hcloud/pull/81)
+- Bump github.com/hashicorp/packer-plugin-sdk from 0.4.0 to 0.5.1 by @dependabot in [#82](https://github.com/hetznercloud/packer-plugin-hcloud/pull/82)
+- Migration plugin docs to integration framework by @nywilken in [#84](https://github.com/hetznercloud/packer-plugin-hcloud/pull/84)
+- version: prepare v1.1.0 release by @lbajolet-hashicorp in [#89](https://github.com/hetznercloud/packer-plugin-hcloud/pull/89)
+
+### New Contributors
+
+- @hashicorp-copywrite made their first contribution in [#53](https://github.com/hetznercloud/packer-plugin-hcloud/pull/53)
+- @nebloc made their first contribution in [#55](https://github.com/hetznercloud/packer-plugin-hcloud/pull/55)
+- @MarkusFreitag made their first contribution in [#62](https://github.com/hetznercloud/packer-plugin-hcloud/pull/62)
+- @apricote made their first contribution in [#70](https://github.com/hetznercloud/packer-plugin-hcloud/pull/70)
+- @fsrv-xyz made their first contribution in [#73](https://github.com/hetznercloud/packer-plugin-hcloud/pull/73)
+
+## [1.0.5](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.0.4...v1.0.5) (2022-08-04)
+
+### New Features
+
+- Use SDK communicator to generate SSH key pair by @Feder1co5oave in [#39](https://github.com/hetznercloud/packer-plugin-hcloud/pull/39)
+
+### Other Changes
+
+- goreleaser: add missing target goos/goarch by @lbajolet-hashicorp in [#40](https://github.com/hetznercloud/packer-plugin-hcloud/pull/40)
+- Bump github.com/hashicorp/packer-plugin-sdk from 0.2.13 to 0.3.1 by @dependabot in [#44](https://github.com/hetznercloud/packer-plugin-hcloud/pull/44)
+
+### New Contributors
+
+- @lbajolet-hashicorp made their first contribution in [#40](https://github.com/hetznercloud/packer-plugin-hcloud/pull/40)
+- @Feder1co5oave made their first contribution in [#39](https://github.com/hetznercloud/packer-plugin-hcloud/pull/39)
+
+## [1.0.4](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.0.3...v1.0.4) (2022-05-25)
+
+This release contains the latest [golang.org/x/crypto/ssh](http://golang.org/x/crypto/ssh) module which implements client authentication support for signature algorithms based on SHA-2 for use with existing RSA keys. Previously, a client would fail to authenticate with RSA keys to servers that reject signature algorithms based on SHA-1.
+
+### Bug fixes
+
+- Bump packer-plugin-sdk to address legacy SSH key algorithms in SSH communicator
+
+## [1.0.3](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.0.2...v1.0.3) (2022-05-06)
+
+### Other Changes
+
+- goreleaser: auto-generate changelog file by @azr in [#29](https://github.com/hetznercloud/packer-plugin-hcloud/pull/29)
+- Update release signing configuration by @nywilken in [#32](https://github.com/hetznercloud/packer-plugin-hcloud/pull/32)
+
 ## 1.0.2 (November 12, 2021)
 
-* Add pre validate step check for snapshot names. Invoking packer build -force
-    will bypass the checks, thus multiple snapshots with the same name will be
-    allowed. This is equivalent to the previous behavior of this plugin.
-    [GH-17] [GH-18]
-* Upgrade packer-plugin-sdk to v0.2.9. [GH-23]
+- Add pre validate step check for snapshot names. Invoking packer build -force will bypass the checks, thus multiple snapshots with the same name will allowed. This is equivalent to the previous behavior of this plugin. [GH-17] [GH-18]
+- Upgrade packer-plugin-sdk to v0.2.9. [GH-23]
 
 ## 1.0.1 (September 1, 2021)
 
-* Add SSH key support for the Freebsd64 Rescue System. [GH-9]
-* Bump to Go 1.17
+- Add SSH key support for the Freebsd64 Rescue System. [GH-9]
+- Bump to Go 1.17
 
 ## 1.0.0 (June 14, 2021)
-* upgrade packer-plugin-sdk to v0.2.3. [GH-8]
+
+- upgrade packer-plugin-sdk to v0.2.3. [GH-8]
 
 ## 0.0.1 (April 22, 2021)
-* initial extraction of hcloud plugin from Packer core.
+
+- initial extraction of hcloud plugin from Packer core.
