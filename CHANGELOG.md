@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0-rc0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.1.1...v1.2.0-rc0) (2023-11-02)
+
+
+### Features
+
+* receive repo transfer from hashicorp ([#95](https://github.com/hetznercloud/packer-plugin-hcloud/issues/95)) ([008082d](https://github.com/hetznercloud/packer-plugin-hcloud/commit/008082da523385a0ccc0956f594be33c3034eaf5))
+
+
+### Build System
+
+* setup release pipeline after transfer ([#100](https://github.com/hetznercloud/packer-plugin-hcloud/issues/100)) ([08c9695](https://github.com/hetznercloud/packer-plugin-hcloud/commit/08c96954b8fc451c363479d50854a78bb7052109))
+
 ## [1.1.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.1.0...v1.1.1) (2023-11-01)
 
 ### New Features
