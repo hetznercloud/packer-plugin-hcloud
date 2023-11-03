@@ -22,12 +22,22 @@ func TestBuilderAcc_basic(t *testing.T) {
 			return nil
 		},
 		Template: testBuilderAccBasic,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
+		Check: func(buildCommand *exec.Cmd, logFile string) error {
 			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
+				if buildCommand.ProcessState.ExitCode() == 0 {
+					return nil
 				}
+
+				logs, err := os.ReadFile(logFile)
+				if err != nil {
+					return err
+				}
+				return fmt.Errorf("invalid exit code: %d\n%s",
+					buildCommand.ProcessState.ExitCode(),
+					logs,
+				)
 			}
+
 			return nil
 		},
 	}
