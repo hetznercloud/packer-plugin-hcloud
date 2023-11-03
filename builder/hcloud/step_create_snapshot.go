@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
@@ -28,7 +29,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	result, _, err := client.Server.CreateImage(ctx, &hcloud.Server{ID: serverID}, &hcloud.ServerCreateImageOpts{
 		Type:        hcloud.ImageTypeSnapshot,
 		Labels:      c.SnapshotLabels,
-		Description: hcloud.String(c.SnapshotName),
+		Description: hcloud.Ptr(c.SnapshotName),
 	})
 	if err != nil {
 		err := fmt.Errorf("Error creating snapshot: %s", err)

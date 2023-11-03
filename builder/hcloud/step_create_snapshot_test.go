@@ -14,6 +14,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
@@ -127,7 +128,8 @@ func setupStepCreateSnapshot(
 			Status:   "success",
 		}
 
-		if r.Method == http.MethodPost && r.URL.Path == "/servers/42/actions/create_image" {
+		switch {
+		case r.Method == http.MethodPost && r.URL.Path == "/servers/42/actions/create_image":
 			if failCause == FailCreateImage {
 				w.WriteHeader(http.StatusBadRequest)
 				return
@@ -135,7 +137,7 @@ func setupStepCreateSnapshot(
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			response = schema.ServerActionCreateImageResponse{Action: action}
-		} else if r.Method == http.MethodGet && r.URL.Path == "/actions/13" {
+		case r.Method == http.MethodGet && r.URL.Path == "/actions/13":
 			if failCause == FailWatchProgress {
 				w.WriteHeader(http.StatusBadRequest)
 				return
@@ -143,13 +145,14 @@ func setupStepCreateSnapshot(
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			response = schema.ActionGetResponse{Action: action}
-		} else if r.Method == http.MethodDelete && r.URL.Path == "/images/33" {
+		case r.Method == http.MethodDelete && r.URL.Path == "/images/33":
 			if failCause == FailDeleteImage {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
 			w.WriteHeader(http.StatusNoContent)
 			return
+		default:
 		}
 
 		if response != nil {
