@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/hetznercloud/packer-plugin-hcloud/version"
 )
 
@@ -41,7 +41,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	opts := []hcloud.ClientOption{
 		hcloud.WithToken(b.config.HCloudToken),
 		hcloud.WithEndpoint(b.config.Endpoint),
-		hcloud.WithPollInterval(b.config.PollInterval),
+		hcloud.WithBackoffFunc(hcloud.ConstantBackoff(b.config.PollInterval)),
 		hcloud.WithApplication("hcloud-packer", version.PluginVersion.String()),
 	}
 	b.hcloudClient = hcloud.NewClient(opts...)

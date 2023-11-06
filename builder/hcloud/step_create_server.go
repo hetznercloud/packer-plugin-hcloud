@@ -6,12 +6,13 @@ package hcloud
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"sort"
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
@@ -30,7 +31,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 	userData := c.UserData
 	if c.UserDataFile != "" {
-		contents, err := ioutil.ReadFile(c.UserDataFile)
+		contents, err := os.ReadFile(c.UserDataFile)
 		if err != nil {
 			state.Put("error", fmt.Errorf("Problem reading user data file: %s", err))
 			return multistep.ActionHalt
@@ -85,7 +86,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	if c.UpgradeServerType != "" {
-		serverCreateOpts.StartAfterCreate = hcloud.Bool(false)
+		serverCreateOpts.StartAfterCreate = hcloud.Ptr(false)
 	}
 
 	serverCreateResult, _, err := client.Server.Create(ctx, serverCreateOpts)
@@ -199,7 +200,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 	// Destroy the server we just created
 	ui.Say("Destroying server...")
-	_, err := client.Server.Delete(context.TODO(), &hcloud.Server{ID: s.serverId})
+	_, _, err := client.Server.DeleteWithResult(context.TODO(), &hcloud.Server{ID: s.serverId})
 	if err != nil {
 		ui.Error(fmt.Sprintf(
 			"Error destroying server. Please destroy it manually: %s", err))

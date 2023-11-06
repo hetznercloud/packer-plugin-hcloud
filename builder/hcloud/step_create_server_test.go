@@ -14,6 +14,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
@@ -142,7 +143,6 @@ func setupStepCreateServer(
 	checker Checker,
 ) (*multistep.BasicStateBag, func()) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		buf, err := io.ReadAll(r.Body)
 		if err != nil {
 			errors <- fmt.Errorf("fake server: reading request: %s", err)

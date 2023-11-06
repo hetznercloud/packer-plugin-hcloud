@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hashicorp/packer-plugin-sdk/plugin"
+
 	"github.com/hetznercloud/packer-plugin-hcloud/builder/hcloud"
 	"github.com/hetznercloud/packer-plugin-hcloud/version"
-
-	"github.com/hashicorp/packer-plugin-sdk/plugin"
 )
 
 func main() {

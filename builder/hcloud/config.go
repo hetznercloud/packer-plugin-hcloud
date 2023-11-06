@@ -18,8 +18,9 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/mitchellh/mapstructure"
+
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
 type Config struct {
