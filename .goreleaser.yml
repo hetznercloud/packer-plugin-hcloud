@@ -14,8 +14,8 @@ builds:
     ldflags:
       - -s
       - -w
-      - -X {{ .ModulePath }}/version.Version={{ .RawVersion }}
-      - -X {{ .ModulePath }}/version.VersionPrerelease={{ .Prerelease }}
+      - -X {{ .ModulePath }}/version.Version={{ .Version }}
+      - -X {{ .ModulePath }}/version.VersionPrerelease={{- if .IsSnapshot -}}dev+{{ .ShortCommit }}{{- end -}}
     binary: >-
       {{- if .IsSnapshot -}}
       {{ replace .ProjectName "-" "_" }}_{{ .Os }}_{{ .Arch }}
@@ -44,7 +44,7 @@ builds:
       - windows_amd64_v1
 
 snapshot:
-  name_template: "{{ incpatch .RawVersion }}-dev+{{ .ShortCommit }}"
+  name_template: "{{ .Version }}-dev+{{ .ShortCommit }}"
 
 archives:
   - format: zip
