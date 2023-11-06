@@ -50,7 +50,12 @@ archives:
   - format: zip
     files:
       - none*
-    name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}"
+    name_template: >-
+      {{- if .IsSnapshot -}}
+      {{ replace .ProjectName "-" "_" }}_{{ .Os }}_{{ .Arch }}
+      {{- else -}}
+      {{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}
+      {{- end -}}
 
 checksum:
   name_template: "{{ .ProjectName }}_v{{ .Version }}_SHA256SUMS"
