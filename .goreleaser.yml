@@ -1,96 +1,61 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
-# This is an example goreleaser.yaml file with some defaults.
-# Make sure to check the documentation at http://goreleaser.com
-version: 1
-
-env:
-  - CGO_ENABLED=0
-
-before:
-  hooks:
-    # We strongly recommend running tests to catch any regression before release.
-    # Even though, this an optional step.
-    - go test ./...
-    # Check plugin compatibility with required version of the Packer SDK
-    - make plugin-check
+# See http://goreleaser.com
+# version: 1
 
 builds:
-  # A separated build to run the packer-plugins-check only once for a linux_amd64 binary
-  - id: plugin-check
+  - id: build
     mod_timestamp: "{{ .CommitTimestamp }}"
+    env:
+      - CGO_ENABLED=0
     flags:
-      - -trimpath #removes all file system paths from the compiled executable
+      - -trimpath
     ldflags:
-      - "-s -w -X {{ .ModulePath }}/version.Version={{.Version}} -X {{ .ModulePath }}/version.VersionPrerelease= "
-    goos:
-      - linux
-    goarch:
-      - amd64
-    binary: "{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}"
-  
-  - id: linux-builds
-    mod_timestamp: "{{ .CommitTimestamp }}"
-    flags:
-      - -trimpath #removes all file system paths from the compiled executable
-    ldflags:
-      - "-s -w -X {{ .ModulePath }}/version.Version={{.Version}} -X {{ .ModulePath }}/version.VersionPrerelease= "
-    goos:
-      - linux
-    goarch:
-      - amd64
-      - "386"
-      - arm
-      - arm64
-    ignore:
-      - goos: linux
-        goarch: amd64
-    binary: "{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}"
+      - -s
+      - -w
+      - -X {{ .ModulePath }}/version.Version={{ .Version }}
+      - -X {{ .ModulePath }}/version.VersionPrerelease={{- if .IsSnapshot -}}dev+{{ .ShortCommit }}{{- end -}}
+    binary: >-
+      {{- if .IsSnapshot -}}
+      {{ replace .ProjectName "-" "_" }}_{{ .Os }}_{{ .Arch }}
+      {{- else -}}
+      {{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}
+      {{- end -}}
 
-  - id: darwin-builds
-    mod_timestamp: "{{ .CommitTimestamp }}"
-    flags:
-      - -trimpath #removes all file system paths from the compiled executable
-    ldflags:
-      - "-s -w -X {{ .ModulePath }}/version.Version={{.Version}} -X {{ .ModulePath }}/version.VersionPrerelease= "
-    goos:
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    binary: "{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}"
+    targets:
+      - linux_386
+      - linux_amd64_v1
+      - linux_arm_6
+      - linux_arm64
+      - freebsd_386
+      - freebsd_amd64_v1
+      - freebsd_arm
+      - netbsd_386
+      - netbsd_amd64_v1
+      - netbsd_arm
+      - openbsd_386
+      - openbsd_amd64_v1
+      - openbsd_arm
+      - solaris_amd64_v1
+      - darwin_amd64_v1
+      - darwin_arm64
+      - windows_386
+      - windows_amd64_v1
 
-  - id: other-builds
-    mod_timestamp: "{{ .CommitTimestamp }}"
-    flags:
-      - -trimpath #removes all file system paths from the compiled executable
-    ldflags:
-      - "-s -w -X {{ .ModulePath }}/version.Version={{.Version}} -X {{ .ModulePath }}/version.VersionPrerelease= "
-    goos:
-      - netbsd
-      - openbsd
-      - freebsd
-      - windows
-      - solaris
-    goarch:
-      - amd64
-      - "386"
-      - arm
-    ignore:
-      - goos: windows
-        goarch: arm
-      - goos: solaris
-        goarch: arm
-      - goos: solaris
-        goarch: "386"
-    binary: "{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}"
+snapshot:
+  name_template: "{{ .Version }}-dev+{{ .ShortCommit }}"
 
 archives:
   - format: zip
     files:
       - none*
-    name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}"
+    name_template: >-
+      {{- if .IsSnapshot -}}
+      {{ replace .ProjectName "-" "_" }}_{{ .Os }}_{{ .Arch }}
+      {{- else -}}
+      {{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}
+      {{- end -}}
 
 checksum:
   name_template: "{{ .ProjectName }}_v{{ .Version }}_SHA256SUMS"
@@ -99,12 +64,8 @@ checksum:
 signs:
   - artifacts: checksum
     args:
-      # if you are using this is in a GitHub action or some other automated pipeline, you
-      # need to pass the batch flag to indicate its not interactive.
-      - "--batch"
-      - "--local-user"
-      - "{{ .Env.GPG_FINGERPRINT }}"
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
+      - --batch
+      - --local-user={{ .Env.GPG_FINGERPRINT }}
+      - --output=${signature}
+      - --detach-sign
+      - ${artifact}
