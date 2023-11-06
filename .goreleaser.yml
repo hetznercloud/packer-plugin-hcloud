@@ -14,8 +14,8 @@ builds:
     ldflags:
       - -s
       - -w
-      - -X {{ .ModulePath }}/version.Version={{ .Version }}
-      - -X {{ .ModulePath }}/version.VersionPrerelease=
+      - -X {{ .ModulePath }}/version.Version={{ .RawVersion }}
+      - -X {{ .ModulePath }}/version.VersionPrerelease={{ .Prerelease }}
     binary: >-
       {{- if .IsSnapshot -}}
       {{ replace .ProjectName "-" "_" }}_{{ .Os }}_{{ .Arch }}
