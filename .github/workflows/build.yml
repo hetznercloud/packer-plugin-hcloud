@@ -9,7 +9,6 @@ name: Build
 on:
   push:
     branches: [main]
-  pull_request:
 
 jobs:
   build:
@@ -31,6 +30,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v3
-        if: github.event_name == 'push'
         with:
           path: dist/build_*/*
