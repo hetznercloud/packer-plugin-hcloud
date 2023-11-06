@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/packer-plugin-sdk v0.5.1
 	github.com/hetznercloud/hcloud-go/v2 v2.4.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/zclconf/go-cty v1.12.1
+	github.com/zclconf/go-cty v1.14.1
 )
 
 require (
