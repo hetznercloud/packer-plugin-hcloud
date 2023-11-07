@@ -16,6 +16,7 @@ jobs:
           token: ${{ secrets.HCLOUD_BOT_TOKEN }}
           release-type: go
           package-name: packer-plugin-hcloud
+          draft: true
 
           extra-files: |
             version/version.go
