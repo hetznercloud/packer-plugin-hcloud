@@ -44,7 +44,7 @@ binary file can be found in the root directory.
 To install the compiled plugin, please follow the official Packer documentation
 on [installing a plugin](https://www.packer.io/docs/extending/plugins/#installing-plugins).
 
-### Configuration
+## Configuration
 
 For more information on how to configure the plugin, please read the
 documentation located in the [`docs/`](docs) directory.
