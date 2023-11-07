@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0-rc1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0-rc0...v1.2.0-rc1) (2023-11-07)
+
+
+### Build System
+
+* rework build/release pipeline ([#103](https://github.com/hetznercloud/packer-plugin-hcloud/issues/103)) ([21c739b](https://github.com/hetznercloud/packer-plugin-hcloud/commit/21c739bb284377a13402cf47d1d720f0be00147b))
+
 ## [1.2.0-rc0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.1.1...v1.2.0-rc0) (2023-11-02)
 
 
