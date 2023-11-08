@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0...v1.2.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* update integrations metadata identifier ([#119](https://github.com/hetznercloud/packer-plugin-hcloud/issues/119)) ([402c146](https://github.com/hetznercloud/packer-plugin-hcloud/commit/402c1464217f01f16d1262b8a7c5e525593e71e9)), closes [#95](https://github.com/hetznercloud/packer-plugin-hcloud/issues/95)
+
 ## [1.2.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0-rc1...v1.2.0) (2023-11-08)
 
 
