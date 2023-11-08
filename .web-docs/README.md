@@ -22,6 +22,22 @@ Alternatively, you can use `packer plugins install` to manage installation of th
 $ packer plugins install github.com/hetznercloud/hcloud
 ```
 
+#### Migrate from `github.com/hashicorp/hcloud`
+
+On the 7 November 2023, the Packer plugin source moved from `github.com/hashicorp/hcloud` to `github.com/hetznercloud/hcloud`, make sure to update your Packer configuration with the new source:
+
+```patch
+ packer {
+   required_plugins {
+     hcloud = {
+-      source  = "github.com/hashicorp/hcloud"
++      source  = "github.com/hetznercloud/hcloud"
+       version = ">= 1.1.1"
+     }
+   }
+ }
+```
+
 ### Components
 
 #### Builders
