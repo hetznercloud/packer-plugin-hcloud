@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.2.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.1...v1.2.0) (2023-11-08)
+
+
+### Features
+
+* **builder/hcloud:** allow selecting image based on filters ([2f556c2](https://github.com/hetznercloud/packer-plugin-hcloud/commit/2f556c2d784c041730c6ed0f5fbbc33fecfcd7d5))
+* only select images with right architecture ([987109a](https://github.com/hetznercloud/packer-plugin-hcloud/commit/987109aa602e9b09a1002239b30f5cc9b728e156))
+* receive repo transfer from hashicorp ([#95](https://github.com/hetznercloud/packer-plugin-hcloud/issues/95)) ([008082d](https://github.com/hetznercloud/packer-plugin-hcloud/commit/008082da523385a0ccc0956f594be33c3034eaf5))
+* transfer the packer plugin to the `hetznercloud` organization ([f3d1ed1](https://github.com/hetznercloud/packer-plugin-hcloud/commit/f3d1ed19f1596dc81561222f88f8edfddeec02a6))
+* validate architectures for server types ([39cf5ad](https://github.com/hetznercloud/packer-plugin-hcloud/commit/39cf5ad8e24110832a6a3f4a2a625ae7a5bc304e))
+* validate unique snapshot description per architecture ([77eb62f](https://github.com/hetznercloud/packer-plugin-hcloud/commit/77eb62f0f9114417f68d981363f4c0373ec1725c))
+
+
+### Bug Fixes
+
+* update integrations metadata identifier ([#119](https://github.com/hetznercloud/packer-plugin-hcloud/issues/119)) ([402c146](https://github.com/hetznercloud/packer-plugin-hcloud/commit/402c1464217f01f16d1262b8a7c5e525593e71e9)), closes [#95](https://github.com/hetznercloud/packer-plugin-hcloud/issues/95)
+* version in hcloud-go client is outdated ([#70](https://github.com/hetznercloud/packer-plugin-hcloud/issues/70)) ([caf7359](https://github.com/hetznercloud/packer-plugin-hcloud/commit/caf7359a9f13cd71753369b175b73046b6092c78))
+
+
+### Build System
+
+* rework build/release pipeline ([#103](https://github.com/hetznercloud/packer-plugin-hcloud/issues/103)) ([21c739b](https://github.com/hetznercloud/packer-plugin-hcloud/commit/21c739bb284377a13402cf47d1d720f0be00147b))
+* setup release pipeline after transfer ([#100](https://github.com/hetznercloud/packer-plugin-hcloud/issues/100)) ([08c9695](https://github.com/hetznercloud/packer-plugin-hcloud/commit/08c96954b8fc451c363479d50854a78bb7052109))
+
 ## [1.2.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0...v1.2.1) (2023-11-08)
 
 
