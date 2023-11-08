@@ -35,7 +35,7 @@ jobs:
       - run: git diff --exit-code
 
       - if: failure()
-        run: echo "::error::Found changes in code, don't forget to run 'go mod tidy' before you commit."
+        run: echo "::error::Check failed, please run 'go mod tidy' and commit the changes."
 
   check-generate:
     runs-on: ubuntu-latest
@@ -50,4 +50,4 @@ jobs:
       - run: git diff --exit-code
 
       - if: failure()
-        run: echo "::error::Found changes in generated code, don't forget to run 'make generate' before you commit."
+        run: echo "::error::Check failed, please run 'make generate' and commit the changes."
