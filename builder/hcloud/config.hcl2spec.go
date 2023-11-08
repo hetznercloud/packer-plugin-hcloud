@@ -67,14 +67,14 @@ type FlatConfig struct {
 	WinRMUseSSL               *bool             `mapstructure:"winrm_use_ssl" cty:"winrm_use_ssl" hcl:"winrm_use_ssl"`
 	WinRMInsecure             *bool             `mapstructure:"winrm_insecure" cty:"winrm_insecure" hcl:"winrm_insecure"`
 	WinRMUseNTLM              *bool             `mapstructure:"winrm_use_ntlm" cty:"winrm_use_ntlm" hcl:"winrm_use_ntlm"`
-	HCloudToken               *string           `mapstructure:"token" cty:"token" hcl:"token"`
+	HCloudToken               *string           `mapstructure:"token" required:"true" cty:"token" hcl:"token"`
 	Endpoint                  *string           `mapstructure:"endpoint" cty:"endpoint" hcl:"endpoint"`
 	PollInterval              *string           `mapstructure:"poll_interval" cty:"poll_interval" hcl:"poll_interval"`
 	ServerName                *string           `mapstructure:"server_name" cty:"server_name" hcl:"server_name"`
-	Location                  *string           `mapstructure:"location" cty:"location" hcl:"location"`
-	ServerType                *string           `mapstructure:"server_type" cty:"server_type" hcl:"server_type"`
+	Location                  *string           `mapstructure:"location" required:"true" cty:"location" hcl:"location"`
+	ServerType                *string           `mapstructure:"server_type" required:"true" cty:"server_type" hcl:"server_type"`
 	UpgradeServerType         *string           `mapstructure:"upgrade_server_type" cty:"upgrade_server_type" hcl:"upgrade_server_type"`
-	Image                     *string           `mapstructure:"image" cty:"image" hcl:"image"`
+	Image                     *string           `mapstructure:"image" required:"true" cty:"image" hcl:"image"`
 	ImageFilter               *FlatimageFilter  `mapstructure:"image_filter" cty:"image_filter" hcl:"image_filter"`
 	SnapshotName              *string           `mapstructure:"snapshot_name" cty:"snapshot_name" hcl:"snapshot_name"`
 	SnapshotLabels            map[string]string `mapstructure:"snapshot_labels" cty:"snapshot_labels" hcl:"snapshot_labels"`
