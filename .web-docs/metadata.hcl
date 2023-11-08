@@ -6,7 +6,7 @@
 integration {
   name = "Hetzner Cloud"
   description = "The hcloud plugin can be used with HashiCorp Packer to create custom images on Hetzner Cloud."
-  identifier = "packer/hashicorp/hcloud"
+  identifier = "packer/hetznercloud/hcloud"
   component {
     type = "builder"
     name = "Hetzner Cloud"
