@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0-rc1...v1.2.0) (2023-11-08)
+
+
+### Features
+
+* transfer the packer plugin to the `hetznercloud` organization ([f3d1ed1](https://github.com/hetznercloud/packer-plugin-hcloud/commit/f3d1ed19f1596dc81561222f88f8edfddeec02a6))
+
 ## [1.2.0-rc1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0-rc0...v1.2.0-rc1) (2023-11-07)
 
 
