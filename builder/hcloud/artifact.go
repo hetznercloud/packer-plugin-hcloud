@@ -47,14 +47,40 @@ func (a *Artifact) String() string {
 
 func (a *Artifact) State(name string) interface{} {
 	if name == registryimage.ArtifactStateURI {
-		img, err := registryimage.FromArtifact(a, registryimage.WithProvider("hetznercloud"))
-		if err != nil {
-			log.Printf("[DEBUG] error encountered when creating a registry image %v", err)
-			return nil
-		}
-		return img
+		return a.stateHCPPackerRegistryMetadata()
 	}
 	return a.StateData[name]
+}
+
+func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
+	// create labels map
+	labels := make(map[string]string)
+	sourceImage, ok := a.StateData["source_image"].(string)
+	if ok {
+		labels["source_image"] = sourceImage
+	}
+	// get and set region from stateData into labels
+	region, ok := a.StateData["region"].(string)
+	if ok {
+		labels["region"] = region
+	}
+	// get and set server_type from stateData into labels
+	serverType, ok := a.StateData["server_type"].(string)
+	if ok {
+		labels["server_type"] = serverType
+	}
+
+	image, err := registryimage.FromArtifact(a,
+		registryimage.WithProvider("hetznercloud"),
+		registryimage.WithID(strconv.FormatInt(a.snapshotId, 10)),
+		registryimage.WithSourceID(sourceImage),
+		registryimage.WithRegion(region))
+	if err != nil {
+		log.Printf("[DEBUG] error encountered when creating registry image %s", err)
+		return nil
+	}
+	image.Labels = labels
+	return image
 }
 
 func (a *Artifact) Destroy() error {
