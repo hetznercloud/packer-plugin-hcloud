@@ -1,0 +1,59 @@
+<!-- Code generated from the comments of the Config struct in builder/hcloud/config.go; DO NOT EDIT MANUALLY -->
+
+- `endpoint` (string) - Configures the client endpoint. It can also be specified with the
+  `HCLOUD_ENDPOINT` environment variable.
+
+- `poll_interval` (duration string | ex: "1h5m2s") - Configures the interval at which the API is polled by the client. Default
+  `500ms`. Increase this interval if you run into rate limiting errors.
+
+- `server_name` (string) - Name assigned to the server. Hetzner Cloud sets the hostname of the server to
+  this value.
+
+- `upgrade_server_type` (string) - ID or name of the server type the server should be upgraded to, without changing
+  the disk size. This improves building performance and the resulting snapshot is
+  compatible with smaller server types and disk sizes.
+
+- `image_filter` (\*imageFilter) - Filters used to populate the `image` field. You may set this in place of `image`,
+  but not both.
+  
+  This selects the most recent image with the label `name==my-image`:
+  
+  ```hcl
+  image_filter {
+    most_recent   = true
+    with_selector = ["name==my-image"]
+  }
+  ```
+  
+  NOTE: This will fail unless _exactly_ one image is returned. In the above
+  example, `most_recent` will cause this to succeed by selecting the newest image.
+  
+  @include 'builder/hcloud/imageFilter-not-required.mdx'
+
+- `snapshot_name` (string) - Name of the resulting snapshot that will appear in your project as image
+  description. Defaults to `packer-{{timestamp}}` (see [configuration
+  templates](/packer/docs/templates/legacy_json_templates/engine) for more info).
+  The `snapshot_name` must be unique per architecture. If you want to reference the
+  image as a sample in your terraform configuration please use the image id or the
+  `snapshot_labels`.
+
+- `snapshot_labels` (map[string]string) - Key/value pair labels to apply to the created image.
+
+- `user_data` (string) - User data to launch the server with. Packer will not automatically wait for a
+  user script to finish before shutting down the instance this must be handled in a
+  provisioner.
+
+- `user_data_file` (string) - Path to a file that will be used for the user data when launching the server. See
+  the `user_data` field.
+
+- `ssh_keys` ([]string) - List of SSH keys names or IDs to be added to image on launch.
+  
+  @include 'packer-plugin-sdk/communicator/SSHTemporaryKeyPair-not-required.mdx'
+
+- `networks` ([]int64) - List of Network IDs to attach to the server private network interface at creation
+  time.
+
+- `rescue` (string) - Enable and boot in to the specified rescue system. This enables simple
+  installation of custom operating systems. `linux64` or `linux32`
+
+<!-- End of code generated from the comments of the Config struct in builder/hcloud/config.go; -->
