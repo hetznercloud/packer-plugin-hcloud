@@ -32,18 +32,20 @@ type Config struct {
 
 	PollInterval time.Duration `mapstructure:"poll_interval"`
 
-	ServerName        string       `mapstructure:"server_name"`
-	Location          string       `mapstructure:"location"`
-	ServerType        string       `mapstructure:"server_type"`
-	UpgradeServerType string       `mapstructure:"upgrade_server_type"`
-	Image             string       `mapstructure:"image"`
-	ImageFilter       *imageFilter `mapstructure:"image_filter"`
+	ServerName        string            `mapstructure:"server_name"`
+	Location          string            `mapstructure:"location"`
+	ServerType        string            `mapstructure:"server_type"`
+	ServerLabels      map[string]string `mapstructure:"server_labels"`
+	UpgradeServerType string            `mapstructure:"upgrade_server_type"`
+	Image             string            `mapstructure:"image"`
+	ImageFilter       *imageFilter      `mapstructure:"image_filter"`
 
 	SnapshotName   string            `mapstructure:"snapshot_name"`
 	SnapshotLabels map[string]string `mapstructure:"snapshot_labels"`
 	UserData       string            `mapstructure:"user_data"`
 	UserDataFile   string            `mapstructure:"user_data_file"`
 	SSHKeys        []string          `mapstructure:"ssh_keys"`
+	SSHKeysLabels  map[string]string `mapstructure:"ssh_keys_labels"`
 	Networks       []int64           `mapstructure:"networks"`
 
 	RescueMode string `mapstructure:"rescue"`

@@ -80,6 +80,9 @@ builder.
 - `server_name` (string) - The name assigned to the server. The Hetzner Cloud
   sets the hostname of the machine to this value.
 
+- `server_labels` (map of key/value strings) - Key/value pair labels to
+  apply to the created server.
+
 - `snapshot_name` (string) - The name of the resulting snapshot that will
   appear in your account as image description. Defaults to `packer-{{timestamp}}` (see
   [configuration templates](/packer/docs/templates/legacy_json_templates/engine) for more info).
@@ -99,6 +102,9 @@ builder.
 
 - `user_data_file` (string) - Path to a file that will be used for the user
   data when launching the server.
+
+- `ssh_keys_labels` (map of key/value strings) - Key/value pair labels to
+  apply to the created ssh keys.
 
 - `ssh_keys` (array of strings) - List of SSH keys by name or id to be added
   to image on launch.
