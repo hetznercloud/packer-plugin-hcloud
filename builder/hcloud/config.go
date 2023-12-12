@@ -45,7 +45,7 @@ type Config struct {
 	UserData       string            `mapstructure:"user_data"`
 	UserDataFile   string            `mapstructure:"user_data_file"`
 	SSHKeys        []string          `mapstructure:"ssh_keys"`
-	SSHKeyLabels   map[string]string `mapstructure:"sshkey_labels"`
+	SSHKeysLabels  map[string]string `mapstructure:"ssh_keys_labels"`
 	Networks       []int64           `mapstructure:"networks"`
 
 	RescueMode string `mapstructure:"rescue"`
