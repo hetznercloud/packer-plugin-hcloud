@@ -43,7 +43,28 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.20"
-      
+
       - uses: hetznercloud/tps-action@main
 
       - run: make testacc
+
+  example:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: example
+
+    env:
+      PACKER_LOG: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-packer@v2
+        with:
+          version: "1.10.0"
+
+      - run: packer init
+      - run: packer validate
+      - run: packer build
