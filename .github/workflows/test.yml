@@ -61,6 +61,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: hetznercloud/tps-action@main
+
       - uses: hashicorp/setup-packer@v2.0.1
         with:
           version: "1.10.0"
