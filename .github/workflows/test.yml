@@ -70,6 +70,6 @@ jobs:
         with:
           version: "1.10.0"
 
-      - run: packer init
-      - run: packer validate
-      - run: packer build
+      - run: packer init .
+      - run: packer validate .
+      - run: packer build .
