@@ -61,7 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-packer@v2
+      - uses: hashicorp/setup-packer@v2.0.1
         with:
           version: "1.10.0"
 
