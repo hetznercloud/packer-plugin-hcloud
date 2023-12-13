@@ -51,6 +51,9 @@ jobs:
   example:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write # Required by hetznercloud/tps-action
+
     defaults:
       run:
         working-directory: example
