@@ -55,10 +55,14 @@ func (a *Artifact) State(name string) interface{} {
 func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 	// create labels map
 	labels := make(map[string]string)
+
+	// This label contains the value the user specified in their template
 	sourceImage, ok := a.StateData["source_image"].(string)
 	if ok {
 		labels["source_image"] = sourceImage
 	}
+	// This is the canonical ID of the source image that was used, useful for ancestry tracking
+	sourceImageID, ok := a.StateData["source_image_id"].(int64)
 	// get and set region from stateData into labels
 	region, ok := a.StateData["region"].(string)
 	if ok {
@@ -70,17 +74,13 @@ func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 		labels["server_type"] = serverType
 	}
 
-	image, err := registryimage.FromArtifact(a,
-		registryimage.WithProvider("hetznercloud"),
-		registryimage.WithID(strconv.FormatInt(a.snapshotId, 10)),
-		registryimage.WithSourceID(sourceImage),
-		registryimage.WithRegion(region))
-	if err != nil {
-		log.Printf("[DEBUG] error encountered when creating registry image %s", err)
-		return nil
+	return &registryimage.Image{
+		ProviderName:   "hetznercloud",
+		ImageID:        a.Id(),
+		ProviderRegion: region,
+		Labels:         labels,
+		SourceImageID:  strconv.FormatInt(sourceImageID, 10),
 	}
-	image.Labels = labels
-	return image
 }
 
 func (a *Artifact) Destroy() error {
