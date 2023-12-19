@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.1...v1.3.0) (2023-12-19)
+
+
+### Features
+
+* add labels options to server and ssh keys ([#128](https://github.com/hetznercloud/packer-plugin-hcloud/issues/128)) ([3f7dcae](https://github.com/hetznercloud/packer-plugin-hcloud/commit/3f7dcae20a07ad8367a06926aa2df1c415105e8b))
+
 ## [1.2.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0...v1.2.1) (2023-11-08)
 
 
