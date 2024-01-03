@@ -74,15 +74,15 @@ func TestStepCreateSnapshot(t *testing.T) {
 			step := &stepCreateSnapshot{}
 			config := Config{SnapshotName: snapName}
 			if testing.Verbose() {
-				state.Put("ui", packersdk.TestUi(t))
+				state.Put(StateUI, packersdk.TestUi(t))
 			} else {
 				// do not output to stdout or console
-				state.Put("ui", &packersdk.MockUi{})
+				state.Put(StateUI, &packersdk.MockUi{})
 			}
-			state.Put("config", &config)
-			state.Put("server_id", serverID)
+			state.Put(StateConfig, &config)
+			state.Put(StateServerID, serverID)
 			if tc.oldSnapID != 0 {
-				state.Put(OldSnapshotID, tc.oldSnapID)
+				state.Put(StateSnapshotIDOld, tc.oldSnapID)
 			}
 
 			if action := step.Run(context.Background(), state); action != tc.wantAction {
@@ -169,7 +169,7 @@ func setupStepCreateSnapshot(
 
 	state := multistep.BasicStateBag{}
 	client := hcloud.NewClient(hcloud.WithEndpoint(ts.URL))
-	state.Put("hcloudClient", client)
+	state.Put(StateHCloudClient, client)
 
 	teardown := func() {
 		ts.Close()

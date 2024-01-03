@@ -15,7 +15,7 @@ func errorHandler(state multistep.StateBag, ui packersdk.Ui, prefix string, err 
 		wrappedError = fmt.Errorf("%s: %w", prefix, err)
 	}
 
-	state.Put("error", wrappedError)
+	state.Put(StateError, wrappedError)
 	ui.Error(wrappedError.Error())
 	return multistep.ActionHalt
 }

@@ -156,5 +156,5 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 }
 
 func getServerIP(state multistep.StateBag) (string, error) {
-	return state.Get("server_ip").(string), nil
+	return state.Get(StateServerIP).(string), nil
 }

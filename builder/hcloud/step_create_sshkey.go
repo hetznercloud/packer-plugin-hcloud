@@ -9,7 +9,6 @@ import (
 	"log"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
@@ -20,9 +19,8 @@ type stepCreateSSHKey struct {
 }
 
 func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("hcloudClient").(*hcloud.Client)
-	ui := state.Get("ui").(packersdk.Ui)
-	c := state.Get("config").(*Config)
+	c, ui, client := UnpackState(state)
+
 	ui.Say("Uploading temporary SSH key for instance...")
 
 	if c.Comm.SSHPublicKey == nil {
@@ -48,7 +46,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	log.Printf("temporary ssh key name: %s", name)
 
 	// Remember some state for the future
-	state.Put("ssh_key_id", key.ID)
+	state.Put(StateSSHKeyID, key.ID)
 
 	return multistep.ActionContinue
 }
@@ -59,8 +57,7 @@ func (s *stepCreateSSHKey) Cleanup(state multistep.StateBag) {
 		return
 	}
 
-	client := state.Get("hcloudClient").(*hcloud.Client)
-	ui := state.Get("ui").(packersdk.Ui)
+	_, ui, client := UnpackState(state)
 
 	ui.Say("Deleting temporary SSH key...")
 	_, err := client.SSHKey.Delete(context.TODO(), &hcloud.SSHKey{ID: s.keyId})

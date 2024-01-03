@@ -111,13 +111,13 @@ func TestStepCreateServer(t *testing.T) {
 			config.Networks = tc.config.Networks
 
 			if testing.Verbose() {
-				state.Put("ui", packersdk.TestUi(t))
+				state.Put(StateUI, packersdk.TestUi(t))
 			} else {
 				// do not output to stdout or console
-				state.Put("ui", &packersdk.MockUi{})
+				state.Put(StateUI, &packersdk.MockUi{})
 			}
-			state.Put("config", &config)
-			state.Put("ssh_key_id", int64(1))
+			state.Put(StateConfig, &config)
+			state.Put(StateSSHKeyID, int64(1))
 
 			if action := step.Run(context.Background(), state); action != tc.wantAction {
 				t.Errorf("step.Run: want: %v; got: %v", tc.wantAction, action)
@@ -197,7 +197,7 @@ func setupStepCreateServer(
 
 	state := multistep.BasicStateBag{}
 	client := hcloud.NewClient(hcloud.WithEndpoint(ts.URL))
-	state.Put("hcloudClient", client)
+	state.Put(StateHCloudClient, client)
 
 	teardown := func() {
 		ts.Close()

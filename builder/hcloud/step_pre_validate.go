@@ -8,7 +8,6 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
@@ -21,9 +20,7 @@ type stepPreValidate struct {
 }
 
 func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("hcloudClient").(*hcloud.Client)
-	ui := state.Get("ui").(packersdk.Ui)
-	c := state.Get("config").(*Config)
+	c, ui, client := UnpackState(state)
 
 	ui.Say(fmt.Sprintf("Validating server types: %s", c.ServerType))
 	serverType, _, err := client.ServerType.Get(ctx, c.ServerType)
@@ -33,7 +30,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	if serverType == nil {
 		return errorHandler(state, ui, fmt.Sprintf("Could not find server type '%s'", c.ServerType), err)
 	}
-	state.Put("serverType", serverType)
+	state.Put(StateServerType, serverType)
 
 	if c.UpgradeServerType != "" {
 		ui.Say(fmt.Sprintf("Validating upgrade server types: %s", c.UpgradeServerType))
@@ -76,7 +73,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 			)
 			if s.Force {
 				ui.Say(msg + ". Force flag specified, will safely overwrite this snapshot")
-				state.Put(OldSnapshotID, snap.ID)
+				state.Put(StateSnapshotIDOld, snap.ID)
 				return multistep.ActionContinue
 			}
 			return errorHandler(state, ui, "", fmt.Errorf(msg))

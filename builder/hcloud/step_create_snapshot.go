@@ -8,21 +8,17 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
-
-const OldSnapshotID = "old_snapshot_id"
 
 type stepCreateSnapshot struct{}
 
 //nolint:gosimple,goimports
 func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("hcloudClient").(*hcloud.Client)
-	ui := state.Get("ui").(packersdk.Ui)
-	c := state.Get("config").(*Config)
-	serverID := state.Get("server_id").(int64)
+	c, ui, client := UnpackState(state)
+
+	serverID := state.Get(StateServerID).(int64)
 
 	ui.Say("Creating snapshot...")
 	ui.Say("This can take some time")
@@ -34,8 +30,8 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	if err != nil {
 		return errorHandler(state, ui, "Could not create snapshot", err)
 	}
-	state.Put("snapshot_id", result.Image.ID)
-	state.Put("snapshot_name", c.SnapshotName)
+	state.Put(StateSnapshotID, result.Image.ID)
+	state.Put(StateSnapshotName, c.SnapshotName)
 	_, errCh := client.Action.WatchProgress(ctx, result.Action)
 
 	err1 := <-errCh
@@ -43,7 +39,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 		return errorHandler(state, ui, "Could not create snapshot", err)
 	}
 
-	oldSnap, found := state.GetOk(OldSnapshotID)
+	oldSnap, found := state.GetOk(StateSnapshotIDOld)
 	if !found {
 		return multistep.ActionContinue
 	}
