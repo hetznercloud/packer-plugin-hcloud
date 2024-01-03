@@ -110,7 +110,7 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 	if c.HCloudToken == "" {
 		// Required configurations that will display errors if not set
 		errs = packersdk.MultiErrorAppend(
-			errs, errors.New("token for auth must be specified"))
+			errs, errors.New("token is missing, make sure to configure your Hetzner Cloud token"))
 	}
 
 	if c.Location == "" {
