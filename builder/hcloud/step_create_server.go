@@ -33,8 +33,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	if c.UserDataFile != "" {
 		contents, err := os.ReadFile(c.UserDataFile)
 		if err != nil {
-			state.Put("error", fmt.Errorf("Problem reading user data file: %s", err))
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not read user data file", err)
 		}
 
 		userData = string(contents)
@@ -44,13 +43,10 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	for _, k := range c.SSHKeys {
 		sshKey, _, err := client.SSHKey.Get(ctx, k)
 		if err != nil {
-			ui.Error(err.Error())
-			state.Put("error", fmt.Errorf("Error fetching SSH key: %s", err))
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not fetch SSH key", err)
 		}
 		if sshKey == nil {
-			state.Put("error", fmt.Errorf("Could not find key: %s", k))
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not find SSH key", err)
 		}
 		sshKeys = append(sshKeys, sshKey)
 	}
@@ -63,9 +59,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		var err error
 		image, err = getImageWithSelectors(ctx, client, c, serverType)
 		if err != nil {
-			ui.Error(err.Error())
-			state.Put("error", err)
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not find image", err)
 		}
 		ui.Message(fmt.Sprintf("Using image %s with ID %d", image.Description, image.ID))
 	}
@@ -92,10 +86,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 	serverCreateResult, _, err := client.Server.Create(ctx, serverCreateOpts)
 	if err != nil {
-		err := fmt.Errorf("Error creating server: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, "Could not create server", err)
 	}
 	state.Put("server_ip", serverCreateResult.Server.PublicNet.IPv4.IP.String())
 	// We use this in cleanup
@@ -108,54 +99,36 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	state.Put("instance_id", serverCreateResult.Server.ID)
 
 	if err := waitForAction(ctx, client, serverCreateResult.Action); err != nil {
-		err := fmt.Errorf("Error creating server: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, "Could not create server", err)
 	}
 	for _, nextAction := range serverCreateResult.NextActions {
 		if err := waitForAction(ctx, client, nextAction); err != nil {
-			err := fmt.Errorf("Error creating server: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not create server", err)
 		}
 	}
 
 	if c.UpgradeServerType != "" {
-		ui.Say("Changing server-type...")
+		ui.Say("Upgrading server type...")
 		serverChangeTypeAction, _, err := client.Server.ChangeType(ctx, serverCreateResult.Server, hcloud.ServerChangeTypeOpts{
 			ServerType:  &hcloud.ServerType{Name: c.UpgradeServerType},
 			UpgradeDisk: false,
 		})
 		if err != nil {
-			err := fmt.Errorf("Error changing server-type: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not upgrade server type", err)
 		}
 
 		if err := waitForAction(ctx, client, serverChangeTypeAction); err != nil {
-			err := fmt.Errorf("Error changing server-type: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not upgrade server type", err)
 		}
 
 		ui.Say("Starting server...")
 		serverPoweronAction, _, err := client.Server.Poweron(ctx, serverCreateResult.Server)
 		if err != nil {
-			err := fmt.Errorf("Error starting server: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not start server", err)
 		}
 
 		if err := waitForAction(ctx, client, serverPoweronAction); err != nil {
-			err := fmt.Errorf("Error starting server: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not start server", err)
 		}
 	}
 
@@ -163,24 +136,15 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		ui.Say("Enabling Rescue Mode...")
 		_, err := setRescue(ctx, client, serverCreateResult.Server, c.RescueMode, sshKeys)
 		if err != nil {
-			err := fmt.Errorf("Error enabling rescue mode: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not enable rescue mode", err)
 		}
-		ui.Say("Reboot server...")
+		ui.Say("Rebooting server...")
 		action, _, err := client.Server.Reset(ctx, serverCreateResult.Server)
 		if err != nil {
-			err := fmt.Errorf("Error rebooting server: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not reboot server", err)
 		}
 		if err := waitForAction(ctx, client, action); err != nil {
-			err := fmt.Errorf("Error rebooting server: %s", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not reboot server", err)
 		}
 	}
 

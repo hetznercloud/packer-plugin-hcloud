@@ -24,7 +24,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	c := state.Get("config").(*Config)
 	serverID := state.Get("server_id").(int64)
 
-	ui.Say("Creating snapshot ...")
+	ui.Say("Creating snapshot...")
 	ui.Say("This can take some time")
 	result, _, err := client.Server.CreateImage(ctx, &hcloud.Server{ID: serverID}, &hcloud.ServerCreateImageOpts{
 		Type:        hcloud.ImageTypeSnapshot,
@@ -32,10 +32,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 		Description: hcloud.Ptr(c.SnapshotName),
 	})
 	if err != nil {
-		err := fmt.Errorf("Error creating snapshot: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, "Could not create snapshot", err)
 	}
 	state.Put("snapshot_id", result.Image.ID)
 	state.Put("snapshot_name", c.SnapshotName)
@@ -43,10 +40,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 
 	err1 := <-errCh
 	if err1 != nil {
-		err := fmt.Errorf("Error creating snapshot: %s", err1)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, "Could not create snapshot", err)
 	}
 
 	oldSnap, found := state.GetOk(OldSnapshotID)
@@ -63,10 +57,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	image := &hcloud.Image{ID: oldSnapID}
 	_, err = client.Image.Delete(ctx, image)
 	if err != nil {
-		err := fmt.Errorf("Error deleting old snapshot with ID: %d: %s", oldSnapID, err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, fmt.Sprintf("Could not delete old snapshot id=%d", oldSnapID), err)
 	}
 	return multistep.ActionContinue
 }

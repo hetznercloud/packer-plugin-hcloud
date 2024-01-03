@@ -5,7 +5,6 @@ package hcloud
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -26,10 +25,7 @@ func (s *stepShutdownServer) Run(ctx context.Context, state multistep.StateBag) 
 	action, _, err := client.Server.Shutdown(ctx, &hcloud.Server{ID: serverID})
 
 	if err != nil {
-		err := fmt.Errorf("Error stopping server: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, "Error stopping server", err)
 	}
 
 	_, errCh := client.Action.WatchProgress(ctx, action)
@@ -39,10 +35,7 @@ func (s *stepShutdownServer) Run(ctx context.Context, state multistep.StateBag) 
 			if err1 == nil {
 				return multistep.ActionContinue
 			} else {
-				err := fmt.Errorf("Error stopping server: %s", err)
-				state.Put("error", err)
-				ui.Error(err.Error())
-				return multistep.ActionHalt
+				return errorHandler(state, ui, "Error stopping server", err)
 			}
 		}
 	}
