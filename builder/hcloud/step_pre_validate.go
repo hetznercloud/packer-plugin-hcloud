@@ -25,48 +25,34 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	ui := state.Get("ui").(packersdk.Ui)
 	c := state.Get("config").(*Config)
 
-	ui.Say("Prevalidating server types")
+	ui.Say(fmt.Sprintf("Validating server types: %s", c.ServerType))
 	serverType, _, err := client.ServerType.Get(ctx, c.ServerType)
 	if err != nil {
-		err = fmt.Errorf("Error: getting server type: %w", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, fmt.Sprintf("Could not fetch server type '%s'", c.ServerType), err)
 	}
 	if serverType == nil {
-		err = fmt.Errorf("Error: server type '%s' not found", c.ServerType)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, fmt.Sprintf("Could not find server type '%s'", c.ServerType), err)
 	}
 	state.Put("serverType", serverType)
 
 	if c.UpgradeServerType != "" {
+		ui.Say(fmt.Sprintf("Validating upgrade server types: %s", c.UpgradeServerType))
 		upgradeServerType, _, err := client.ServerType.Get(ctx, c.UpgradeServerType)
 		if err != nil {
-			err = fmt.Errorf("Error: getting upgrade server type: %w", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, fmt.Sprintf("Could not fetch upgrade server type '%s'", c.UpgradeServerType), err)
 		}
 		if serverType == nil {
-			err = fmt.Errorf("Error: upgrade server type '%s' not found", c.UpgradeServerType)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, fmt.Sprintf("Could not find upgrade server type '%s'", c.UpgradeServerType), err)
 		}
 
 		if serverType.Architecture != upgradeServerType.Architecture {
 			// This is also validated by API, but if we validate it here, its faster and we never have to create
 			// a server in the first place. Saving users to first hour of billing.
-			err = fmt.Errorf("Error: server_type and upgrade_server_type have incompatible architectures")
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "", fmt.Errorf("server_type and upgrade_server_type have incompatible architectures"))
 		}
 	}
 
-	ui.Say(fmt.Sprintf("Prevalidating snapshot name: %s", s.SnapshotName))
+	ui.Say(fmt.Sprintf("Validating snapshot name: %s", s.SnapshotName))
 
 	// We would like to ask only for snapshots with a certain name using
 	// ImageListOpts{Name: s.SnapshotName}, but snapshots do not have name, they
@@ -77,25 +63,23 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	snapshots, err := client.Image.AllWithOpts(ctx, opts)
 	if err != nil {
-		err := fmt.Errorf("Error: getting snapshot list: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+		return errorHandler(state, ui, "Could not fetch snapshots", err)
 	}
 
 	for _, snap := range snapshots {
 		if snap.Description == s.SnapshotName {
-			snapMsg := fmt.Sprintf("snapshot name: '%s' is used by existing snapshot with ID %d (arch=%s)",
-				s.SnapshotName, snap.ID, serverType.Architecture)
+			msg := fmt.Sprintf(
+				"Found existing snapshot (id=%d, arch=%s) with name '%s'",
+				snap.ID,
+				serverType.Architecture,
+				s.SnapshotName,
+			)
 			if s.Force {
-				ui.Say(snapMsg + ". Force flag specified, will safely overwrite this snapshot")
+				ui.Say(msg + ". Force flag specified, will safely overwrite this snapshot")
 				state.Put(OldSnapshotID, snap.ID)
 				return multistep.ActionContinue
 			}
-			err := fmt.Errorf("Error: " + snapMsg)
-			state.Put("error", err)
-			ui.Error(err.Error())
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "", fmt.Errorf(msg))
 		}
 	}
 
