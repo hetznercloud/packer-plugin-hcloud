@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
@@ -21,10 +20,9 @@ type stepCreateServer struct {
 }
 
 func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("hcloudClient").(*hcloud.Client)
-	ui := state.Get("ui").(packersdk.Ui)
-	c := state.Get("config").(*Config)
-	sshKeyId := state.Get("ssh_key_id").(int64)
+	c, ui, client := UnpackState(state)
+
+	sshKeyId := state.Get(StateSSHKeyID).(int64)
 
 	// Create the server based on configuration
 	ui.Say("Creating server...")
@@ -55,7 +53,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	if c.Image != "" {
 		image = &hcloud.Image{Name: c.Image}
 	} else {
-		serverType := state.Get("serverType").(*hcloud.ServerType)
+		serverType := state.Get(StateServerType).(*hcloud.ServerType)
 		var err error
 		image, err = getImageWithSelectors(ctx, client, c, serverType)
 		if err != nil {
@@ -88,15 +86,15 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	if err != nil {
 		return errorHandler(state, ui, "Could not create server", err)
 	}
-	state.Put("server_ip", serverCreateResult.Server.PublicNet.IPv4.IP.String())
+	state.Put(StateServerIP, serverCreateResult.Server.PublicNet.IPv4.IP.String())
 	// We use this in cleanup
 	s.serverId = serverCreateResult.Server.ID
 
 	// Store the server id for later
-	state.Put("server_id", serverCreateResult.Server.ID)
+	state.Put(StateServerID, serverCreateResult.Server.ID)
 	// instance_id is the generic term used so that users can have access to the
 	// instance id inside of the provisioners, used in step_provision.
-	state.Put("instance_id", serverCreateResult.Server.ID)
+	state.Put(StateInstanceID, serverCreateResult.Server.ID)
 
 	if err := waitForAction(ctx, client, serverCreateResult.Action); err != nil {
 		return errorHandler(state, ui, "Could not create server", err)
@@ -157,8 +155,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 		return
 	}
 
-	client := state.Get("hcloudClient").(*hcloud.Client)
-	ui := state.Get("ui").(packersdk.Ui)
+	_, ui, client := UnpackState(state)
 
 	// Destroy the server we just created
 	ui.Say("Destroying server...")

@@ -55,17 +55,17 @@ func TestStepPreValidate(t *testing.T) {
 			defer teardown()
 
 			if testing.Verbose() {
-				state.Put("ui", packersdk.TestUi(t))
+				state.Put(StateUI, packersdk.TestUi(t))
 			} else {
 				// do not output to stdout or console
-				state.Put("ui", &packersdk.MockUi{})
+				state.Put(StateUI, &packersdk.MockUi{})
 			}
 
 			if action := tc.step.Run(context.Background(), state); action != tc.wantAction {
 				t.Errorf("step.Run: want: %v; got: %v", tc.wantAction, action)
 			}
 
-			oldSnap, found := state.GetOk(OldSnapshotID)
+			oldSnap, found := state.GetOk(StateSnapshotIDOld)
 			if found {
 				oldSnapID := oldSnap.(int64)
 				if tc.wantOldSnapID == 0 {
@@ -147,12 +147,12 @@ func setupStepPreValidate(errors chan<- error, fakeSnapNames []string) (*multist
 	state := multistep.BasicStateBag{}
 
 	client := hcloud.NewClient(hcloud.WithEndpoint(ts.URL), hcloud.WithDebugWriter(os.Stderr))
-	state.Put("hcloudClient", client)
+	state.Put(StateHCloudClient, client)
 
 	config := &Config{
 		ServerType: "cx11",
 	}
-	state.Put("config", config)
+	state.Put(StateConfig, config)
 
 	teardown := func() {
 		ts.Close()

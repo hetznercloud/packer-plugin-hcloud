@@ -47,10 +47,10 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	b.hcloudClient = hcloud.NewClient(opts...)
 	// Set up the state
 	state := new(multistep.BasicStateBag)
-	state.Put("config", &b.config)
-	state.Put("hcloudClient", b.hcloudClient)
-	state.Put("hook", hook)
-	state.Put("ui", ui)
+	state.Put(StateConfig, &b.config)
+	state.Put(StateHCloudClient, b.hcloudClient)
+	state.Put(StateHook, hook)
+	state.Put(StateUI, ui)
 
 	// Build the steps
 	steps := []multistep.Step{
@@ -86,19 +86,19 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	b.runner = commonsteps.NewRunner(steps, b.config.PackerConfig, ui)
 	b.runner.Run(ctx, state)
 	// If there was an error, return that
-	if rawErr, ok := state.GetOk("error"); ok {
+	if rawErr, ok := state.GetOk(StateError); ok {
 		return nil, rawErr.(error)
 	}
 
-	if _, ok := state.GetOk("snapshot_name"); !ok {
+	if _, ok := state.GetOk(StateSnapshotName); !ok {
 		return nil, nil
 	}
 
 	artifact := &Artifact{
-		snapshotName: state.Get("snapshot_name").(string),
-		snapshotId:   state.Get("snapshot_id").(int64),
+		snapshotName: state.Get(StateSnapshotName).(string),
+		snapshotId:   state.Get(StateSnapshotID).(int64),
 		hcloudClient: b.hcloudClient,
-		StateData:    map[string]interface{}{"generated_data": state.Get("generated_data")},
+		StateData:    map[string]interface{}{"generated_data": state.Get(StateGeneratedData)},
 	}
 
 	return artifact, nil
