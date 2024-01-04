@@ -32,11 +32,10 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	}
 	state.Put(StateSnapshotID, result.Image.ID)
 	state.Put(StateSnapshotName, c.SnapshotName)
-	_, errCh := client.Action.WatchProgress(ctx, result.Action)
 
-	err1 := <-errCh
-	if err1 != nil {
-		return errorHandler(state, ui, "Could not create snapshot", err)
+	_, errCh := client.Action.WatchProgress(ctx, result.Action)
+	if err1 := <-errCh; err1 != nil {
+		return errorHandler(state, ui, "Could not create snapshot", err1)
 	}
 
 	oldSnap, found := state.GetOk(StateSnapshotIDOld)
