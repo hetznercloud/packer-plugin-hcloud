@@ -3,3 +3,4 @@ dist/*
 packer-plugin-hcloud
 .docs
 crash.log
+coverage.txt
