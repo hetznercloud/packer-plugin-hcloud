@@ -99,7 +99,11 @@ func NewTestServer(t *testing.T, requests []Request) *httptest.Server {
 
 		if response.WantRequestBodyFunc != nil {
 			buffer, err := io.ReadAll(r.Body)
-			defer r.Body.Close()
+			defer func() {
+				if err := r.Body.Close(); err != nil {
+					t.Fatal(err)
+				}
+			}()
 			if err != nil {
 				t.Fatal(err)
 			}
