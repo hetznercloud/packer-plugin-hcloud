@@ -4,175 +4,195 @@
 package hcloud
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/stretchr/testify/assert"
 
-	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
-type FailCause int
-
-const (
-	Pass FailCause = iota
-	FailCreateImage
-	FailWatchProgress
-	FailDeleteImage
-)
-
 func TestStepCreateSnapshot(t *testing.T) {
-	const serverID = int64(42)
-	const snapName = "dummy-snap"
-
-	testCases := []struct {
-		name       string
-		oldSnapID  int64     // zero value: no old snap will be injected
-		failCause  FailCause // zero value: pass
-		wantAction multistep.StepAction
-	}{
+	RunStepTestCases(t, []StepTestCase{
 		{
-			name:       "happy path",
-			wantAction: multistep.ActionContinue,
+			Name: "happy",
+			Step: &stepCreateSnapshot{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateServerID, int64(8))
+			},
+			WantRequests: []Request{
+				{"POST", "/servers/8/actions/create_image",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerActionCreateImageRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-snapshot", *payload.Description)
+						assert.Equal(t, "snapshot", *payload.Type)
+					},
+					201, `{
+						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": { "id": 3, "status": "success" }
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				snapshotID, ok := state.Get(StateSnapshotID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(16), snapshotID)
+
+				snapshotName, ok := state.Get(StateSnapshotName).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "dummy-snapshot", snapshotName)
+			},
 		},
 		{
-			name:       "create image, failure",
-			failCause:  FailCreateImage,
-			wantAction: multistep.ActionHalt,
+			Name: "fail create image",
+			Step: &stepCreateSnapshot{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateServerID, int64(8))
+			},
+			WantRequests: []Request{
+				{"POST", "/servers/8/actions/create_image",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerActionCreateImageRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-snapshot", *payload.Description)
+						assert.Equal(t, "snapshot", *payload.Type)
+					},
+					400, "",
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not create snapshot: .*", err.Error())
+			},
 		},
 		{
-			name:       "watch progress, failure",
-			failCause:  FailWatchProgress,
-			wantAction: multistep.ActionHalt,
+			Name: "fail action",
+			Step: &stepCreateSnapshot{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateServerID, int64(8))
+			},
+			WantRequests: []Request{
+				{"POST", "/servers/8/actions/create_image",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerActionCreateImageRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-snapshot", *payload.Description)
+						assert.Equal(t, "snapshot", *payload.Type)
+					},
+					201, `{
+						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": {
+							"id": 3,
+							"status": "error",
+							"error": {
+								"code": "action_failed", 
+								"message": "Action failed"
+							}
+						}
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not create snapshot: .*", err.Error())
+			},
 		},
 		{
-			name:       "delete old snapshot, success",
-			oldSnapID:  33,
-			wantAction: multistep.ActionContinue,
+			Name: "happy with old snapshot",
+			Step: &stepCreateSnapshot{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateServerID, int64(8))
+				state.Put(StateSnapshotIDOld, int64(20))
+			},
+			WantRequests: []Request{
+				{"POST", "/servers/8/actions/create_image",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerActionCreateImageRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-snapshot", *payload.Description)
+						assert.Equal(t, "snapshot", *payload.Type)
+					},
+					201, `{
+						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": { "id": 3, "status": "success" }
+					}`,
+				},
+				{"DELETE", "/images/20", nil,
+					204, "",
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				snapshotID, ok := state.Get(StateSnapshotID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(16), snapshotID)
+
+				snapshotName, ok := state.Get(StateSnapshotName).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "dummy-snapshot", snapshotName)
+			},
 		},
 		{
-			name:       "delete old snapshot, failure",
-			oldSnapID:  33,
-			failCause:  FailDeleteImage,
-			wantAction: multistep.ActionHalt,
+			Name: "fail with old snapshot",
+			Step: &stepCreateSnapshot{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateServerID, int64(8))
+				state.Put(StateSnapshotIDOld, int64(20))
+			},
+			WantRequests: []Request{
+				{"POST", "/servers/8/actions/create_image",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerActionCreateImageRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-snapshot", *payload.Description)
+						assert.Equal(t, "snapshot", *payload.Type)
+					},
+					201, `{
+						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": { "id": 3, "status": "success" }
+					}`,
+				},
+				{"DELETE", "/images/20", nil,
+					400, "",
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not delete old snapshot id=20: .*", err.Error())
+			},
 		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			errors := make(chan error, 1)
-			state, teardown := setupStepCreateSnapshot(errors, tc.failCause)
-			defer teardown()
-
-			step := &stepCreateSnapshot{}
-			config := Config{SnapshotName: snapName}
-			if testing.Verbose() {
-				state.Put(StateUI, packersdk.TestUi(t))
-			} else {
-				// do not output to stdout or console
-				state.Put(StateUI, &packersdk.MockUi{})
-			}
-			state.Put(StateConfig, &config)
-			state.Put(StateServerID, serverID)
-			if tc.oldSnapID != 0 {
-				state.Put(StateSnapshotIDOld, tc.oldSnapID)
-			}
-
-			if action := step.Run(context.Background(), state); action != tc.wantAction {
-				t.Errorf("step.Run: want: %v; got: %v", tc.wantAction, action)
-			}
-
-			select {
-			case err := <-errors:
-				t.Errorf("server: got: %s", err)
-			default:
-			}
-		})
-	}
-}
-
-// Configure a httptest server to reply to the requests done by stepCreateSnapshot.
-// React with the appropriate failCause.
-// Report errors on the errors channel (cannot use testing.T, it runs on a different goroutine).
-// Return a tuple (state, teardown) where:
-// - state (containing the client) is ready to be passed to the step.Run() method.
-// - teardown is a function meant to be deferred from the test.
-func setupStepCreateSnapshot(
-	errors chan<- error,
-	failCause FailCause,
-) (*multistep.BasicStateBag, func()) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		buf, err := io.ReadAll(r.Body)
-		if err != nil {
-			errors <- fmt.Errorf("fake server: reading request: %s", err)
-			return
-		}
-		reqDump := fmt.Sprintf("fake server: request:\n    %s %s\n    body: %s",
-			r.Method, r.URL.Path, string(buf))
-		if testing.Verbose() {
-			fmt.Println(reqDump)
-		}
-
-		enc := json.NewEncoder(w)
-		var response interface{}
-		action := schema.Action{
-			ID:       13,
-			Progress: 100,
-			Status:   "success",
-		}
-
-		switch {
-		case r.Method == http.MethodPost && r.URL.Path == "/servers/42/actions/create_image":
-			if failCause == FailCreateImage {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusCreated)
-			response = schema.ServerActionCreateImageResponse{Action: action}
-		case r.Method == http.MethodGet && r.URL.Path == "/actions/13":
-			if failCause == FailWatchProgress {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			response = schema.ActionGetResponse{Action: action}
-		case r.Method == http.MethodDelete && r.URL.Path == "/images/33":
-			if failCause == FailDeleteImage {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-			w.WriteHeader(http.StatusNoContent)
-			return
-		default:
-		}
-
-		if response != nil {
-			if err := enc.Encode(response); err != nil {
-				errors <- fmt.Errorf("fake server: encoding reply: %s", err)
-			}
-			return
-		}
-
-		// no match: report error
-		w.WriteHeader(http.StatusBadRequest)
-		errors <- fmt.Errorf(reqDump)
-	}))
-
-	state := multistep.BasicStateBag{}
-	client := hcloud.NewClient(hcloud.WithEndpoint(ts.URL))
-	state.Put(StateHCloudClient, client)
-
-	teardown := func() {
-		ts.Close()
-	}
-	return &state, teardown
+	})
 }
