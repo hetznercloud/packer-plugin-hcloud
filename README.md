@@ -1,5 +1,7 @@
 # Packer Plugin Hcloud
 
+[![](https://codecov.io/github/hetznercloud/packer-plugin-hcloud/graph/badge.svg?token=3NECH20DRY)](https://codecov.io/github/hetznercloud/packer-plugin-hcloud/tree/main)
+
 The `Hcloud` multi-component plugin can be used with HashiCorp [Packer](https://www.packer.io)
 to create custom images. For the full list of available features for this plugin see [docs](docs).
 
