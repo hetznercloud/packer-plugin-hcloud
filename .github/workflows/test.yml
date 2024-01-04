@@ -28,6 +28,8 @@ jobs:
 
       - run: make test
 
+      - uses: codecov/codecov-action@v3
+
   acceptance:
     strategy:
       fail-fast: false
@@ -47,6 +49,8 @@ jobs:
       - uses: hetznercloud/tps-action@main
 
       - run: make testacc
+
+      - uses: codecov/codecov-action@v3
 
   example:
     runs-on: ubuntu-latest
