@@ -9,8 +9,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
 func TestStepCreateSnapshot(t *testing.T) {

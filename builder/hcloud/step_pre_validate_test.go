@@ -7,8 +7,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
 func TestStepPreValidate(t *testing.T) {
