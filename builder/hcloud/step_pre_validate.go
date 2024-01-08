@@ -28,7 +28,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		return errorHandler(state, ui, fmt.Sprintf("Could not fetch server type '%s'", c.ServerType), err)
 	}
 	if serverType == nil {
-		return errorHandler(state, ui, fmt.Sprintf("Could not find server type '%s'", c.ServerType), err)
+		return errorHandler(state, ui, "", fmt.Errorf("Could not find server type '%s'", c.ServerType))
 	}
 	state.Put(StateServerType, serverType)
 
@@ -39,7 +39,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 			return errorHandler(state, ui, fmt.Sprintf("Could not fetch upgrade server type '%s'", c.UpgradeServerType), err)
 		}
 		if serverType == nil {
-			return errorHandler(state, ui, fmt.Sprintf("Could not find upgrade server type '%s'", c.UpgradeServerType), err)
+			return errorHandler(state, ui, "", fmt.Errorf("Could not find upgrade server type '%s'", c.UpgradeServerType))
 		}
 
 		if serverType.Architecture != upgradeServerType.Architecture {
