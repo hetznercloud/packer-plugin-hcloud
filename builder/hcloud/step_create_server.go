@@ -84,7 +84,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip '%s'", c.PublicIPv4), err)
 		}
 		if publicIPv4 == nil {
-			return errorHandler(state, ui, "", fmt.Errorf("Could not find PublicIPv4"))
+			return errorHandler(state, ui, "", fmt.Errorf("Could not find primary ip '%s'", c.PublicIPv4))
 		}
 		publicNetOpts := hcloud.ServerCreatePublicNet{
 			EnableIPv4: true,
