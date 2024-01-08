@@ -161,8 +161,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	ui.Say("Destroying server...")
 	_, _, err := client.Server.DeleteWithResult(context.TODO(), &hcloud.Server{ID: s.serverId})
 	if err != nil {
-		ui.Error(fmt.Sprintf(
-			"Error destroying server. Please destroy it manually: %s", err))
+		errorHandler(state, ui, "Could not destroy server (please destroy it manually)", err)
 	}
 }
 
