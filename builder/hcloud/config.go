@@ -47,6 +47,8 @@ type Config struct {
 	SSHKeys        []string          `mapstructure:"ssh_keys"`
 	SSHKeysLabels  map[string]string `mapstructure:"ssh_keys_labels"`
 	Networks       []int64           `mapstructure:"networks"`
+	PublicIPv4     string            `mapstructure:"public_ipv4"`
+	PublicIPv6     string            `mapstructure:"public_ipv6"`
 
 	RescueMode string `mapstructure:"rescue"`
 
