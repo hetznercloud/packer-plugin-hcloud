@@ -131,8 +131,11 @@ builder.
 - `networks` (array of integers) - List of Network IDs which should be
   attached to the server private network interface at creation time.
 
-- `public_ipv4` (string) - ID or IP address of a pre-allocated Hetzner
-  Primary IPv4 address or to use for the created server.
+- `public_ipv4` (string) - ID, name or IP address of a pre-allocated Hetzner
+  Primary IPv4 address to use for the created server.
+
+- `public_ipv6` (string) - ID, name or IP address of a pre-allocated Hetzner
+  Primary IPv6 address to use for the created server.
 
 ## Basic Example
 
