@@ -132,6 +132,9 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
+				{"GET", "/primary_ips?name=127.0.0.1", nil,
+					200, `{ "primary_ips": [] }`,
+				},
 				{"GET", "/primary_ips?ip=127.0.0.1", nil,
 					200, `{
 						"primary_ips": [
@@ -195,9 +198,6 @@ func TestStepCreateServer(t *testing.T) {
 					200, `{
 						"ssh_key": { "id": 1 }
 					}`,
-				},
-				{"GET", "/primary_ips?ip=permanent-packer-ip", nil,
-					200, `{ "primary_ips": [] }`,
 				},
 				{"GET", "/primary_ips?name=permanent-packer-ip", nil,
 					200, `{
@@ -326,15 +326,11 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{"GET", "/primary_ips?ip=127.0.0.1", nil,
-					200, `{
-						"primary_ips": []
-					}`,
-				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,
-					200, `{
-						"primary_ips": []
-					}`,
+					200, `{ "primary_ips": [] }`,
+				},
+				{"GET", "/primary_ips?ip=127.0.0.1", nil,
+					200, `{ "primary_ips": [] }`,
 				},
 			},
 			WantStepAction: multistep.ActionHalt,
@@ -359,6 +355,9 @@ func TestStepCreateServer(t *testing.T) {
 					200, `{
 						"ssh_key": { "id": 1 }
 					}`,
+				},
+				{"GET", "/primary_ips?name=127.0.0.1", nil,
+					200, `{ "primary_ips": [] }`,
 				},
 				{"GET", "/primary_ips?ip=127.0.0.1", nil,
 					500, `{}`,
@@ -413,6 +412,9 @@ func TestStepCreateServer(t *testing.T) {
 					200, `{
 						"ssh_key": { "id": 1 }
 					}`,
+				},
+				{"GET", "/primary_ips?name=%3A%3A1", nil,
+					200, `{ "primary_ips": [] }`,
 				},
 				{"GET", "/primary_ips?ip=%3A%3A1", nil,
 					200, `{
@@ -479,6 +481,9 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
+				{"GET", "/primary_ips?name=127.0.0.1", nil,
+					200, `{ "primary_ips": [] }`,
+				},
 				{"GET", "/primary_ips?ip=127.0.0.1", nil,
 					200, `{
 						"primary_ips": [
@@ -489,6 +494,9 @@ func TestStepCreateServer(t *testing.T) {
 							}
 						]
 					}`,
+				},
+				{"GET", "/primary_ips?name=%3A%3A1", nil,
+					200, `{ "primary_ips": [] }`,
 				},
 				{"GET", "/primary_ips?ip=%3A%3A1", nil,
 					200, `{
@@ -554,9 +562,6 @@ func TestStepCreateServer(t *testing.T) {
 					200, `{
 						"ssh_key": { "id": 1 }
 					}`,
-				},
-				{"GET", "/primary_ips?ip=permanent-packer-ip", nil,
-					200, `{ "primary_ips": [] }`,
 				},
 				{"GET", "/primary_ips?name=permanent-packer-ip", nil,
 					200, `{
@@ -685,15 +690,11 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{"GET", "/primary_ips?ip=127.0.0.1", nil,
-					200, `{
-						"primary_ips": []
-					}`,
-				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,
-					200, `{
-						"primary_ips": []
-					}`,
+					200, `{ "primary_ips": [] }`,
+				},
+				{"GET", "/primary_ips?ip=127.0.0.1", nil,
+					200, `{ "primary_ips": [] }`,
 				},
 			},
 			WantStepAction: multistep.ActionHalt,
@@ -718,6 +719,9 @@ func TestStepCreateServer(t *testing.T) {
 					200, `{
 						"ssh_key": { "id": 1 }
 					}`,
+				},
+				{"GET", "/primary_ips?name=127.0.0.1", nil,
+					200, `{ "primary_ips": [] }`,
 				},
 				{"GET", "/primary_ips?ip=127.0.0.1", nil,
 					500, `{}`,

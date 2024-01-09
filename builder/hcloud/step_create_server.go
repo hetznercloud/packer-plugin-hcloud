@@ -281,12 +281,12 @@ func getPrimaryIP(ctx context.Context, client *hcloud.Client, publicIP string) (
 			return nil, fmt.Sprintf("Could not fetch primary ip with ID %d", publicIPID), err
 		}
 	} else {
-		hcloudPublicIP, _, err = client.PrimaryIP.GetByIP(ctx, publicIP)
+		hcloudPublicIP, _, err = client.PrimaryIP.GetByName(ctx, publicIP)
 		if err != nil {
 			return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
 		}
 		if hcloudPublicIP == nil {
-			hcloudPublicIP, _, err = client.PrimaryIP.GetByName(ctx, publicIP)
+			hcloudPublicIP, _, err = client.PrimaryIP.GetByIP(ctx, publicIP)
 			if err != nil {
 				return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
 			}
