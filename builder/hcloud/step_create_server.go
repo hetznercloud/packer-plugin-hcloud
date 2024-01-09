@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -79,12 +80,21 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	if c.PublicIPv4 != "" {
-		publicIPv4, _, err := client.PrimaryIP.GetByIP(ctx, c.PublicIPv4)
-		if err != nil {
-			return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip '%s'", c.PublicIPv4), err)
-		}
-		if publicIPv4 == nil {
-			return errorHandler(state, ui, "", fmt.Errorf("Could not find primary ip '%s'", c.PublicIPv4))
+		var publicIPv4 *hcloud.PrimaryIP
+		publicIPv4ID, err := strconv.ParseInt(c.PublicIPv4, 10, 64)
+		if err == nil {
+			publicIPv4, _, err = client.PrimaryIP.GetByID(ctx, publicIPv4ID)
+			if err != nil {
+				return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip with ID %d", publicIPv4ID), err)
+			}
+		} else {
+			publicIPv4, _, err = client.PrimaryIP.GetByIP(ctx, c.PublicIPv4)
+			if err != nil {
+				return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip '%s'", c.PublicIPv4), err)
+			}
+			if publicIPv4 == nil {
+				return errorHandler(state, ui, "", fmt.Errorf("Could not find primary ip '%s'", c.PublicIPv4))
+			}
 		}
 		publicNetOpts := hcloud.ServerCreatePublicNet{
 			EnableIPv4: true,
