@@ -79,33 +79,30 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		Labels:     c.ServerLabels,
 	}
 
-	if c.PublicIPv4 != "" {
-		var publicIPv4 *hcloud.PrimaryIP
-		publicIPv4ID, err := strconv.ParseInt(c.PublicIPv4, 10, 64)
-		if err == nil {
-			publicIPv4, _, err = client.PrimaryIP.GetByID(ctx, publicIPv4ID)
-			if err != nil {
-				return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip with ID %d", publicIPv4ID), err)
-			}
-		} else {
-			publicIPv4, _, err = client.PrimaryIP.GetByIP(ctx, c.PublicIPv4)
-			if err != nil {
-				return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip '%s'", c.PublicIPv4), err)
-			}
-			if publicIPv4 == nil {
-				publicIPv4, _, err = client.PrimaryIP.GetByName(ctx, c.PublicIPv4)
-				if err != nil {
-					return errorHandler(state, ui, fmt.Sprintf("Could not fetch primary ip '%s'", c.PublicIPv4), err)
-				}
-				if publicIPv4 == nil {
-					return errorHandler(state, ui, "", fmt.Errorf("Could not find primary ip '%s'", c.PublicIPv4))
-				}
-			}
-		}
+	if c.PublicIPv4 != "" || c.PublicIPv6 != "" {
 		publicNetOpts := hcloud.ServerCreatePublicNet{
 			EnableIPv4: true,
 			EnableIPv6: true,
-			IPv4:       publicIPv4,
+		}
+		if c.PublicIPv4 != "" {
+			publicIPv4, msg, err := getPrimaryIP(ctx, client, c.PublicIPv4)
+			if err != nil {
+				return errorHandler(state, ui, msg, err)
+			}
+			if publicIPv4.Type != hcloud.PrimaryIPTypeIPv4 {
+				return errorHandler(state, ui, "", fmt.Errorf("Primary ip %s is not an IPv4 address", c.PublicIPv4))
+			}
+			publicNetOpts.IPv4 = publicIPv4
+		}
+		if c.PublicIPv6 != "" {
+			publicIPv6, msg, err := getPrimaryIP(ctx, client, c.PublicIPv6)
+			if err != nil {
+				return errorHandler(state, ui, msg, err)
+			}
+			if publicIPv6.Type != hcloud.PrimaryIPTypeIPv6 {
+				return errorHandler(state, ui, "", fmt.Errorf("Primary ip %s is not an IPv6 address", c.PublicIPv6))
+			}
+			publicNetOpts.IPv6 = publicIPv6
 		}
 		serverCreateOpts.PublicNet = &publicNetOpts
 	}
@@ -273,4 +270,30 @@ func getImageWithSelectors(ctx context.Context, client *hcloud.Client, c *Config
 	}
 
 	return allImages[0], nil
+}
+
+func getPrimaryIP(ctx context.Context, client *hcloud.Client, publicIP string) (*hcloud.PrimaryIP, string, error) {
+	var hcloudPublicIP *hcloud.PrimaryIP
+	publicIPID, err := strconv.ParseInt(publicIP, 10, 64)
+	if err == nil {
+		hcloudPublicIP, _, err = client.PrimaryIP.GetByID(ctx, publicIPID)
+		if err != nil {
+			return nil, fmt.Sprintf("Could not fetch primary ip with ID %d", publicIPID), err
+		}
+	} else {
+		hcloudPublicIP, _, err = client.PrimaryIP.GetByIP(ctx, publicIP)
+		if err != nil {
+			return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
+		}
+		if hcloudPublicIP == nil {
+			hcloudPublicIP, _, err = client.PrimaryIP.GetByName(ctx, publicIP)
+			if err != nil {
+				return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
+			}
+			if hcloudPublicIP == nil {
+				return nil, "", fmt.Errorf("Could not find primary ip '%s'", publicIP)
+			}
+		}
+	}
+	return hcloudPublicIP, "", nil
 }

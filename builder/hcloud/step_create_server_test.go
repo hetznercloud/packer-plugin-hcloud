@@ -399,5 +399,287 @@ func TestStepCreateServer(t *testing.T) {
 				assert.Regexp(t, "Could not fetch primary ip with ID .*", err.Error())
 			},
 		},
+		{
+			Name: "happy with public ipv6 address",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv6 = "::1"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips?ip=%3A%3A1", nil,
+					200, `{
+						"primary_ips": [
+							{
+								"id": 1,
+								"ip": "::1",
+								"type": "ipv6"
+							}
+						]
+					}`,
+				},
+				{"POST", "/servers",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerCreateRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-server", payload.Name)
+						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, "nbg1", payload.Location)
+						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Nil(t, payload.Networks)
+						assert.NotNil(t, payload.PublicNet)
+						assert.Equal(t, int64(1), payload.PublicNet.IPv6ID)
+					},
+					201, `{
+						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }, "ipv6": { "ip": "::1" }}},
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": { "id": 3, "status": "success" }
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				serverID, ok := state.Get(StateServerID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), serverID)
+
+				instanceID, ok := state.Get(StateInstanceID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), instanceID)
+
+				serverIP, ok := state.Get(StateServerIP).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "1.2.3.4", serverIP)
+			},
+		},
+		{
+			Name: "happy with public ipv6 name",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv6 = "permanent-packer-ip"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips?ip=permanent-packer-ip", nil,
+					200, `{ "primary_ips": [] }`,
+				},
+				{"GET", "/primary_ips?name=permanent-packer-ip", nil,
+					200, `{
+						"primary_ips": [
+							{
+								"name": "permanent-packer-ip",
+								"id": 1,
+								"ip": "::1",
+								"type": "ipv6"
+							}
+						]
+					}`,
+				},
+				{"POST", "/servers",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerCreateRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-server", payload.Name)
+						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, "nbg1", payload.Location)
+						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Nil(t, payload.Networks)
+						assert.NotNil(t, payload.PublicNet)
+						assert.Equal(t, int64(1), payload.PublicNet.IPv6ID)
+					},
+					201, `{
+						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }, "ipv6": { "ip": "::1" }}},
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": { "id": 3, "status": "success" }
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				serverID, ok := state.Get(StateServerID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), serverID)
+
+				instanceID, ok := state.Get(StateInstanceID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), instanceID)
+
+				serverIP, ok := state.Get(StateServerIP).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "1.2.3.4", serverIP)
+			},
+		},
+		{
+			Name: "happy with public ipv6 ID",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv6 = "72"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips/72", nil,
+					200, `{
+						"primary_ip": {
+							"id": 72,
+							"ip": "::1",
+							"type": "ipv6"
+						}
+					}`,
+				},
+				{"POST", "/servers",
+					func(t *testing.T, r *http.Request, body []byte) {
+						payload := schema.ServerCreateRequest{}
+						assert.NoError(t, json.Unmarshal(body, &payload))
+						assert.Equal(t, "dummy-server", payload.Name)
+						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, "nbg1", payload.Location)
+						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Nil(t, payload.Networks)
+						assert.NotNil(t, payload.PublicNet)
+						assert.Equal(t, int64(72), payload.PublicNet.IPv6ID)
+					},
+					201, `{
+						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }, "ipv6": { "ip": "::1" }}},
+						"action": { "id": 3, "status": "progress" }
+					}`,
+				},
+				{"GET", "/actions/3", nil,
+					200, `{
+						"action": { "id": 3, "status": "success" }
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				serverID, ok := state.Get(StateServerID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), serverID)
+
+				instanceID, ok := state.Get(StateInstanceID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), instanceID)
+
+				serverIP, ok := state.Get(StateServerIP).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "1.2.3.4", serverIP)
+			},
+		},
+		{
+			Name: "fail to get for primary ipv4 by address",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv4 = "127.0.0.1"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips?ip=127.0.0.1", nil,
+					200, `{
+						"primary_ips": []
+					}`,
+				},
+				{"GET", "/primary_ips?name=127.0.0.1", nil,
+					200, `{
+						"primary_ips": []
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not find primary ip .*", err.Error())
+			},
+		},
+		{
+			Name: "fail to search for primary ipv4 by address",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv4 = "127.0.0.1"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips?ip=127.0.0.1", nil,
+					500, `{}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
+			},
+		},
+		{
+			Name: "fail to fetch primary ipv4 by ID",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv4 = "72"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+							"ssh_key": { "id": 1 }
+						}`,
+				},
+				{"GET", "/primary_ips/72", nil,
+					404, `{}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not fetch primary ip with ID .*", err.Error())
+			},
+		},
 	})
 }
