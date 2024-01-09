@@ -395,7 +395,7 @@ func TestStepCreateServer(t *testing.T) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
 				assert.NotNil(t, err)
-				assert.Regexp(t, "Could not fetch primary ip with ID .*", err.Error())
+				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
 			},
 		},
 		{
@@ -759,7 +759,7 @@ func TestStepCreateServer(t *testing.T) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
 				assert.NotNil(t, err)
-				assert.Regexp(t, "Could not fetch primary ip with ID .*", err.Error())
+				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
 			},
 		},
 	})

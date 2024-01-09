@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -273,26 +272,17 @@ func getImageWithSelectors(ctx context.Context, client *hcloud.Client, c *Config
 }
 
 func getPrimaryIP(ctx context.Context, client *hcloud.Client, publicIP string) (*hcloud.PrimaryIP, string, error) {
-	var hcloudPublicIP *hcloud.PrimaryIP
-	publicIPID, err := strconv.ParseInt(publicIP, 10, 64)
-	if err == nil {
-		hcloudPublicIP, _, err = client.PrimaryIP.GetByID(ctx, publicIPID)
-		if err != nil {
-			return nil, fmt.Sprintf("Could not fetch primary ip with ID %d", publicIPID), err
-		}
-	} else {
-		hcloudPublicIP, _, err = client.PrimaryIP.GetByName(ctx, publicIP)
+	hcloudPublicIP, _, err := client.PrimaryIP.Get(ctx, publicIP)
+	if err != nil {
+		return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
+	}
+	if hcloudPublicIP == nil {
+		hcloudPublicIP, _, err = client.PrimaryIP.GetByIP(ctx, publicIP)
 		if err != nil {
 			return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
 		}
 		if hcloudPublicIP == nil {
-			hcloudPublicIP, _, err = client.PrimaryIP.GetByIP(ctx, publicIP)
-			if err != nil {
-				return nil, fmt.Sprintf("Could not fetch primary ip '%s'", publicIP), err
-			}
-			if hcloudPublicIP == nil {
-				return nil, "", fmt.Errorf("Could not find primary ip '%s'", publicIP)
-			}
+			return nil, "", fmt.Errorf("Could not find primary ip '%s'", publicIP)
 		}
 	}
 	return hcloudPublicIP, "", nil
