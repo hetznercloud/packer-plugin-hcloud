@@ -44,7 +44,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			return errorHandler(state, ui, fmt.Sprintf("Could not fetch SSH key '%s'", k), err)
 		}
 		if sshKey == nil {
-			return errorHandler(state, ui, fmt.Sprintf("Could not find SSH key '%s'", k), err)
+			return errorHandler(state, ui, "", fmt.Errorf("Could not find SSH key '%s'", k))
 		}
 		sshKeys = append(sshKeys, sshKey)
 	}
@@ -161,8 +161,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	ui.Say("Destroying server...")
 	_, _, err := client.Server.DeleteWithResult(context.TODO(), &hcloud.Server{ID: s.serverId})
 	if err != nil {
-		ui.Error(fmt.Sprintf(
-			"Error destroying server. Please destroy it manually: %s", err))
+		errorHandler(state, ui, "Could not destroy server (please destroy it manually)", err)
 	}
 }
 
