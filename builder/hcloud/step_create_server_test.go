@@ -243,5 +243,88 @@ func TestStepCreateServer(t *testing.T) {
 				assert.Equal(t, "127.0.0.1", serverIP)
 			},
 		},
+		{
+			Name: "fail to get for primary ip by address",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv4 = "127.0.0.1"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips?ip=127.0.0.1", nil,
+					200, `{
+						"primary_ips": []
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not find primary ip .*", err.Error())
+			},
+		},
+		{
+			Name: "fail to search for primary ip by address",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv4 = "127.0.0.1"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/primary_ips?ip=127.0.0.1", nil,
+					500, `{}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
+			},
+		},
+		{
+			Name: "fail to fetch primary ip by ID",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.PublicIPv4 = "72"
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+			},
+			WantRequests: []Request{
+				{"GET", "/ssh_keys/1", nil,
+					200, `{
+							"ssh_key": { "id": 1 }
+						}`,
+				},
+				{"GET", "/primary_ips/72", nil,
+					404, `{}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.Regexp(t, "Could not fetch primary ip with ID .*", err.Error())
+			},
+		},
 	})
 }
