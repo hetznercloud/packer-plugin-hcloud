@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.1...v1.3.0) (2024-01-09)
+
+
+### Features
+
+* add labels options to server and ssh keys ([#128](https://github.com/hetznercloud/packer-plugin-hcloud/issues/128)) ([3f7dcae](https://github.com/hetznercloud/packer-plugin-hcloud/commit/3f7dcae20a07ad8367a06926aa2df1c415105e8b))
+* use existing IP for server create ([#144](https://github.com/hetznercloud/packer-plugin-hcloud/issues/144)) ([1ebdfe7](https://github.com/hetznercloud/packer-plugin-hcloud/commit/1ebdfe74b395b2adaf015bc909a621aea2897a97))
+
+
+### Bug Fixes
+
+* do not pass nil error to error handler ([#145](https://github.com/hetznercloud/packer-plugin-hcloud/issues/145)) ([e742263](https://github.com/hetznercloud/packer-plugin-hcloud/commit/e74226397f420ecfd016c60e050ffc37fd3cddc8))
+* improve logs messages and error handling ([#139](https://github.com/hetznercloud/packer-plugin-hcloud/issues/139)) ([2f2bcf1](https://github.com/hetznercloud/packer-plugin-hcloud/commit/2f2bcf1bca4aa46440e639907093095df67faf34))
+* improve missing hcloud token error ([#138](https://github.com/hetznercloud/packer-plugin-hcloud/issues/138)) ([e47f476](https://github.com/hetznercloud/packer-plugin-hcloud/commit/e47f47679164d4ba700de64c4b44400604f152e2))
+
 ## [1.2.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.0...v1.2.1) (2023-11-08)
 
 
