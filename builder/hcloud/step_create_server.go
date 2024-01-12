@@ -23,6 +23,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	c, ui, client := UnpackState(state)
 
 	sshKeyId := state.Get(StateSSHKeyID).(int64)
+	serverType := state.Get(StateServerType).(*hcloud.ServerType)
 
 	// Create the server based on configuration
 	ui.Say("Creating server...")
@@ -49,25 +50,21 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		sshKeys = append(sshKeys, sshKey)
 	}
 
-	serverType := state.Get(StateServerType).(*hcloud.ServerType)
 	var image *hcloud.Image
+	var err error
 	if c.Image != "" {
-		var err error
 		image, _, err = client.Image.GetForArchitecture(ctx, c.Image, serverType.Architecture)
 		if err != nil {
-			ui.Error(err.Error())
-			state.Put("error", err)
-			return multistep.ActionHalt
+			return errorHandler(state, ui, "Could not find image", err)
 		}
 	} else {
-		var err error
 		image, err = getImageWithSelectors(ctx, client, c, serverType)
 		if err != nil {
 			return errorHandler(state, ui, "Could not find image", err)
 		}
-		ui.Message(fmt.Sprintf("Using image %s with ID %d", image.Description, image.ID))
 	}
-	state.Put("source_image_id", image.ID)
+	ui.Message(fmt.Sprintf("Using image '%s' with ID '%d'", image.Description, image.ID))
+	state.Put(StateSourceImageID, image.ID)
 
 	var networks []*hcloud.Network
 	for _, k := range c.Networks {
