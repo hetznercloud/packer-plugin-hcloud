@@ -86,7 +86,7 @@ func NewTestServer(t *testing.T, requests []Request) *httptest.Server {
 
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if testing.Verbose() {
-			t.Logf("request %d: %s %s\n", index, r.Method, r.URL.Path)
+			t.Logf("request %d: %s %s\n", index, r.Method, r.RequestURI)
 		}
 
 		if index >= len(requests) {
