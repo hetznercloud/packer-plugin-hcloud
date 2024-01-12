@@ -63,7 +63,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			return errorHandler(state, ui, "Could not find image", err)
 		}
 	}
-	ui.Message(fmt.Sprintf("Using image '%s' with ID '%d'", image.Description, image.ID))
+	ui.Message(fmt.Sprintf("Using image '%d'", image.ID))
 	state.Put(StateSourceImageID, image.ID)
 
 	var networks []*hcloud.Network

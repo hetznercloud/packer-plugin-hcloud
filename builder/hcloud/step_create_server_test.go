@@ -30,12 +30,17 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
+					}`,
+				},
 				{"POST", "/servers",
 					func(t *testing.T, r *http.Request, body []byte) {
 						payload := schema.ServerCreateRequest{}
 						assert.NoError(t, json.Unmarshal(body, &payload))
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
 						assert.Nil(t, payload.Networks)
@@ -83,13 +88,17 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
+					}`,
+				},
 				{"POST", "/servers",
 					func(t *testing.T, r *http.Request, body []byte) {
 						payload := schema.ServerCreateRequest{}
 						assert.NoError(t, json.Unmarshal(body, &payload))
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, "debian-12", payload.Image)
-						assert.Equal(t, "nbg1", payload.Location)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
 						assert.Equal(t, []int64{12}, payload.Networks)
 					},
