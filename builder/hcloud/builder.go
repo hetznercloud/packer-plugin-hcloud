@@ -6,6 +6,7 @@ package hcloud
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
@@ -43,6 +44,9 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		hcloud.WithEndpoint(b.config.Endpoint),
 		hcloud.WithBackoffFunc(hcloud.ConstantBackoff(b.config.PollInterval)),
 		hcloud.WithApplication("hcloud-packer", version.PluginVersion.String()),
+
+		// This is being redirect by Packer to the appropriate location. If users set `PACKER_LOG=1` it is shown on stderr
+		hcloud.WithDebugWriter(log.Writer()),
 	}
 	b.hcloudClient = hcloud.NewClient(opts...)
 	// Set up the state
