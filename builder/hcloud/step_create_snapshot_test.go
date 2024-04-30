@@ -32,7 +32,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 					},
 					201, `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
@@ -93,7 +93,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 					},
 					201, `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
@@ -134,7 +134,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 					},
 					201, `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
@@ -174,7 +174,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 					},
 					201, `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,

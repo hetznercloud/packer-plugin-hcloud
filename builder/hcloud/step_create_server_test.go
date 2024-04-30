@@ -41,7 +41,7 @@ func TestStepCreateServer(t *testing.T) {
 					},
 					201, `{
 						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }}},
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
@@ -92,7 +92,7 @@ func TestStepCreateServer(t *testing.T) {
 					},
 					201, `{
 						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }}},
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
@@ -172,7 +172,7 @@ func TestStepCreateServer(t *testing.T) {
 					},
 					201, `{
 						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "127.0.0.1" }, "ipv6": { "ip": "::1" }}},
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
@@ -255,7 +255,7 @@ func TestStepCreateServer(t *testing.T) {
 					},
 					201, `{
 						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "127.0.0.1" }, "ipv6": { "ip": "::1" }}},
-						"action": { "id": 3, "status": "progress" }
+						"action": { "id": 3, "status": "running" }
 					}`,
 				},
 				{"GET", "/actions/3", nil,
