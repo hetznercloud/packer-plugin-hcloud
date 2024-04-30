@@ -110,3 +110,5 @@ require (
 )
 
 replace github.com/zclconf/go-cty => github.com/nywilken/go-cty v1.13.3 // added by packer-sdc fix as noted in github.com/hashicorp/packer-plugin-sdk/issues/187
+
+replace github.com/hetznercloud/hcloud-go/v2 => github.com/hetznercloud/hcloud-go/v2 v2.7.3-0.20240430130644-7bb1a7b9ae5f
