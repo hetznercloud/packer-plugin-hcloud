@@ -64,7 +64,7 @@ runtime in order to build packer with the Hetzner Cloud plugin.
 
 1. This project always releases from the latest version of golang.
    [Install go](https://golang.org/doc/install#install) To properly build from
-   source, you need to have golang >= 1.20
+   source, you need to have golang >= 1.21
 
 ## Setting up Hetzner Cloud plugin for dev
 

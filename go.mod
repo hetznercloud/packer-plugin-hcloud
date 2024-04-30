@@ -1,6 +1,6 @@
 module github.com/hetznercloud/packer-plugin-hcloud
 
-go 1.19
+go 1.21
 
 require (
 	github.com/hashicorp/hcl/v2 v2.20.1
