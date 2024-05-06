@@ -44,9 +44,12 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions/3", nil,
+				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
 					200, `{
-						"action": { "id": 3, "status": "success" }
+						"actions": [
+							{ "id": 3, "status": "success" }
+						],
+						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
 			},
@@ -95,9 +98,12 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions/3", nil,
+				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
 					200, `{
-						"action": { "id": 3, "status": "success" }
+						"actions": [
+							{ "id": 3, "status": "success" }
+						],
+						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
 			},
@@ -175,9 +181,12 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions/3", nil,
+				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
 					200, `{
-						"action": { "id": 3, "status": "success" }
+						"actions": [
+							{ "id": 3, "status": "success" }
+						],
+						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
 			},
@@ -258,9 +267,12 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions/3", nil,
+				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
 					200, `{
-						"action": { "id": 3, "status": "success" }
+						"actions": [
+							{ "id": 3, "status": "success" }
+						],
+						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
 			},
