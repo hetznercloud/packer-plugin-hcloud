@@ -26,17 +26,11 @@ func (s *stepShutdownServer) Run(ctx context.Context, state multistep.StateBag) 
 		return errorHandler(state, ui, "Error stopping server", err)
 	}
 
-	_, errCh := client.Action.WatchProgress(ctx, action)
-	for {
-		select {
-		case err1 := <-errCh:
-			if err1 == nil {
-				return multistep.ActionContinue
-			} else {
-				return errorHandler(state, ui, "Error stopping server", err)
-			}
-		}
+	if err := client.Action.WaitFor(ctx, action); err != nil {
+		return errorHandler(state, ui, "Error stopping server", err)
 	}
+
+	return multistep.ActionContinue
 }
 
 func (s *stepShutdownServer) Cleanup(state multistep.StateBag) {

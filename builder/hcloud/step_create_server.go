@@ -124,13 +124,11 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	// instance id inside of the provisioners, used in step_provision.
 	state.Put(StateInstanceID, serverCreateResult.Server.ID)
 
-	if err := waitForAction(ctx, client, serverCreateResult.Action); err != nil {
+	if err := client.Action.WaitFor(ctx, serverCreateResult.Action); err != nil {
 		return errorHandler(state, ui, "Could not create server", err)
 	}
-	for _, nextAction := range serverCreateResult.NextActions {
-		if err := waitForAction(ctx, client, nextAction); err != nil {
-			return errorHandler(state, ui, "Could not create server", err)
-		}
+	if err := client.Action.WaitFor(ctx, serverCreateResult.NextActions...); err != nil {
+		return errorHandler(state, ui, "Could not create server", err)
 	}
 
 	if c.UpgradeServerType != "" {
@@ -143,7 +141,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			return errorHandler(state, ui, "Could not upgrade server type", err)
 		}
 
-		if err := waitForAction(ctx, client, serverChangeTypeAction); err != nil {
+		if err := client.Action.WaitFor(ctx, serverChangeTypeAction); err != nil {
 			return errorHandler(state, ui, "Could not upgrade server type", err)
 		}
 
@@ -153,7 +151,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			return errorHandler(state, ui, "Could not start server", err)
 		}
 
-		if err := waitForAction(ctx, client, serverPoweronAction); err != nil {
+		if err := client.Action.WaitFor(ctx, serverPoweronAction); err != nil {
 			return errorHandler(state, ui, "Could not start server", err)
 		}
 	}
@@ -169,7 +167,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		if err != nil {
 			return errorHandler(state, ui, "Could not reboot server", err)
 		}
-		if err := waitForAction(ctx, client, action); err != nil {
+		if err := client.Action.WaitFor(ctx, action); err != nil {
 			return errorHandler(state, ui, "Could not reboot server", err)
 		}
 	}
@@ -201,7 +199,7 @@ func setRescue(ctx context.Context, client *hcloud.Client, server *hcloud.Server
 		if err != nil {
 			return "", err
 		}
-		if err := waitForAction(ctx, client, action); err != nil {
+		if err := client.Action.WaitFor(ctx, action); err != nil {
 			return "", err
 		}
 	}
@@ -214,7 +212,7 @@ func setRescue(ctx context.Context, client *hcloud.Client, server *hcloud.Server
 		if err != nil {
 			return "", err
 		}
-		if err := waitForAction(ctx, client, res.Action); err != nil {
+		if err := client.Action.WaitFor(ctx, res.Action); err != nil {
 			return "", err
 		}
 		return res.RootPassword, nil
@@ -225,19 +223,11 @@ func setRescue(ctx context.Context, client *hcloud.Client, server *hcloud.Server
 		if err != nil {
 			return "", err
 		}
-		if err := waitForAction(ctx, client, action); err != nil {
+		if err := client.Action.WaitFor(ctx, action); err != nil {
 			return "", err
 		}
 	}
 	return "", nil
-}
-
-func waitForAction(ctx context.Context, client *hcloud.Client, action *hcloud.Action) error {
-	_, errCh := client.Action.WatchProgress(ctx, action)
-	if err := <-errCh; err != nil {
-		return err
-	}
-	return nil
 }
 
 func getImageWithSelectors(ctx context.Context, client *hcloud.Client, c *Config, serverType *hcloud.ServerType) (*hcloud.Image, error) {
