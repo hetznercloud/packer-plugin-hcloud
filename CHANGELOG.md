@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.3.0...v1.4.0) (2024-05-06)
+
+
+### Features
+
+* enable hcloud-go debug logging ([#167](https://github.com/hetznercloud/packer-plugin-hcloud/issues/167)) ([1ab544e](https://github.com/hetznercloud/packer-plugin-hcloud/commit/1ab544ebd1b4ad862f19ff2ec07c129feeef5434)), closes [#165](https://github.com/hetznercloud/packer-plugin-hcloud/issues/165)
+
 ## [1.3.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.2.1...v1.3.0) (2024-01-09)
 
 
