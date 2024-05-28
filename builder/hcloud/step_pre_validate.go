@@ -38,7 +38,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		if err != nil {
 			return errorHandler(state, ui, fmt.Sprintf("Could not fetch upgrade server type '%s'", c.UpgradeServerType), err)
 		}
-		if serverType == nil {
+		if upgradeServerType == nil {
 			return errorHandler(state, ui, "", fmt.Errorf("Could not find upgrade server type '%s'", c.UpgradeServerType))
 		}
 
