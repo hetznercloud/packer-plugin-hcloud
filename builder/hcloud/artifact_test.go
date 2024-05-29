@@ -10,6 +10,7 @@ import (
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestArtifact_Impl(t *testing.T) {
@@ -75,15 +76,11 @@ func TestArtifactState_hcpPackerRegistryMetadata(t *testing.T) {
 	}
 
 	result := artifact.State(registryimage.ArtifactStateURI)
-	if result == nil {
-		t.Fatalf("Bad: HCP Packer registry image data was nil")
-	}
+	require.NotNil(t, result)
 
-	// check for proper decoding of result into slice of registryimage.Image
 	var image registryimage.Image
-	err := mapstructure.Decode(result, &image)
-	if err != nil {
-		t.Errorf("Bad: unexpected error when trying to decode state into registryimage.Image %v", err)
+	if err := mapstructure.Decode(result, &image); err != nil {
+		t.Errorf("unexpected error when trying to decode state into registryimage.Image %v", err)
 	}
 
 	assert.Equal(t, registryimage.Image{
