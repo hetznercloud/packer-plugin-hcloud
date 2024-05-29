@@ -4,39 +4,42 @@
 packer {
   required_plugins {
     hcloud = {
-      version = ">=1.1.0"
       source  = "github.com/hetznercloud/hcloud"
+      version = ">=1.1.0"
     }
   }
 }
 
 variable "hcloud_token" {
   type      = string
-  default   = "${env("HCLOUD_TOKEN")}"
   sensitive = true
+  default   = "${env("HCLOUD_TOKEN")}"
 }
 
 source "hcloud" "example" {
-  image       = "ubuntu-22.04"
+  token = var.hcloud_token
+
   location    = "hel1"
+  image       = "ubuntu-24.04"
+  server_type = "cpx11"
   server_name = "hcloud-example"
-  server_type = "cx11"
+
+  ssh_username = "root"
+
+  snapshot_name = "hcloud-example"
   snapshot_labels = {
     app = "hcloud-example"
   }
-  snapshot_name = "hcloud-example"
-  ssh_username  = "root"
-  token         = var.hcloud_token
 }
 
 build {
   sources = ["source.hcloud.example"]
 
   provisioner "shell" {
-    inline = ["cloud-init status --wait"]
+    inline = ["cloud-init status --wait || test $? -eq 2"]
   }
 
   provisioner "shell" {
-    inline = ["echo \"Hello World!\" > /var/log/packer.log"]
+    inline = ["echo 'Hello World!' > /var/log/packer.log"]
   }
 }
