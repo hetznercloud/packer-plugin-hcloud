@@ -106,7 +106,6 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			"generated_data":  state.Get(StateGeneratedData),
 			"source_image":    b.config.Image,
 			"source_image_id": state.Get(StateSourceImageID),
-			"region":          b.config.Location,
 			"server_type":     b.config.ServerType,
 		},
 	}

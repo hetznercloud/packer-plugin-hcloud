@@ -70,7 +70,6 @@ func TestArtifactState_hcpPackerRegistryMetadata(t *testing.T) {
 		StateData: map[string]interface{}{
 			"source_image":    "ubuntu-24.04",
 			"source_image_id": int64(161547269),
-			"region":          "hel1",
 			"server_type":     "cpx11",
 		},
 	}
