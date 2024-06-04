@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
@@ -21,6 +22,7 @@ func TestStepCreateServer(t *testing.T) {
 			Step: &stepCreateServer{},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -28,12 +30,17 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
+					}`,
+				},
 				{"POST", "/servers",
 					func(t *testing.T, r *http.Request, body []byte) {
 						payload := schema.ServerCreateRequest{}
 						assert.NoError(t, json.Unmarshal(body, &payload))
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
 						assert.Nil(t, payload.Networks)
@@ -76,6 +83,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -83,12 +91,17 @@ func TestStepCreateServer(t *testing.T) {
 						"ssh_key": { "id": 1 }
 					}`,
 				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
+					}`,
+				},
 				{"POST", "/servers",
 					func(t *testing.T, r *http.Request, body []byte) {
 						payload := schema.ServerCreateRequest{}
 						assert.NoError(t, json.Unmarshal(body, &payload))
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
 						assert.Equal(t, []int64{12}, payload.Networks)
@@ -132,11 +145,17 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
 					200, `{
 						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
 				{"GET", "/primary_ips?name=permanent-packer-ipv4", nil,
@@ -168,7 +187,7 @@ func TestStepCreateServer(t *testing.T) {
 						payload := schema.ServerCreateRequest{}
 						assert.NoError(t, json.Unmarshal(body, &payload))
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
 						assert.Nil(t, payload.Networks)
@@ -214,11 +233,17 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
 					200, `{
 						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,
@@ -254,7 +279,7 @@ func TestStepCreateServer(t *testing.T) {
 						payload := schema.ServerCreateRequest{}
 						assert.NoError(t, json.Unmarshal(body, &payload))
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, "debian-12", payload.Image)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
 						assert.Nil(t, payload.Networks)
@@ -299,11 +324,17 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
 					200, `{
 						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,
@@ -329,11 +360,17 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
 					200, `{
 						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,
@@ -359,11 +396,17 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
 					200, `{
 						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,
@@ -389,11 +432,17 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
 					200, `{
 						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{"GET", "/images?architecture=x86&include_deprecated=true&name=debian-12", nil,
+					200, `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
 				{"GET", "/primary_ips?name=127.0.0.1", nil,

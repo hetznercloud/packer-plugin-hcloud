@@ -9,6 +9,8 @@ import (
 	"log"
 	"strconv"
 
+	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
+
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
@@ -44,7 +46,37 @@ func (a *Artifact) String() string {
 }
 
 func (a *Artifact) State(name string) interface{} {
+	if name == registryimage.ArtifactStateURI {
+		return a.stateHCPPackerRegistryMetadata()
+	}
 	return a.StateData[name]
+}
+
+func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
+	labels := make(map[string]string)
+
+	// Those labels contains the value the user specified in their template
+	sourceImage, ok := a.StateData["source_image"].(string)
+	if ok {
+		labels["source_image"] = sourceImage
+	}
+	serverType, ok := a.StateData["server_type"].(string)
+	if ok {
+		labels["server_type"] = serverType
+	}
+
+	img := &registryimage.Image{
+		ImageID:      a.Id(),
+		ProviderName: "hetznercloud", // Use explicit name over the builder ID
+		Labels:       labels,
+	}
+
+	sourceImageID, ok := a.StateData["source_image_id"].(int64)
+	if ok {
+		img.SourceImageID = strconv.FormatInt(sourceImageID, 10)
+	}
+
+	return img
 }
 
 func (a *Artifact) Destroy() error {
