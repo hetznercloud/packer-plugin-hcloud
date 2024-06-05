@@ -23,6 +23,12 @@ servers that are launched within the Hetzner Cloud.
 The builder does _not_ manage images. Once it creates an image, it is up to you
 to use it or delete it.
 
+The builder will connect to the server using the first available IP, in the following order:
+
+- `public_ipv4`
+- `public_ipv6`
+- `private_ipv4`
+
 ## Configuration Reference
 
 There are many configuration options available for the builder. They are
