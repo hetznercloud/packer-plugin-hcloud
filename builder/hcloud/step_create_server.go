@@ -135,6 +135,17 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	// instance id inside of the provisioners, used in step_provision.
 	state.Put(StateInstanceID, server.ID)
 
+	switch {
+	case !server.PublicNet.IPv4.IsUnspecified():
+		state.Put(StateServerIP, server.PublicNet.IPv4.IP.String())
+	case !server.PublicNet.IPv6.IsUnspecified():
+		state.Put(StateServerIP, server.PublicNet.IPv6.IP.String())
+	case len(server.PrivateNet) > 0:
+		state.Put(StateServerIP, server.PrivateNet[0].IP.String())
+	default:
+		return errorHandler(state, ui, "", fmt.Errorf("Could not find server ip"))
+	}
+
 	if c.UpgradeServerType != "" {
 		ui.Say("Upgrading server type...")
 		serverChangeTypeAction, _, err := client.Server.ChangeType(ctx, server, hcloud.ServerChangeTypeOpts{
