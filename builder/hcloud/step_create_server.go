@@ -86,7 +86,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		},
 	}
 
-	if c.PublicIPv4 != "" {
+	if !c.PublicIPv4Disabled && c.PublicIPv4 != "" {
 		publicIPv4, msg, err := getPrimaryIP(ctx, client, c.PublicIPv4)
 		if err != nil {
 			return errorHandler(state, ui, msg, err)
@@ -97,7 +97,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		serverCreateOpts.PublicNet.IPv4 = publicIPv4
 	}
 
-	if c.PublicIPv6 != "" {
+	if !c.PublicIPv6Disabled && c.PublicIPv6 != "" {
 		publicIPv6, msg, err := getPrimaryIP(ctx, client, c.PublicIPv6)
 		if err != nil {
 			return errorHandler(state, ui, msg, err)
