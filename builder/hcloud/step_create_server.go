@@ -80,34 +80,32 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		UserData:   userData,
 		Networks:   networks,
 		Labels:     c.ServerLabels,
+		PublicNet: &hcloud.ServerCreatePublicNet{
+			EnableIPv4: !c.PublicIPv4Disabled,
+			EnableIPv6: !c.PublicIPv6Disabled,
+		},
 	}
 
-	if c.PublicIPv4 != "" || c.PublicIPv6 != "" {
-		publicNetOpts := hcloud.ServerCreatePublicNet{
-			EnableIPv4: true,
-			EnableIPv6: true,
+	if c.PublicIPv4 != "" {
+		publicIPv4, msg, err := getPrimaryIP(ctx, client, c.PublicIPv4)
+		if err != nil {
+			return errorHandler(state, ui, msg, err)
 		}
-		if c.PublicIPv4 != "" {
-			publicIPv4, msg, err := getPrimaryIP(ctx, client, c.PublicIPv4)
-			if err != nil {
-				return errorHandler(state, ui, msg, err)
-			}
-			if publicIPv4.Type != hcloud.PrimaryIPTypeIPv4 {
-				return errorHandler(state, ui, "", fmt.Errorf("Primary ip %s is not an IPv4 address", c.PublicIPv4))
-			}
-			publicNetOpts.IPv4 = publicIPv4
+		if publicIPv4.Type != hcloud.PrimaryIPTypeIPv4 {
+			return errorHandler(state, ui, "", fmt.Errorf("Primary ip %s is not an IPv4 address", c.PublicIPv4))
 		}
-		if c.PublicIPv6 != "" {
-			publicIPv6, msg, err := getPrimaryIP(ctx, client, c.PublicIPv6)
-			if err != nil {
-				return errorHandler(state, ui, msg, err)
-			}
-			if publicIPv6.Type != hcloud.PrimaryIPTypeIPv6 {
-				return errorHandler(state, ui, "", fmt.Errorf("Primary ip %s is not an IPv6 address", c.PublicIPv6))
-			}
-			publicNetOpts.IPv6 = publicIPv6
+		serverCreateOpts.PublicNet.IPv4 = publicIPv4
+	}
+
+	if c.PublicIPv6 != "" {
+		publicIPv6, msg, err := getPrimaryIP(ctx, client, c.PublicIPv6)
+		if err != nil {
+			return errorHandler(state, ui, msg, err)
 		}
-		serverCreateOpts.PublicNet = &publicNetOpts
+		if publicIPv6.Type != hcloud.PrimaryIPTypeIPv6 {
+			return errorHandler(state, ui, "", fmt.Errorf("Primary ip %s is not an IPv6 address", c.PublicIPv6))
+		}
+		serverCreateOpts.PublicNet.IPv6 = publicIPv6
 	}
 
 	if c.UpgradeServerType != "" {

@@ -46,9 +46,12 @@ type Config struct {
 	UserDataFile   string            `mapstructure:"user_data_file"`
 	SSHKeys        []string          `mapstructure:"ssh_keys"`
 	SSHKeysLabels  map[string]string `mapstructure:"ssh_keys_labels"`
-	Networks       []int64           `mapstructure:"networks"`
-	PublicIPv4     string            `mapstructure:"public_ipv4"`
-	PublicIPv6     string            `mapstructure:"public_ipv6"`
+
+	Networks           []int64 `mapstructure:"networks"`
+	PublicIPv4         string  `mapstructure:"public_ipv4"`
+	PublicIPv4Disabled bool    `mapstructure:"public_ipv4_disabled"`
+	PublicIPv6         string  `mapstructure:"public_ipv6"`
+	PublicIPv6Disabled bool    `mapstructure:"public_ipv6_disabled"`
 
 	RescueMode string `mapstructure:"rescue"`
 
