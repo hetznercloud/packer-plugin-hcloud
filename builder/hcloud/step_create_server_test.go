@@ -43,8 +43,9 @@ func TestStepCreateServer(t *testing.T) {
 						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
 						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.True(t, payload.PublicNet.EnableIPv4)
+						assert.True(t, payload.PublicNet.EnableIPv6)
 						assert.Nil(t, payload.Networks)
-						assert.Nil(t, payload.PublicNet)
 					},
 					201, `{
 						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }}},
