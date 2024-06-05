@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 # See http://goreleaser.com
-# version: 1
+version: 2
 
 builds:
   - id: build
