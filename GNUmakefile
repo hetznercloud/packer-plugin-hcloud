@@ -4,6 +4,7 @@ ifeq ($(OS), Windows_NT)
 # Prevent "Ignoring plugin match packer-plugin-hcloud, no exe extension"
 BINARY=packer-plugin-$(NAME).exe
 endif
+FQN=$(shell go list | sed 's/packer-plugin-//')
 
 COUNT?=1
 TEST?=./...
@@ -15,8 +16,7 @@ build:
 	go build -o $(BINARY)
 
 dev: build
-	mkdir -p ~/.config/packer/plugins
-	mv $(BINARY) ~/.config/packer/plugins
+	packer plugins install --path $(BINARY) $(FQN)
 
 test:
 	go test -race -count $(COUNT) -v $(TEST) -timeout=3m -coverprofile=coverage.txt
@@ -27,8 +27,8 @@ install-packer-sdc: ## Install packer software development command
 plugin-check: install-packer-sdc build
 	packer-sdc plugin-check $(BINARY)
 
-testacc: build
-	PACKER_ACC=1 PACKER_PLUGIN_PATH=$(PWD) go test -count $(COUNT) -v $(TEST) -timeout=120m -coverprofile=coverage.txt
+testacc: dev
+	PACKER_ACC=1 go test -count $(COUNT) -v $(TEST) -timeout=120m -coverprofile=coverage.txt
 
 generate: install-packer-sdc
 	go generate ./...
