@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.4.0...v1.5.0) (2024-06-05)
+
+
+### Features
+
+* add HCP packer support ([#122](https://github.com/hetznercloud/packer-plugin-hcloud/issues/122)) ([85435ef](https://github.com/hetznercloud/packer-plugin-hcloud/commit/85435efce96f06f0fd6f7016732d66cf9d2b6cac))
+* allow disabling the server public ips ([#190](https://github.com/hetznercloud/packer-plugin-hcloud/issues/190)) ([82e6cdb](https://github.com/hetznercloud/packer-plugin-hcloud/commit/82e6cdb5ec589cc3de10159d74bcd7b352e67eec)), closes [#188](https://github.com/hetznercloud/packer-plugin-hcloud/issues/188)
+
+
+### Bug Fixes
+
+* ensure the upgrade server type is not nil ([#182](https://github.com/hetznercloud/packer-plugin-hcloud/issues/182)) ([d297dcb](https://github.com/hetznercloud/packer-plugin-hcloud/commit/d297dcb44805f12d6a37b1218fe268dd633c48c1))
+
 ## [1.4.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.3.0...v1.4.0) (2024-05-06)
 
 
