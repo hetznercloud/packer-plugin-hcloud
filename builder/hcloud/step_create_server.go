@@ -116,15 +116,9 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	if err != nil {
 		return errorHandler(state, ui, "Could not create server", err)
 	}
-	state.Put(StateServerIP, serverCreateResult.Server.PublicNet.IPv4.IP.String())
+
 	// We use this in cleanup
 	s.serverId = serverCreateResult.Server.ID
-
-	// Store the server id for later
-	state.Put(StateServerID, serverCreateResult.Server.ID)
-	// instance_id is the generic term used so that users can have access to the
-	// instance id inside of the provisioners, used in step_provision.
-	state.Put(StateInstanceID, serverCreateResult.Server.ID)
 
 	if err := client.Action.WaitFor(ctx, serverCreateResult.Action); err != nil {
 		return errorHandler(state, ui, "Could not create server", err)
@@ -133,9 +127,17 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		return errorHandler(state, ui, "Could not create server", err)
 	}
 
+	// Store server data for later
+	server := serverCreateResult.Server
+
+	state.Put(StateServerID, server.ID)
+	// instance_id is the generic term used so that users can have access to the
+	// instance id inside of the provisioners, used in step_provision.
+	state.Put(StateInstanceID, server.ID)
+
 	if c.UpgradeServerType != "" {
 		ui.Say("Upgrading server type...")
-		serverChangeTypeAction, _, err := client.Server.ChangeType(ctx, serverCreateResult.Server, hcloud.ServerChangeTypeOpts{
+		serverChangeTypeAction, _, err := client.Server.ChangeType(ctx, server, hcloud.ServerChangeTypeOpts{
 			ServerType:  &hcloud.ServerType{Name: c.UpgradeServerType},
 			UpgradeDisk: false,
 		})
@@ -148,7 +150,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		}
 
 		ui.Say("Starting server...")
-		serverPoweronAction, _, err := client.Server.Poweron(ctx, serverCreateResult.Server)
+		serverPoweronAction, _, err := client.Server.Poweron(ctx, server)
 		if err != nil {
 			return errorHandler(state, ui, "Could not start server", err)
 		}
@@ -160,12 +162,12 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 	if c.RescueMode != "" {
 		ui.Say("Enabling Rescue Mode...")
-		_, err := setRescue(ctx, client, serverCreateResult.Server, c.RescueMode, sshKeys)
+		_, err := setRescue(ctx, client, server, c.RescueMode, sshKeys)
 		if err != nil {
 			return errorHandler(state, ui, "Could not enable rescue mode", err)
 		}
 		ui.Say("Rebooting server...")
-		action, _, err := client.Server.Reset(ctx, serverCreateResult.Server)
+		action, _, err := client.Server.Reset(ctx, server)
 		if err != nil {
 			return errorHandler(state, ui, "Could not reboot server", err)
 		}
