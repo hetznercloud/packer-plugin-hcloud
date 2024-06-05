@@ -22,7 +22,7 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - uses: goreleaser/goreleaser-action@v5
+      - uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release --clean --timeout 120m --snapshot --skip=sign

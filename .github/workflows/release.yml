@@ -34,7 +34,7 @@ jobs:
         run: echo "api_version=$(go run . describe | jq -r '.api_version')" >> "$GITHUB_OUTPUT"
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release --clean --timeout 120m
