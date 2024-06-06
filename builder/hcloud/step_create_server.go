@@ -6,6 +6,7 @@ package hcloud
 import (
 	"context"
 	"fmt"
+	"net/netip"
 	"os"
 	"sort"
 	"strings"
@@ -135,16 +136,11 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	// instance id inside of the provisioners, used in step_provision.
 	state.Put(StateInstanceID, server.ID)
 
-	switch {
-	case !server.PublicNet.IPv4.IsUnspecified():
-		state.Put(StateServerIP, server.PublicNet.IPv4.IP.String())
-	case !server.PublicNet.IPv6.IsUnspecified():
-		state.Put(StateServerIP, server.PublicNet.IPv6.IP.String())
-	case len(server.PrivateNet) > 0:
-		state.Put(StateServerIP, server.PrivateNet[0].IP.String())
-	default:
-		return errorHandler(state, ui, "", fmt.Errorf("Could not find server ip"))
+	serverIP := firstAvailableIP(server)
+	if serverIP == "" {
+		return errorHandler(state, ui, "", fmt.Errorf("Could not find available ip"))
 	}
+	state.Put(StateServerIP, serverIP)
 
 	if c.UpgradeServerType != "" {
 		ui.Say("Upgrading server type...")
@@ -290,4 +286,19 @@ func getPrimaryIP(ctx context.Context, client *hcloud.Client, publicIP string) (
 		}
 	}
 	return hcloudPublicIP, "", nil
+}
+
+func firstAvailableIP(server *hcloud.Server) string {
+	switch {
+	case !server.PublicNet.IPv4.IsUnspecified():
+		return server.PublicNet.IPv4.IP.String()
+	case !server.PublicNet.IPv6.IsUnspecified():
+		network, ok := netip.AddrFromSlice(server.PublicNet.IPv6.IP)
+		if ok {
+			return network.Next().String()
+		}
+	case len(server.PrivateNet) > 0:
+		return server.PrivateNet[0].IP.String()
+	}
+	return ""
 }
