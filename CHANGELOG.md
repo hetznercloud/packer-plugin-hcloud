@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.0...v1.5.1) (2024-06-06)
+
+
+### Bug Fixes
+
+* use first host ip in public ipv6 network ([#192](https://github.com/hetznercloud/packer-plugin-hcloud/issues/192)) ([77bb637](https://github.com/hetznercloud/packer-plugin-hcloud/commit/77bb637283c936f793ca73d2c3ea411e28914830))
+
 ## [1.5.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.4.0...v1.5.0) (2024-06-05)
 
 
