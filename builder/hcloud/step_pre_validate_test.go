@@ -21,17 +21,17 @@ func TestStepPreValidate(t *testing.T) {
 				Force:        false,
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cx22"
 			},
 			WantRequests: []Request{
-				{"GET", "/server_types?name=cpx11", nil,
+				{"GET", "/server_types?name=cx22", nil,
 					200, `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 9, "name": "cx22", "architecture": "x86"}]
 					}`,
 				},
-				{"GET", "/server_types?name=cpx21", nil,
+				{"GET", "/server_types?name=cx22", nil,
 					200, `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 10, "name": "cx22", "architecture": "x86"}]
 					}`,
 				},
 				{"GET", "/images?architecture=x86&page=1&type=snapshot", nil,
@@ -44,7 +44,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"}, *serverType)
 
 				_, ok = state.Get(StateSnapshotIDOld).(int64)
 				assert.False(t, ok)
@@ -57,17 +57,17 @@ func TestStepPreValidate(t *testing.T) {
 				Force:        false,
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cx22"
 			},
 			WantRequests: []Request{
-				{"GET", "/server_types?name=cpx11", nil,
+				{"GET", "/server_types?name=cx22", nil,
 					200, `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 9, "name": "cx22", "architecture": "x86"}]
 					}`,
 				},
-				{"GET", "/server_types?name=cpx21", nil,
+				{"GET", "/server_types?name=cx22", nil,
 					200, `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 10, "name": "cx22", "architecture": "x86"}]
 					}`,
 				},
 				{"GET", "/images?architecture=x86&page=1&type=snapshot", nil,
@@ -80,7 +80,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"}, *serverType)
 
 				_, ok = state.Get(StateSnapshotIDOld).(int64)
 				assert.False(t, ok)
@@ -98,17 +98,17 @@ func TestStepPreValidate(t *testing.T) {
 				Force:        true,
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cx22"
 			},
 			WantRequests: []Request{
-				{"GET", "/server_types?name=cpx11", nil,
+				{"GET", "/server_types?name=cx22", nil,
 					200, `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 9, "name": "cx22", "architecture": "x86"}]
 					}`,
 				},
-				{"GET", "/server_types?name=cpx21", nil,
+				{"GET", "/server_types?name=cx22", nil,
 					200, `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 10, "name": "cx22", "architecture": "x86"}]
 					}`,
 				},
 				{"GET", "/images?architecture=x86&page=1&type=snapshot", nil,
@@ -121,7 +121,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"}, *serverType)
 
 				snapshotIDOld, ok := state.Get(StateSnapshotIDOld).(int64)
 				assert.True(t, ok)

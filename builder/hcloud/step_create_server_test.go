@@ -22,7 +22,7 @@ func TestStepCreateServer(t *testing.T) {
 			Step: &stepCreateServer{},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -42,7 +42,7 @@ func TestStepCreateServer(t *testing.T) {
 						assert.Equal(t, "dummy-server", payload.Name)
 						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cx22", payload.ServerType)
 						assert.True(t, payload.PublicNet.EnableIPv4)
 						assert.True(t, payload.PublicNet.EnableIPv6)
 						assert.Nil(t, payload.Networks)
@@ -84,7 +84,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -104,7 +104,7 @@ func TestStepCreateServer(t *testing.T) {
 						assert.Equal(t, "dummy-server", payload.Name)
 						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cx22", payload.ServerType)
 						assert.Equal(t, []int64{12}, payload.Networks)
 					},
 					201, `{
@@ -146,7 +146,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -190,7 +190,7 @@ func TestStepCreateServer(t *testing.T) {
 						assert.Equal(t, "dummy-server", payload.Name)
 						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cx22", payload.ServerType)
 						assert.Nil(t, payload.Networks)
 						assert.NotNil(t, payload.PublicNet)
 						assert.Equal(t, int64(1), payload.PublicNet.IPv4ID)
@@ -234,7 +234,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -282,7 +282,7 @@ func TestStepCreateServer(t *testing.T) {
 						assert.Equal(t, "dummy-server", payload.Name)
 						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cx22", payload.ServerType)
 						assert.Nil(t, payload.Networks)
 						assert.NotNil(t, payload.PublicNet)
 						assert.Equal(t, int64(1), payload.PublicNet.IPv4ID)
@@ -325,7 +325,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -361,7 +361,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -397,7 +397,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,
@@ -433,7 +433,7 @@ func TestStepCreateServer(t *testing.T) {
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
-				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cx22", Architecture: "x86"})
 			},
 			WantRequests: []Request{
 				{"GET", "/ssh_keys/1", nil,

@@ -45,7 +45,7 @@ func RunStepTestCases(t *testing.T, testCases []StepTestCase) {
 				ServerName:   "dummy-server",
 				Image:        "debian-12",
 				SnapshotName: "dummy-snapshot",
-				ServerType:   "cpx11",
+				ServerType:   "cx22",
 				Location:     "nbg1",
 				SSHKeys:      []string{"1"},
 			}
