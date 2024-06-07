@@ -157,7 +157,7 @@ source "hcloud" "basic_example" {
   token = "YOUR API TOKEN"
   image = "ubuntu-22.04"
   location = "nbg1"
-  server_type = "cx11"
+  server_type = "cx22"
   ssh_username = "root"
 }
 
