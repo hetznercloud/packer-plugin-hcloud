@@ -5,7 +5,7 @@ packer {
   required_plugins {
     hcloud = {
       source  = "github.com/hetznercloud/hcloud"
-      version = ">=1.1.0"
+      version = ">=1.5.1"
     }
   }
 }
@@ -45,7 +45,8 @@ build {
   sources = ["source.hcloud.example"]
 
   provisioner "shell" {
-    inline = ["cloud-init status --wait || test $? -eq 2"]
+    inline           = ["cloud-init status --wait --long"]
+    valid_exit_codes = [0, 2]
   }
 
   provisioner "shell" {
