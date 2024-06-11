@@ -14,10 +14,10 @@ to use it or delete it.
 
 The builder will connect to the server using the first available IP, in the following order:
 
-- `public_ipv4`: If enabled, the public IPv4 will be used, 
+- `public_ipv4`: If enabled, the public IPv4 will be used,
 - `public_ipv6`: If enabled, the public IPv6 will be used,
-- `private_ipv4`: If the server is attached to private networks, the private IPv4 of the 
-  first private network will be used. 
+- `private_ipv4`: If the server is attached to private networks, the private IPv4 of the
+  first private network will be used.
 
 ## Configuration Reference
 
@@ -170,3 +170,66 @@ build {
 ```
 
 See the [examples](https://github.com/hetznercloud/packer-plugin-hcloud/tree/main/example) folder in the Packer project for more examples.
+
+## Tips
+
+### Keeping the images size small
+
+To reduce the size of your images, we recommend cleaning up any temporary files that
+were added during the build process and discard the unused blocks from the disk.
+
+Below are a few commands that might useful:
+
+- Clean and reset could-init files:
+
+  ```bash
+  cloud-init clean --logs --machine-id --seed --configs all
+
+  rm -rf /run/cloud-init/*
+  rm -rf /var/lib/cloud/*
+  ```
+
+- Clean apt files:
+
+  ```bash
+  export DEBIAN_FRONTEND=noninteractive
+
+  apt-get -y autopurge
+  apt-get -y clean
+
+  rm -rf /var/lib/apt/lists/*
+  ```
+
+- Clean logs:
+
+  ```bash
+  journalctl --flush
+  journalctl --rotate --vacuum-time=0
+
+  find /var/log -type f -exec truncate --size 0 {} \; # truncate system logs
+  find /var/log -type f -name '*.[1-9]' -delete # remove archived logs
+  find /var/log -type f -name '*.gz' -delete # remove compressed archived logs
+  ```
+
+- Reset host ssh keys:
+
+  ```bash
+  rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
+  ```
+
+Once the cleanup is complete, you must discard the now unused blocks from the disk. This can be done with the following:
+
+```bash
+dd if=/dev/zero of=/zero bs=4M || true
+sync
+rm -f /zero
+```
+
+To speed up the process above, you may configure cloud-init to not grow the system partition to the server disk size during the boot process, leaving you with a 4GB system partition:
+
+```yaml
+#cloud-config
+growpart:
+  mode: "off"
+resize_rootfs: false
+```
