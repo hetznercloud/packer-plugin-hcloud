@@ -15,7 +15,7 @@ Type: `hcloud`
 Artifact BuilderId: `hcloud.builder`
 
 The `hcloud` Packer builder is able to create new images for use with [Hetzner
-Cloud](https://www.hetzner.cloud). The builder takes a source image, runs any
+Cloud](https://www.hetzner.com/cloud/). The builder takes a source image, runs any
 provisioning necessary on the image after launching it, then snapshots it into
 a reusable image. This reusable image can then be used as the foundation of new
 servers that are launched within the Hetzner Cloud.
@@ -23,11 +23,14 @@ servers that are launched within the Hetzner Cloud.
 The builder does _not_ manage images. Once it creates an image, it is up to you
 to use it or delete it.
 
+## Connection to the server
+
 The builder will connect to the server using the first available IP, in the following order:
 
-- `public_ipv4`
-- `public_ipv6`
-- `private_ipv4`
+- `public_ipv4`: If enabled, the public IPv4 will be used, 
+- `public_ipv6`: If enabled, the public IPv6 will be used,
+- `private_ipv4`: If the server is attached to private networks, the private IPv4 of the 
+  first private network will be used. 
 
 ## Configuration Reference
 
@@ -75,7 +78,7 @@ builder.
   - `with_selector` (list of strings) - label selectors used to select an
     `image`. NOTE: This will fail unless _exactly_ one image is returned.
     Check the official hcloud docs on
-    [Label Selectors](https://docs.hetzner.cloud/#overview-label-selector)
+    [Label Selectors](https://docs.hetzner.cloud/#label-selector)
     for more info.
 
   - `most_recent` (boolean) - Selects the newest created image when true.
