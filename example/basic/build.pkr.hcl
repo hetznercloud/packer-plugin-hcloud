@@ -22,13 +22,13 @@ source "hcloud" "example" {
   location    = "hel1"
   image       = "ubuntu-24.04"
   server_type = "cpx11"
-  server_name = "hcloud-example"
+  server_name = "example-{{ timestamp }}"
 
   ssh_username = "root"
 
-  snapshot_name = "hcloud-example"
+  snapshot_name = "example-{{ timestamp }}"
   snapshot_labels = {
-    app = "hcloud-example"
+    app = "example"
   }
 }
 
