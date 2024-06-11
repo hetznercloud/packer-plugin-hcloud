@@ -68,7 +68,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: example
+        working-directory: example/basic
 
     env:
       PACKER_LOG: "1"
@@ -82,6 +82,6 @@ jobs:
         with:
           version: 1.11.0 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
-      - run: packer init build.pkr.hcl
-      - run: packer validate build.pkr.hcl
-      - run: packer build build.pkr.hcl
+      - run: packer init .
+      - run: packer validate .
+      - run: packer build .

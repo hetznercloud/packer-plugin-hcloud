@@ -5,7 +5,7 @@ packer {
   required_plugins {
     hcloud = {
       source  = "github.com/hetznercloud/hcloud"
-      version = ">=1.1.0"
+      version = ">=1.5.1"
     }
   }
 }
@@ -22,19 +22,20 @@ source "hcloud" "example" {
   location    = "hel1"
   image       = "ubuntu-24.04"
   server_type = "cpx11"
-  server_name = "hcloud-example"
+  server_name = "example-{{ timestamp }}"
 
   ssh_username = "root"
 
-  snapshot_name = "hcloud-example"
+  snapshot_name = "example-{{ timestamp }}"
   snapshot_labels = {
-    app = "hcloud-example"
+    app = "example"
   }
 }
 
 build {
   hcp_packer_registry {
     description = "A nice test description"
+
     bucket_name = "hcloud-hcp-test"
     bucket_labels = {
       "packer version" = packer.version
@@ -44,7 +45,8 @@ build {
   sources = ["source.hcloud.example"]
 
   provisioner "shell" {
-    inline = ["cloud-init status --wait || test $? -eq 2"]
+    inline           = ["cloud-init status --wait --long"]
+    valid_exit_codes = [0, 2]
   }
 
   provisioner "shell" {
