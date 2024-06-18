@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.1...v1.5.2) (2024-06-18)
+
+
+### Bug Fixes
+
+* update module github.com/hashicorp/packer-plugin-sdk to v0.5.4 ([#199](https://github.com/hetznercloud/packer-plugin-hcloud/issues/199)) ([b1c2f2f](https://github.com/hetznercloud/packer-plugin-hcloud/commit/b1c2f2fa9034a80b81214562bdeaab7feced62f5))
+
 ## [1.5.1](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.0...v1.5.1) (2024-06-06)
 
 
