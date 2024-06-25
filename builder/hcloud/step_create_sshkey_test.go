@@ -4,13 +4,13 @@
 package hcloud
 
 import (
-	"encoding/json"
 	"net/http"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
@@ -22,15 +22,15 @@ func TestStepCreateSSHKey(t *testing.T) {
 			SetupConfigFunc: func(c *Config) {
 				c.Comm.SSHPublicKey = []byte("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILBN85MgkHac/Q+iyPS8+88eBDn2SEGnU4/uLvj6lbT0")
 			},
-			WantRequests: []Request{
-				{"POST", "/ssh_keys",
-					func(t *testing.T, r *http.Request, body []byte) {
-						payload := schema.SSHKeyCreateRequest{}
-						assert.NoError(t, json.Unmarshal(body, &payload))
+			WantRequests: []mockutils.Request{
+				{Method: "POST", Path: "/ssh_keys",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.SSHKeyCreateRequest{})
 						assert.Regexp(t, "packer([a-z0-9-]+)$", payload.Name)
 						assert.Equal(t, "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILBN85MgkHac/Q+iyPS8+88eBDn2SEGnU4/uLvj6lbT0", payload.PublicKey)
 					},
-					201, `{
+					Status: 201,
+					JSONRaw: `{
 						"ssh_key": {
 							"id": 8,
 							"name": "packer-659596d1-93df-3868-8170-42139065172e",
@@ -55,9 +55,9 @@ func TestStepCleanupSSHKey(t *testing.T) {
 			Name:         "happy",
 			Step:         &stepCreateSSHKey{keyId: 1},
 			StepFuncName: "cleanup",
-			WantRequests: []Request{
-				{"DELETE", "/ssh_keys/1", nil,
-					204, "",
+			WantRequests: []mockutils.Request{
+				{Method: "DELETE", Path: "/ssh_keys/1",
+					Status: 204,
 				},
 			},
 		},

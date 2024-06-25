@@ -4,13 +4,13 @@
 package hcloud
 
 import (
-	"encoding/json"
 	"net/http"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
@@ -22,21 +22,22 @@ func TestStepCreateSnapshot(t *testing.T) {
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateServerID, int64(8))
 			},
-			WantRequests: []Request{
-				{"POST", "/servers/8/actions/create_image",
-					func(t *testing.T, r *http.Request, body []byte) {
-						payload := schema.ServerActionCreateImageRequest{}
-						assert.NoError(t, json.Unmarshal(body, &payload))
+			WantRequests: []mockutils.Request{
+				{Method: "POST", Path: "/servers/8/actions/create_image",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
 						assert.Equal(t, "snapshot", *payload.Type)
 					},
-					201, `{
+					Status: 201,
+					JSONRaw: `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
-					200, `{
+				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+					Status: 200,
+					JSONRaw: `{
 						"actions": [
 							{ "id": 3, "status": "success" }
 						],
@@ -61,15 +62,14 @@ func TestStepCreateSnapshot(t *testing.T) {
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateServerID, int64(8))
 			},
-			WantRequests: []Request{
-				{"POST", "/servers/8/actions/create_image",
-					func(t *testing.T, r *http.Request, body []byte) {
-						payload := schema.ServerActionCreateImageRequest{}
-						assert.NoError(t, json.Unmarshal(body, &payload))
+			WantRequests: []mockutils.Request{
+				{Method: "POST", Path: "/servers/8/actions/create_image",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
 						assert.Equal(t, "snapshot", *payload.Type)
 					},
-					400, "",
+					Status: 400,
 				},
 			},
 			WantStepAction: multistep.ActionHalt,
@@ -86,21 +86,22 @@ func TestStepCreateSnapshot(t *testing.T) {
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateServerID, int64(8))
 			},
-			WantRequests: []Request{
-				{"POST", "/servers/8/actions/create_image",
-					func(t *testing.T, r *http.Request, body []byte) {
-						payload := schema.ServerActionCreateImageRequest{}
-						assert.NoError(t, json.Unmarshal(body, &payload))
+			WantRequests: []mockutils.Request{
+				{Method: "POST", Path: "/servers/8/actions/create_image",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
 						assert.Equal(t, "snapshot", *payload.Type)
 					},
-					201, `{
+					Status: 201,
+					JSONRaw: `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
-					200, `{
+				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+					Status: 200,
+					JSONRaw: `{
 						"actions": [
 							{
 								"id": 3,
@@ -130,29 +131,30 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 				state.Put(StateSnapshotIDOld, int64(20))
 			},
-			WantRequests: []Request{
-				{"POST", "/servers/8/actions/create_image",
-					func(t *testing.T, r *http.Request, body []byte) {
-						payload := schema.ServerActionCreateImageRequest{}
-						assert.NoError(t, json.Unmarshal(body, &payload))
+			WantRequests: []mockutils.Request{
+				{Method: "POST", Path: "/servers/8/actions/create_image",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
 						assert.Equal(t, "snapshot", *payload.Type)
 					},
-					201, `{
+					Status: 201,
+					JSONRaw: `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
-					200, `{
+				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+					Status: 200,
+					JSONRaw: `{
 						"actions": [
 							{ "id": 3, "status": "success" }
 						],
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{"DELETE", "/images/20", nil,
-					204, "",
+				{Method: "DELETE", Path: "/images/20",
+					Status: 204,
 				},
 			},
 			WantStepAction: multistep.ActionContinue,
@@ -173,29 +175,30 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 				state.Put(StateSnapshotIDOld, int64(20))
 			},
-			WantRequests: []Request{
-				{"POST", "/servers/8/actions/create_image",
-					func(t *testing.T, r *http.Request, body []byte) {
-						payload := schema.ServerActionCreateImageRequest{}
-						assert.NoError(t, json.Unmarshal(body, &payload))
+			WantRequests: []mockutils.Request{
+				{Method: "POST", Path: "/servers/8/actions/create_image",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
 						assert.Equal(t, "snapshot", *payload.Type)
 					},
-					201, `{
+					Status: 201,
+					JSONRaw: `{
 						"image": { "id": 16, "description": "dummy-snapshot", "type": "snapshot" },
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{"GET", "/actions?id=3&page=1&sort=status&sort=id", nil,
-					200, `{
+				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+					Status: 200,
+					JSONRaw: `{
 						"actions": [
 							{ "id": 3, "status": "success" }
 						],
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{"DELETE", "/images/20", nil,
-					400, "",
+				{Method: "DELETE", Path: "/images/20",
+					Status: 400,
 				},
 			},
 			WantStepAction: multistep.ActionHalt,

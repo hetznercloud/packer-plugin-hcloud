@@ -2,8 +2,8 @@ package hcloud
 
 import (
 	"context"
+	"encoding/json"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -11,8 +11,10 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
 )
 
 type StepTestCase struct {
@@ -23,19 +25,10 @@ type StepTestCase struct {
 	SetupConfigFunc func(*Config)
 	SetupStateFunc  func(multistep.StateBag)
 
-	WantRequests []Request
+	WantRequests []mockutils.Request
 
 	WantStepAction multistep.StepAction
 	WantStateFunc  func(*testing.T, multistep.StateBag)
-}
-
-type Request struct {
-	Method              string
-	Path                string
-	WantRequestBodyFunc func(t *testing.T, r *http.Request, body []byte)
-
-	Status int
-	Body   string
 }
 
 func RunStepTestCases(t *testing.T, testCases []StepTestCase) {
@@ -54,7 +47,7 @@ func RunStepTestCases(t *testing.T, testCases []StepTestCase) {
 				tc.SetupConfigFunc(config)
 			}
 
-			server := NewTestServer(t, tc.WantRequests)
+			server := httptest.NewServer(mockutils.Handler(t, tc.WantRequests))
 			defer server.Close()
 			client := hcloud.NewClient(hcloud.WithEndpoint(server.URL))
 
@@ -81,46 +74,6 @@ func RunStepTestCases(t *testing.T, testCases []StepTestCase) {
 	}
 }
 
-func NewTestServer(t *testing.T, requests []Request) *httptest.Server {
-	index := 0
-
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if testing.Verbose() {
-			t.Logf("request %d: %s %s\n", index, r.Method, r.RequestURI)
-		}
-
-		if index >= len(requests) {
-			t.Fatalf("received unknown request %d", index)
-		}
-
-		response := requests[index]
-		assert.Equal(t, response.Method, r.Method)
-		assert.Equal(t, response.Path, r.RequestURI)
-
-		if response.WantRequestBodyFunc != nil {
-			buffer, err := io.ReadAll(r.Body)
-			defer func() {
-				if err := r.Body.Close(); err != nil {
-					t.Fatal(err)
-				}
-			}()
-			if err != nil {
-				t.Fatal(err)
-			}
-			response.WantRequestBodyFunc(t, r, buffer)
-		}
-
-		w.WriteHeader(response.Status)
-		w.Header().Set("Content-Type", "application/json")
-		_, err := w.Write([]byte(response.Body))
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		index++
-	}))
-}
-
 func NewTestState(t *testing.T) multistep.StateBag {
 	state := &multistep.BasicStateBag{}
 
@@ -131,4 +84,10 @@ func NewTestState(t *testing.T) multistep.StateBag {
 	}
 
 	return state
+}
+
+func decodeJSONBody[T any](t *testing.T, body io.ReadCloser, v *T) *T {
+	t.Helper()
+	require.NoError(t, json.NewDecoder(body).Decode(v))
+	return v
 }
