@@ -48,9 +48,9 @@ const testBuilderAccBasic = `
 {
 	"builders": [{
 		"type": "hcloud",
-		"location": "nbg1",
-		"server_type": "cx22",
-		"image": "ubuntu-22.04",
+		"location": "hel1",
+		"server_type": "cax11",
+		"image": "debian-12",
 		"user_data": "",
 		"user_data_file": "",
 		"ssh_username": "root"
