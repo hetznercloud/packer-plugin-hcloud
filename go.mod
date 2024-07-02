@@ -5,7 +5,7 @@ go 1.21.0
 toolchain go1.22.4
 
 require (
-	github.com/hashicorp/hcl/v2 v2.20.1
+	github.com/hashicorp/hcl/v2 v2.21.0
 	github.com/hashicorp/packer-plugin-sdk v0.5.4
 	github.com/hetznercloud/hcloud-go/v2 v2.10.2
 	github.com/mitchellh/mapstructure v1.5.0
