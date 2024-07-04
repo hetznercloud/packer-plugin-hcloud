@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/netip"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 
@@ -141,6 +142,16 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		return errorHandler(state, ui, "", fmt.Errorf("Could not find available ip"))
 	}
 	state.Put(StateServerIP, serverIP)
+
+	// Wait that the server to settle before continuing. Prevents possible `locked`
+	// error when changing the server type.
+	actions, err := getServerRunningActions(ctx, client, server)
+	if err != nil {
+		return errorHandler(state, ui, "Could not fetch server running actions", err)
+	}
+	if err := client.Action.WaitFor(ctx, actions...); err != nil {
+		return errorHandler(state, ui, "Could not wait for server running actions", err)
+	}
 
 	if c.UpgradeServerType != "" {
 		ui.Say("Upgrading server type...")
@@ -301,4 +312,25 @@ func firstAvailableIP(server *hcloud.Server) string {
 		return server.PrivateNet[0].IP.String()
 	}
 	return ""
+}
+
+func getServerRunningActions(ctx context.Context, client *hcloud.Client, server *hcloud.Server) ([]*hcloud.Action, error) {
+	actions, err := client.Firewall.Action.All(ctx,
+		hcloud.ActionListOpts{
+			Status: []hcloud.ActionStatus{
+				hcloud.ActionStatusRunning,
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	actions = slices.DeleteFunc(actions, func(action *hcloud.Action) bool {
+		return !slices.ContainsFunc(action.Resources, func(resource *hcloud.ActionResource) bool {
+			return resource.Type == hcloud.ActionResourceTypeServer && resource.ID == server.ID
+		})
+	})
+
+	return actions, nil
 }
