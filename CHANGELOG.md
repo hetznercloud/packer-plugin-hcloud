@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.2...v1.5.3) (2024-07-09)
+
+
+### Bug Fixes
+
+* wait server firewall actions to settle ([#209](https://github.com/hetznercloud/packer-plugin-hcloud/issues/209)) ([2d58893](https://github.com/hetznercloud/packer-plugin-hcloud/commit/2d588935e674fc17b29f4d8aaa4664d029564748))
+
 ## [1.5.2](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.1...v1.5.2) (2024-06-18)
 
 
