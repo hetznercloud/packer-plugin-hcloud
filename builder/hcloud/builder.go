@@ -42,7 +42,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	opts := []hcloud.ClientOption{
 		hcloud.WithToken(b.config.HCloudToken),
 		hcloud.WithEndpoint(b.config.Endpoint),
-		hcloud.WithBackoffFunc(hcloud.ConstantBackoff(b.config.PollInterval)),
+		hcloud.WithPollBackoffFunc(hcloud.ConstantBackoff(b.config.PollInterval)),
 		hcloud.WithApplication("hcloud-packer", version.PluginVersion.String()),
 
 		// This is being redirect by Packer to the appropriate location. If users set `PACKER_LOG=1` it is shown on stderr
