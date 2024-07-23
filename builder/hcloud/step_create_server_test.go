@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutil"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
@@ -24,7 +24,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -96,7 +96,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -168,7 +168,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -268,7 +268,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -373,7 +373,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -413,7 +413,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -452,7 +452,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
@@ -492,7 +492,7 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateSSHKeyID, int64(1))
 				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{

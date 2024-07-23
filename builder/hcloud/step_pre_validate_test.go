@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutil"
 )
 
 func TestStepPreValidate(t *testing.T) {
@@ -24,7 +24,7 @@ func TestStepPreValidate(t *testing.T) {
 			SetupConfigFunc: func(c *Config) {
 				c.UpgradeServerType = "cpx21"
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/server_types?name=cpx11",
 					Status: 200,
 					JSONRaw: `{
@@ -63,7 +63,7 @@ func TestStepPreValidate(t *testing.T) {
 			SetupConfigFunc: func(c *Config) {
 				c.UpgradeServerType = "cpx21"
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/server_types?name=cpx11",
 					Status: 200,
 					JSONRaw: `{
@@ -107,7 +107,7 @@ func TestStepPreValidate(t *testing.T) {
 			SetupConfigFunc: func(c *Config) {
 				c.UpgradeServerType = "cpx21"
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "GET", Path: "/server_types?name=cpx11",
 					Status: 200,
 					JSONRaw: `{

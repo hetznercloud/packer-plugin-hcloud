@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutil"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
@@ -22,7 +22,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateServerID, int64(8))
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
@@ -62,7 +62,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateServerID, int64(8))
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
@@ -86,7 +86,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateServerID, int64(8))
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
@@ -131,7 +131,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 				state.Put(StateSnapshotIDOld, int64(20))
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
@@ -175,7 +175,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 				state.Put(StateSnapshotIDOld, int64(20))
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
