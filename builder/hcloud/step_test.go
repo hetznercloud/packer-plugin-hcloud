@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
-	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutil"
 )
 
 type StepTestCase struct {
@@ -25,7 +25,7 @@ type StepTestCase struct {
 	SetupConfigFunc func(*Config)
 	SetupStateFunc  func(multistep.StateBag)
 
-	WantRequests []mockutils.Request
+	WantRequests []mockutil.Request
 
 	WantStepAction multistep.StepAction
 	WantStateFunc  func(*testing.T, multistep.StateBag)
@@ -47,7 +47,7 @@ func RunStepTestCases(t *testing.T, testCases []StepTestCase) {
 				tc.SetupConfigFunc(config)
 			}
 
-			server := httptest.NewServer(mockutils.Handler(t, tc.WantRequests))
+			server := httptest.NewServer(mockutil.Handler(t, tc.WantRequests))
 			defer server.Close()
 			client := hcloud.NewClient(hcloud.WithEndpoint(server.URL))
 

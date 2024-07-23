@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutils"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutil"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
 )
 
@@ -22,7 +22,7 @@ func TestStepCreateSSHKey(t *testing.T) {
 			SetupConfigFunc: func(c *Config) {
 				c.Comm.SSHPublicKey = []byte("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILBN85MgkHac/Q+iyPS8+88eBDn2SEGnU4/uLvj6lbT0")
 			},
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "POST", Path: "/ssh_keys",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.SSHKeyCreateRequest{})
@@ -55,7 +55,7 @@ func TestStepCleanupSSHKey(t *testing.T) {
 			Name:         "happy",
 			Step:         &stepCreateSSHKey{keyId: 1},
 			StepFuncName: "cleanup",
-			WantRequests: []mockutils.Request{
+			WantRequests: []mockutil.Request{
 				{Method: "DELETE", Path: "/ssh_keys/1",
 					Status: 204,
 				},
