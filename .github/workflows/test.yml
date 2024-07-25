@@ -29,6 +29,9 @@ jobs:
       - run: make test
 
       - uses: codecov/codecov-action@v4
+        if: >
+          !startsWith(github.head_ref, 'renovate/') &&
+          !startsWith(github.head_ref, 'release-please--')
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -57,6 +60,9 @@ jobs:
       - run: make testacc
 
       - uses: codecov/codecov-action@v4
+        if: >
+          !startsWith(github.head_ref, 'renovate/') &&
+          !startsWith(github.head_ref, 'release-please--')
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
