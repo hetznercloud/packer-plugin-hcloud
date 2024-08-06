@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.4](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.3...v1.5.4) (2024-08-06)
+
+
+### Bug Fixes
+
+* wrong client option name for poll backoff func ([#213](https://github.com/hetznercloud/packer-plugin-hcloud/issues/213)) ([4da0192](https://github.com/hetznercloud/packer-plugin-hcloud/commit/4da0192e81e13ad501b04195c13b153f702e6385))
+
 ## [1.5.3](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.2...v1.5.3) (2024-07-09)
 
 
