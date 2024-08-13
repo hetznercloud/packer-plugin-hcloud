@@ -71,6 +71,9 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		if err != nil {
 			return errorHandler(state, ui, "Could not find image", err)
 		}
+		if image == nil {
+			return errorHandler(state, ui, "", fmt.Errorf("Could not find image"))
+		}
 	} else {
 		image, err = getImageWithSelectors(ctx, client, c, serverType)
 		if err != nil {
@@ -78,6 +81,13 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		}
 	}
 	ui.Message(fmt.Sprintf("Using image '%d'", image.ID))
+	if image.IsDeprecated() {
+		ui.Errorf(
+			"The image '%d' is deprecated since the %s and will soon be unavailable",
+			image.ID, image.Deprecated.Format("2006-01-02"),
+		)
+	}
+
 	state.Put(StateSourceImageID, image.ID)
 
 	var networks []*hcloud.Network
