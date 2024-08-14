@@ -41,15 +41,27 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	sshKeys := []*hcloud.SSHKey{{ID: sshKeyId}}
-	for _, k := range c.SSHKeys {
-		sshKey, _, err := client.SSHKey.Get(ctx, k)
+	for _, idOrName := range c.SSHKeys {
+		sshKey, _, err := client.SSHKey.Get(ctx, idOrName)
 		if err != nil {
-			return errorHandler(state, ui, fmt.Sprintf("Could not fetch SSH key '%s'", k), err)
+			return errorHandler(state, ui, fmt.Sprintf("Could not fetch SSH key '%s'", idOrName), err)
 		}
 		if sshKey == nil {
-			return errorHandler(state, ui, "", fmt.Errorf("Could not find SSH key '%s'", k))
+			return errorHandler(state, ui, "", fmt.Errorf("Could not find SSH key '%s'", idOrName))
 		}
 		sshKeys = append(sshKeys, sshKey)
+	}
+
+	firewalls := make([]*hcloud.ServerCreateFirewall, 0, len(c.Firewalls))
+	for _, idOrName := range c.Firewalls {
+		firewall, _, err := client.Firewall.Get(ctx, idOrName)
+		if err != nil {
+			return errorHandler(state, ui, fmt.Sprintf("Could not fetch firewall '%s'", idOrName), err)
+		}
+		if firewall == nil {
+			return errorHandler(state, ui, "", fmt.Errorf("Could not find firewall '%s'", idOrName))
+		}
+		firewalls = append(firewalls, &hcloud.ServerCreateFirewall{Firewall: *firewall})
 	}
 
 	var image *hcloud.Image
@@ -77,6 +89,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		Name:       c.ServerName,
 		ServerType: &hcloud.ServerType{Name: c.ServerType},
 		Image:      image,
+		Firewalls:  firewalls,
 		SSHKeys:    sshKeys,
 		Location:   &hcloud.Location{Name: c.Location},
 		UserData:   userData,
