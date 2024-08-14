@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.0](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.4...v1.6.0) (2024-08-14)
+
+
+### Features
+
+* allow attaching firewalls to the server ([#221](https://github.com/hetznercloud/packer-plugin-hcloud/issues/221)) ([73f10e4](https://github.com/hetznercloud/packer-plugin-hcloud/commit/73f10e462e2f69b1a88a8036fe694016c57d702b))
+
+
+### Bug Fixes
+
+* check if the image was found ([#223](https://github.com/hetznercloud/packer-plugin-hcloud/issues/223)) ([da3b49b](https://github.com/hetznercloud/packer-plugin-hcloud/commit/da3b49baac321a4774249c607b7a27a62563a55d)), closes [#222](https://github.com/hetznercloud/packer-plugin-hcloud/issues/222)
+
 ## [1.5.4](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.5.3...v1.5.4) (2024-08-06)
 
 
