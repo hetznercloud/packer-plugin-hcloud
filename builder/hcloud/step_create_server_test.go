@@ -597,6 +597,36 @@ func TestStepCreateServer(t *testing.T) {
 				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
 			},
 		},
+		{
+			Name:            "fail to get image",
+			Step:            &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+			},
+			WantRequests: []mockutil.Request{
+				{Method: "GET", Path: "/ssh_keys/1",
+					Status: 200,
+					JSONRaw: `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+					Status: 200,
+					JSONRaw: `{
+						"images": []
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionHalt,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.True(t, ok)
+				assert.NotNil(t, err)
+				assert.EqualError(t, err, "Could not find image")
+			},
+		},
 	})
 }
 
