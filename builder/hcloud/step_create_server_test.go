@@ -439,7 +439,6 @@ func TestStepCreateServer(t *testing.T) {
 				assert.Equal(t, "127.0.0.1", serverIP)
 			},
 		},
-
 		{
 			Name: "fail to get for primary ip by address",
 			Step: &stepCreateServer{},
