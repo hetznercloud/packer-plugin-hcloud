@@ -87,6 +87,82 @@ func TestStepCreateServer(t *testing.T) {
 			},
 		},
 		{
+			Name: "happy with firewall",
+			Step: &stepCreateServer{},
+			SetupConfigFunc: func(c *Config) {
+				c.Firewalls = []string{"allow-ssh"}
+			},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"})
+			},
+			WantRequests: []mockutil.Request{
+				{Method: "GET", Path: "/ssh_keys/1",
+					Status: 200,
+					JSONRaw: `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{Method: "GET", Path: "/firewalls?name=allow-ssh",
+					Status: 200,
+					JSONRaw: `{
+						"firewalls": [{ "id": 986532, "name": "allow-ssh" }]
+					}`,
+				},
+				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+					Status: 200,
+					JSONRaw: `{
+						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
+					}`,
+				},
+				{Method: "POST", Path: "/servers",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
+						assert.Equal(t, "dummy-server", payload.Name)
+						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
+						assert.Equal(t, "nbg1", payload.Location)
+						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, int64(986532), payload.Firewalls[0].Firewall)
+					},
+					Status: 201,
+					JSONRaw: `{
+						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "127.0.0.1" }, "ipv6": { "ip": "::1" }}},
+						"action": { "id": 3, "status": "running" }
+					}`,
+				},
+				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+					Status: 200,
+					JSONRaw: `{
+						"actions": [
+							{ "id": 3, "status": "success" }
+						],
+						"meta": { "pagination": { "page": 1 }}
+					}`,
+				},
+				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+					Status: 200,
+					JSONRaw: `{
+						"actions": [],
+						"meta": { "pagination": { "page": 1 }}
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				err, ok := state.Get(StateError).(error)
+				assert.False(t, ok)
+				assert.Nil(t, err)
+
+				serverID, ok := state.Get(StateServerID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), serverID)
+
+				instanceID, ok := state.Get(StateInstanceID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), instanceID)
+			},
+		},
+		{
 			Name: "happy with network",
 			Step: &stepCreateServer{},
 			SetupConfigFunc: func(c *Config) {
@@ -363,6 +439,7 @@ func TestStepCreateServer(t *testing.T) {
 				assert.Equal(t, "127.0.0.1", serverIP)
 			},
 		},
+
 		{
 			Name: "fail to get for primary ip by address",
 			Step: &stepCreateServer{},
