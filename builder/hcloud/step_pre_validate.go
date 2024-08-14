@@ -5,6 +5,7 @@ package hcloud
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -76,7 +77,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 				state.Put(StateSnapshotIDOld, snap.ID)
 				return multistep.ActionContinue
 			}
-			return errorHandler(state, ui, "", fmt.Errorf(msg))
+			return errorHandler(state, ui, "", errors.New(msg))
 		}
 	}
 
