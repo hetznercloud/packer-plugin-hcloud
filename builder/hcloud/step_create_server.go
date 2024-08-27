@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/netip"
 	"os"
-	"slices"
 	"sort"
 	"strings"
 
@@ -338,22 +337,14 @@ func firstAvailableIP(server *hcloud.Server) string {
 }
 
 func getServerRunningActions(ctx context.Context, client *hcloud.Client, server *hcloud.Server) ([]*hcloud.Action, error) {
-	actions, err := client.Firewall.Action.All(ctx,
-		hcloud.ActionListOpts{
-			Status: []hcloud.ActionStatus{
-				hcloud.ActionStatusRunning,
-			},
+	actions, err := client.Server.Action.AllForResource(ctx, server.ID,
+		hcloud.ResourceActionListOpts{
+			Status: []hcloud.ActionStatus{hcloud.ActionStatusRunning},
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	actions = slices.DeleteFunc(actions, func(action *hcloud.Action) bool {
-		return !slices.ContainsFunc(action.Resources, func(resource *hcloud.ActionResource) bool {
-			return resource.Type == hcloud.ActionResourceTypeServer && resource.ID == server.ID
-		})
-	})
 
 	return actions, nil
 }

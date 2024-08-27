@@ -416,7 +416,7 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+				{Method: "GET", Path: "/servers/8/actions?page=1&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
