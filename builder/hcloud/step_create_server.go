@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"net/netip"
 	"os"
-	"slices"
 	"sort"
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/actionutil"
 )
 
 type stepCreateServer struct {
@@ -168,7 +168,11 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 	// Wait that the server to settle before continuing. Prevents possible `locked`
 	// error when changing the server type.
-	actions, err := getServerRunningActions(ctx, client, server)
+	actions, err := actionutil.AllForResource(ctx,
+		client.Firewall.Action,
+		hcloud.ActionListOpts{Status: []hcloud.ActionStatus{hcloud.ActionStatusRunning}},
+		hcloud.ActionResourceTypeServer, server.ID,
+	)
 	if err != nil {
 		return errorHandler(state, ui, "Could not fetch server running actions", err)
 	}
@@ -335,25 +339,4 @@ func firstAvailableIP(server *hcloud.Server) string {
 		return server.PrivateNet[0].IP.String()
 	}
 	return ""
-}
-
-func getServerRunningActions(ctx context.Context, client *hcloud.Client, server *hcloud.Server) ([]*hcloud.Action, error) {
-	actions, err := client.Firewall.Action.All(ctx,
-		hcloud.ActionListOpts{
-			Status: []hcloud.ActionStatus{
-				hcloud.ActionStatusRunning,
-			},
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	actions = slices.DeleteFunc(actions, func(action *hcloud.Action) bool {
-		return !slices.ContainsFunc(action.Resources, func(resource *hcloud.ActionResource) bool {
-			return resource.Type == hcloud.ActionResourceTypeServer && resource.ID == server.ID
-		})
-	})
-
-	return actions, nil
 }
