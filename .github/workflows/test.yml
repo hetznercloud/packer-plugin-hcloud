@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  GOTOOLCHAIN: local
+
 permissions:
   contents: read
 
@@ -24,7 +27,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: "1.23"
 
       - run: make test
 
@@ -49,7 +52,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: "1.23"
 
       - uses: hetznercloud/tps-action@main
 
