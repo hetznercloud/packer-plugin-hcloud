@@ -2,7 +2,7 @@ module github.com/hetznercloud/packer-plugin-hcloud
 
 go 1.21.0
 
-toolchain go1.22.7
+toolchain go1.23.1
 
 require (
 	github.com/hashicorp/hcl/v2 v2.22.0
