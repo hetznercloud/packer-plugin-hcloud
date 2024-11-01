@@ -7,7 +7,7 @@ toolchain go1.23.2
 require (
 	github.com/hashicorp/hcl/v2 v2.22.0
 	github.com/hashicorp/packer-plugin-sdk v0.5.4
-	github.com/hetznercloud/hcloud-go/v2 v2.14.0
+	github.com/hetznercloud/hcloud-go/v2 v2.15.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/stretchr/testify v1.9.0
 	github.com/zclconf/go-cty v1.15.0
