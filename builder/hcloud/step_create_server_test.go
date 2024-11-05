@@ -41,9 +41,9 @@ func TestStepCreateServer(t *testing.T) {
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
+						assert.Equal(t, int64(114690387), payload.Image.ID)
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cpx11", payload.ServerType.Name)
 						assert.True(t, payload.PublicNet.EnableIPv4)
 						assert.True(t, payload.PublicNet.EnableIPv6)
 						assert.Nil(t, payload.Networks)
@@ -119,9 +119,9 @@ func TestStepCreateServer(t *testing.T) {
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
+						assert.Equal(t, int64(114690387), payload.Image.ID)
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cpx11", payload.ServerType.Name)
 						assert.Equal(t, int64(986532), payload.Firewalls[0].Firewall)
 					},
 					Status: 201,
@@ -189,9 +189,9 @@ func TestStepCreateServer(t *testing.T) {
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
+						assert.Equal(t, int64(114690387), payload.Image.ID)
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cpx11", payload.ServerType.Name)
 						assert.Equal(t, []int64{12}, payload.Networks)
 					},
 					Status: 201,
@@ -287,9 +287,9 @@ func TestStepCreateServer(t *testing.T) {
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
+						assert.Equal(t, int64(114690387), payload.Image.ID)
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cpx11", payload.ServerType.Name)
 						assert.Nil(t, payload.Networks)
 						assert.NotNil(t, payload.PublicNet)
 						assert.Equal(t, int64(1), payload.PublicNet.IPv4ID)
@@ -393,9 +393,9 @@ func TestStepCreateServer(t *testing.T) {
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
-						assert.Equal(t, int64(114690387), int64(payload.Image.(float64)))
+						assert.Equal(t, int64(114690387), payload.Image.ID)
 						assert.Equal(t, "nbg1", payload.Location)
-						assert.Equal(t, "cpx11", payload.ServerType)
+						assert.Equal(t, "cpx11", payload.ServerType.Name)
 						assert.Nil(t, payload.Networks)
 						assert.NotNil(t, payload.PublicNet)
 						assert.Equal(t, int64(1), payload.PublicNet.IPv4ID)
