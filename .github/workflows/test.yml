@@ -81,6 +81,7 @@ jobs:
 
     env:
       PACKER_LOG: "1"
+      PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
