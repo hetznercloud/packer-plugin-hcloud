@@ -21,7 +21,7 @@ linters:
     - dupl
     - errcheck
     - exhaustive
-    - exportloopref
+    - copyloopvar
     - gci
     - gocritic
     - gofmt
