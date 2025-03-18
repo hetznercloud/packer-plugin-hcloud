@@ -1,0 +1,24 @@
+name: Releaser-pleaser
+
+on:
+  push:
+    branches: [main]
+  pull_request_target:
+    types:
+      - edited
+      - labeled
+      - unlabeled
+
+jobs:
+  releaser-pleaser:
+    # Do not run on forks.
+    if: github.repository == 'hetznercloud/packer-plugin-hcloud'
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: releaser-pleaser
+        uses: apricote/releaser-pleaser@v0.5.0
+        with:
+          token: ${{ secrets.HCLOUD_BOT_TOKEN }}
+          extra-files: |
+            version/version.go
