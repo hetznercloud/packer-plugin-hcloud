@@ -42,9 +42,8 @@ clean_root() {
 }
 
 flush_disk() {
-  dd if=/dev/zero of=/zero bs=4M || true
+  fstrim --all || true
   sync
-  rm -f /zero
 }
 
 clean_cloud_init
