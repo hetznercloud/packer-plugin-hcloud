@@ -223,9 +223,8 @@ Below are a few commands that might useful:
 Once the cleanup is complete, you must discard the now unused blocks from the disk. This can be done with the following:
 
 ```bash
-dd if=/dev/zero of=/zero bs=4M || true
+fstrim --all || true
 sync
-rm -f /zero
 ```
 
 To speed up the process above, you may configure cloud-init to not grow the system partition to the server disk size during the boot process, leaving you with a 4GB system partition:
