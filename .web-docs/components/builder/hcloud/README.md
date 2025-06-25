@@ -65,7 +65,7 @@ builder.
   - `with_selector` (list of strings) - label selectors used to select an
     `image`. NOTE: This will fail unless _exactly_ one image is returned.
     Check the official hcloud docs on
-    [Label Selectors](https://docs.hetzner.cloud/#label-selector)
+    [Label Selectors](https://docs.hetzner.cloud/reference/cloud#label-selector)
     for more info.
 
   - `most_recent` (boolean) - Selects the newest created image when true.
