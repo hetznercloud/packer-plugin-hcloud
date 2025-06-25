@@ -80,7 +80,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			return errorHandler(state, ui, "Could not find image", err)
 		}
 	}
-	ui.Message(fmt.Sprintf("Using image '%d'", image.ID))
+	ui.Say(fmt.Sprintf("Using image '%d'", image.ID))
 	if image.IsDeprecated() {
 		ui.Errorf(
 			"The image '%d' is deprecated since the %s and will soon be unavailable",
