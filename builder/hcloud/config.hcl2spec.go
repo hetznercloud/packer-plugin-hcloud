@@ -77,6 +77,7 @@ type FlatConfig struct {
 	UpgradeServerType         *string           `mapstructure:"upgrade_server_type" cty:"upgrade_server_type" hcl:"upgrade_server_type"`
 	Image                     *string           `mapstructure:"image" cty:"image" hcl:"image"`
 	ImageFilter               *FlatimageFilter  `mapstructure:"image_filter" cty:"image_filter" hcl:"image_filter"`
+	SkipCreateSnapshot        *bool             `mapstructure:"skip_create_snapshot" cty:"skip_create_snapshot" hcl:"skip_create_snapshot"`
 	SnapshotName              *string           `mapstructure:"snapshot_name" cty:"snapshot_name" hcl:"snapshot_name"`
 	SnapshotLabels            map[string]string `mapstructure:"snapshot_labels" cty:"snapshot_labels" hcl:"snapshot_labels"`
 	UserData                  *string           `mapstructure:"user_data" cty:"user_data" hcl:"user_data"`
@@ -171,6 +172,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"upgrade_server_type":          &hcldec.AttrSpec{Name: "upgrade_server_type", Type: cty.String, Required: false},
 		"image":                        &hcldec.AttrSpec{Name: "image", Type: cty.String, Required: false},
 		"image_filter":                 &hcldec.BlockSpec{TypeName: "image_filter", Nested: hcldec.ObjectSpec((*FlatimageFilter)(nil).HCL2Spec())},
+		"skip_create_snapshot":         &hcldec.AttrSpec{Name: "skip_create_snapshot", Type: cty.Bool, Required: false},
 		"snapshot_name":                &hcldec.AttrSpec{Name: "snapshot_name", Type: cty.String, Required: false},
 		"snapshot_labels":              &hcldec.AttrSpec{Name: "snapshot_labels", Type: cty.Map(cty.String), Required: false},
 		"user_data":                    &hcldec.AttrSpec{Name: "user_data", Type: cty.String, Required: false},

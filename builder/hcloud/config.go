@@ -40,12 +40,13 @@ type Config struct {
 	Image             string            `mapstructure:"image"`
 	ImageFilter       *imageFilter      `mapstructure:"image_filter"`
 
-	SnapshotName   string            `mapstructure:"snapshot_name"`
-	SnapshotLabels map[string]string `mapstructure:"snapshot_labels"`
-	UserData       string            `mapstructure:"user_data"`
-	UserDataFile   string            `mapstructure:"user_data_file"`
-	SSHKeys        []string          `mapstructure:"ssh_keys"`
-	SSHKeysLabels  map[string]string `mapstructure:"ssh_keys_labels"`
+	SkipCreateSnapshot bool              `mapstructure:"skip_create_snapshot"`
+	SnapshotName       string            `mapstructure:"snapshot_name"`
+	SnapshotLabels     map[string]string `mapstructure:"snapshot_labels"`
+	UserData           string            `mapstructure:"user_data"`
+	UserDataFile       string            `mapstructure:"user_data_file"`
+	SSHKeys            []string          `mapstructure:"ssh_keys"`
+	SSHKeysLabels      map[string]string `mapstructure:"ssh_keys_labels"`
 
 	Networks           []int64  `mapstructure:"networks"`
 	PublicIPv4         string   `mapstructure:"public_ipv4"`

@@ -23,7 +23,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "POST", Path: "/servers/8/actions/create_image",
+				{
+					Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
@@ -35,7 +36,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -63,7 +65,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "POST", Path: "/servers/8/actions/create_image",
+				{
+					Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
@@ -87,7 +90,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateServerID, int64(8))
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "POST", Path: "/servers/8/actions/create_image",
+				{
+					Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
@@ -99,7 +103,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -132,7 +137,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateSnapshotIDOld, int64(20))
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "POST", Path: "/servers/8/actions/create_image",
+				{
+					Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
@@ -144,7 +150,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -153,7 +160,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "DELETE", Path: "/images/20",
+				{
+					Method: "DELETE", Path: "/images/20",
 					Status: 204,
 				},
 			},
@@ -176,7 +184,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 				state.Put(StateSnapshotIDOld, int64(20))
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "POST", Path: "/servers/8/actions/create_image",
+				{
+					Method: "POST", Path: "/servers/8/actions/create_image",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerActionCreateImageRequest{})
 						assert.Equal(t, "dummy-snapshot", *payload.Description)
@@ -188,7 +197,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -197,7 +207,8 @@ func TestStepCreateSnapshot(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "DELETE", Path: "/images/20",
+				{
+					Method: "DELETE", Path: "/images/20",
 					Status: 400,
 				},
 			},
@@ -208,6 +219,15 @@ func TestStepCreateSnapshot(t *testing.T) {
 				assert.NotNil(t, err)
 				assert.Regexp(t, "Could not delete old snapshot id=20: .*", err.Error())
 			},
+		},
+		{
+			Name: "skip snapshot creation",
+			Step: &stepCreateSnapshot{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateServerID, int64(8))
+				state.Put(StateConfig, &Config{SkipCreateSnapshot: true})
+			},
+			WantStepAction: multistep.ActionContinue,
 		},
 	})
 }

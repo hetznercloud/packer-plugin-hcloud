@@ -25,19 +25,22 @@ func TestStepPreValidate(t *testing.T) {
 				c.UpgradeServerType = "cpx21"
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/server_types?name=cpx11",
+				{
+					Method: "GET", Path: "/server_types?name=cpx11",
 					Status: 200,
 					JSONRaw: `{
 						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
 					}`,
 				},
-				{Method: "GET", Path: "/server_types?name=cpx21",
+				{
+					Method: "GET", Path: "/server_types?name=cpx21",
 					Status: 200,
 					JSONRaw: `{
 						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
+				{
+					Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
 					Status: 200,
 					JSONRaw: `{
 						"images": []
@@ -64,19 +67,22 @@ func TestStepPreValidate(t *testing.T) {
 				c.UpgradeServerType = "cpx21"
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/server_types?name=cpx11",
+				{
+					Method: "GET", Path: "/server_types?name=cpx11",
 					Status: 200,
 					JSONRaw: `{
 						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
 					}`,
 				},
-				{Method: "GET", Path: "/server_types?name=cpx21",
+				{
+					Method: "GET", Path: "/server_types?name=cpx21",
 					Status: 200,
 					JSONRaw: `{
 						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
+				{
+					Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 1, "description": "dummy-snapshot"}]
@@ -108,19 +114,22 @@ func TestStepPreValidate(t *testing.T) {
 				c.UpgradeServerType = "cpx21"
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/server_types?name=cpx11",
+				{
+					Method: "GET", Path: "/server_types?name=cpx11",
 					Status: 200,
 					JSONRaw: `{
 						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
 					}`,
 				},
-				{Method: "GET", Path: "/server_types?name=cpx21",
+				{
+					Method: "GET", Path: "/server_types?name=cpx21",
 					Status: 200,
 					JSONRaw: `{
 						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
+				{
+					Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 1, "description": "dummy-snapshot"}]
@@ -136,6 +145,38 @@ func TestStepPreValidate(t *testing.T) {
 				snapshotIDOld, ok := state.Get(StateSnapshotIDOld).(int64)
 				assert.True(t, ok)
 				assert.Equal(t, int64(1), snapshotIDOld)
+			},
+		},
+		{
+			Name: "skip snapshot name validation",
+			Step: &stepPreValidate{
+				SnapshotName: "dummy-snapshot",
+			},
+			SetupConfigFunc: func(c *Config) {
+				c.UpgradeServerType = "cpx21"
+				c.SkipCreateSnapshot = true
+			},
+			WantRequests: []mockutil.Request{
+				{
+					Method: "GET", Path: "/server_types?name=cpx11",
+					Status: 200,
+					JSONRaw: `{
+						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+					}`,
+				},
+				{
+					Method: "GET", Path: "/server_types?name=cpx21",
+					Status: 200,
+					JSONRaw: `{
+						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
+				assert.True(t, ok)
+				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
 			},
 		},
 	})
