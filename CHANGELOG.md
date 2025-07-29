@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.7.0](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.7.0)
+
+### Features
+
+- add `skip_create_snapshot` config to the builder (#289)
+
 ## [v1.6.1](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.6.1)
 
 ### Bug Fixes
