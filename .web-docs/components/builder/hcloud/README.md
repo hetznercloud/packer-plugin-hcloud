@@ -79,6 +79,8 @@ builder.
 - `server_labels` (map of key/value strings) - Key/value pair labels to
   apply to the created server.
 
+- `skip_create_snapshot` (boolean) - Skips snapshot creation.
+
 - `snapshot_name` (string) - The name of the resulting snapshot that will
   appear in your account as image description. Defaults to `packer-{{timestamp}}` (see
   [configuration templates](/packer/docs/templates/legacy_json_templates/engine) for more info).

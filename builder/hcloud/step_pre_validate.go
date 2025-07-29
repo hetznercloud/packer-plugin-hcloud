@@ -50,6 +50,11 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 	}
 
+	// Skip snapshot name validation if skip_create_snapshot is set to true.
+	if c.SkipCreateSnapshot {
+		return multistep.ActionContinue
+	}
+
 	ui.Say(fmt.Sprintf("Validating snapshot name: %s", s.SnapshotName))
 
 	// We would like to ask only for snapshots with a certain name using

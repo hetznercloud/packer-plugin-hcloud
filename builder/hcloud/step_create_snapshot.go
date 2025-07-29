@@ -20,6 +20,12 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 
 	serverID := state.Get(StateServerID).(int64)
 
+	// Skip snapshot creation if skip_create_snapshot is set to true.
+	if c.SkipCreateSnapshot {
+		ui.Say("Skipping snapshot creation...")
+		return multistep.ActionContinue
+	}
+
 	ui.Say("Creating snapshot...")
 	ui.Say("This can take some time")
 	result, _, err := client.Server.CreateImage(ctx, &hcloud.Server{ID: serverID}, &hcloud.ServerCreateImageOpts{
