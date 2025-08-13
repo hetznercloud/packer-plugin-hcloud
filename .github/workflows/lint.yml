@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - uses: golangci/golangci-lint-action@v6
         with:
@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - run: go mod tidy
 
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - run: make generate
 
