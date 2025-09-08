@@ -10,7 +10,7 @@ require (
 	github.com/hetznercloud/hcloud-go/v2 v2.22.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/stretchr/testify v1.11.1
-	github.com/zclconf/go-cty v1.16.4
+	github.com/zclconf/go-cty v1.17.0
 )
 
 require (
