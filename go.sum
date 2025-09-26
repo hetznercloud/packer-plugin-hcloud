@@ -200,8 +200,8 @@ github.com/hashicorp/vault/api v1.14.0 h1:Ah3CFLixD5jmjusOgm8grfN9M0d+Y8fVR2SW0K
 github.com/hashicorp/vault/api v1.14.0/go.mod h1:pV9YLxBGSz+cItFDd8Ii4G17waWOQ32zVjMWHe/cOqk=
 github.com/hashicorp/yamux v0.1.1 h1:yrQxtgseBDrq9Y652vSRDvsKCJKOUD+GzTS4Y0Y8pvE=
 github.com/hashicorp/yamux v0.1.1/go.mod h1:CtWFDAQgb7dxtzFs4tWbplKIe2jSi3+5vKbgIO0SLnQ=
-github.com/hetznercloud/hcloud-go/v2 v2.25.0 h1:vW8rC+ArxSAI7YYkRWQf+7CKnYE+Z++MabzZADaPvi4=
-github.com/hetznercloud/hcloud-go/v2 v2.25.0/go.mod h1:uQdAWaW3d9TimiyOjQWY8HKShs0Nd6S4wNYqo0HjvIY=
+github.com/hetznercloud/hcloud-go/v2 v2.25.1 h1:ib86acotlvgUSnKfFG5FJl0VFeYKe/Ht8nmikdUp+po=
+github.com/hetznercloud/hcloud-go/v2 v2.25.1/go.mod h1:uQdAWaW3d9TimiyOjQWY8HKShs0Nd6S4wNYqo0HjvIY=
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 h1:IPJ3dvxmJ4uczJe5YQdrYB16oTJlGSC/OyZDqUk9xX4=
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=
