@@ -151,7 +151,7 @@ func TestStepCreateServer(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.False(t, ok)
-				assert.Nil(t, err)
+				assert.NoError(t, err)
 
 				serverID, ok := state.Get(StateServerID).(int64)
 				assert.True(t, ok)
@@ -475,7 +475,7 @@ func TestStepCreateServer(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not find primary ip .*", err.Error())
 			},
 		},
@@ -514,7 +514,7 @@ func TestStepCreateServer(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
 			},
 		},
@@ -554,7 +554,7 @@ func TestStepCreateServer(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not find primary ip .*", err.Error())
 			},
 		},
@@ -593,7 +593,7 @@ func TestStepCreateServer(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not fetch primary ip .*", err.Error())
 			},
 		},
@@ -623,7 +623,7 @@ func TestStepCreateServer(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.EqualError(t, err, "Could not find image")
 			},
 		},
