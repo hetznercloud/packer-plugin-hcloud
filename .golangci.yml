@@ -1,48 +1,96 @@
----
-linters-settings:
-  gci:
-    sections:
-      - standard
-      - default
-      - prefix(github.com/hetznercloud)
-  exhaustive:
-    default-signifies-exhaustive: true
-  misspell:
-    locale: "US"
-  revive:
-    rules:
-      - name: var-naming
-        disabled: true
+version: "2"
+
+run:
+  timeout: 5m
 
 linters:
-  disable-all: true
   enable:
+    - asasalint
+    - asciicheck
+    - bidichk
     - bodyclose
-    - dupl
-    - errcheck
-    - exhaustive
+    - contextcheck
     - copyloopvar
-    - gci
+    - dupl
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errorlint
+    - exhaustive
+    - gocheckcompilerdirectives
+    - gochecksumtype
     - gocritic
-    - gofmt
-    - goimports
+    - gomoddirectives
     - gomodguard
     - gosec
-    - gosimple
+    - gosmopolitan
     - govet
     - ineffassign
+    - loggercheck
+    - makezero
     - misspell
+    - musttag
+    - nilerr
+    - nilnesserr
+    - noctx
+    - protogetter
+    - reassign
+    - recvcheck
     - revive
     - rowserrcheck
+    - spancheck
+    - sqlclosecheck
     - staticcheck
-    - typecheck
+    - testifylint
     - unconvert
     - unparam
     - unused
     - whitespace
+    - zerologlint
 
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - dupl
+  settings:
+    exhaustive:
+      default-signifies-exhaustive: true
+
+    staticcheck:
+      checks: ["all", "-QF1008", "-ST1003", "-ST1005"]
+
+    revive:
+      rules:
+        - name: var-naming
+          disabled: true
+
+    gomoddirectives:
+      replace-allow-list:
+        - github.com/hetznercloud/hcloud-go/v2
+        - github.com/zclconf/go-cty
+
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - std-error-handling
+    rules:
+      - linters:
+          - testifylint
+        text: require-error
+      - linters:
+          - dupl
+        path: _test\.go
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - goimports
+
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/hetznercloud)
+
+  exclusions:
+    generated: lax
