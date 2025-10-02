@@ -79,7 +79,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not create snapshot: .*", err.Error())
 			},
 		},
@@ -125,7 +125,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not create snapshot: .*", err.Error())
 			},
 		},
@@ -216,7 +216,7 @@ func TestStepCreateSnapshot(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Regexp(t, "Could not delete old snapshot id=20: .*", err.Error())
 			},
 		},

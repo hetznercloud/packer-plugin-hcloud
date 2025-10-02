@@ -100,7 +100,7 @@ func TestStepPreValidate(t *testing.T) {
 
 				err, ok := state.Get(StateError).(error)
 				assert.True(t, ok)
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Equal(t, "Found existing snapshot (id=1, arch=x86) with name 'dummy-snapshot'", err.Error())
 			},
 		},
