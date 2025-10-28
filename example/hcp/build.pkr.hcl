@@ -21,7 +21,7 @@ source "hcloud" "example" {
 
   location    = "hel1"
   image       = "ubuntu-24.04"
-  server_type = "cpx11"
+  server_type = "cpx22"
   server_name = "example-{{ timestamp }}"
 
   ssh_username = "root"

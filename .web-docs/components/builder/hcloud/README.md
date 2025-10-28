@@ -163,9 +163,9 @@ access tokens:
 ```hcl
 source "hcloud" "basic_example" {
   token = "YOUR API TOKEN"
-  image = "ubuntu-22.04"
-  location = "nbg1"
-  server_type = "cx22"
+  image = "ubuntu-24.04"
+  location = "hel1"
+  server_type = "cx23"
   ssh_username = "root"
 }
 
