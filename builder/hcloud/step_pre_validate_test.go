@@ -22,21 +22,21 @@ func TestStepPreValidate(t *testing.T) {
 				Force:        false,
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cpx32"
 			},
 			WantRequests: []mockutil.Request{
 				{
-					Method: "GET", Path: "/server_types?name=cpx11",
+					Method: "GET", Path: "/server_types?name=cpx22",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 109, "name": "cpx22", "architecture": "x86"}]
 					}`,
 				},
 				{
-					Method: "GET", Path: "/server_types?name=cpx21",
+					Method: "GET", Path: "/server_types?name=cpx32",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 110, "name": "cpx32", "architecture": "x86"}]
 					}`,
 				},
 				{
@@ -51,7 +51,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"}, *serverType)
 
 				_, ok = state.Get(StateSnapshotIDOld).(int64)
 				assert.False(t, ok)
@@ -64,21 +64,21 @@ func TestStepPreValidate(t *testing.T) {
 				Force:        false,
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cpx32"
 			},
 			WantRequests: []mockutil.Request{
 				{
-					Method: "GET", Path: "/server_types?name=cpx11",
+					Method: "GET", Path: "/server_types?name=cpx22",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 109, "name": "cpx22", "architecture": "x86"}]
 					}`,
 				},
 				{
-					Method: "GET", Path: "/server_types?name=cpx21",
+					Method: "GET", Path: "/server_types?name=cpx32",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 110, "name": "cpx32", "architecture": "x86"}]
 					}`,
 				},
 				{
@@ -93,7 +93,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"}, *serverType)
 
 				_, ok = state.Get(StateSnapshotIDOld).(int64)
 				assert.False(t, ok)
@@ -111,21 +111,21 @@ func TestStepPreValidate(t *testing.T) {
 				Force:        true,
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cpx32"
 			},
 			WantRequests: []mockutil.Request{
 				{
-					Method: "GET", Path: "/server_types?name=cpx11",
+					Method: "GET", Path: "/server_types?name=cpx22",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 109, "name": "cpx22", "architecture": "x86"}]
 					}`,
 				},
 				{
-					Method: "GET", Path: "/server_types?name=cpx21",
+					Method: "GET", Path: "/server_types?name=cpx32",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 110, "name": "cpx32", "architecture": "x86"}]
 					}`,
 				},
 				{
@@ -140,7 +140,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"}, *serverType)
 
 				snapshotIDOld, ok := state.Get(StateSnapshotIDOld).(int64)
 				assert.True(t, ok)
@@ -153,22 +153,22 @@ func TestStepPreValidate(t *testing.T) {
 				SnapshotName: "dummy-snapshot",
 			},
 			SetupConfigFunc: func(c *Config) {
-				c.UpgradeServerType = "cpx21"
+				c.UpgradeServerType = "cpx32"
 				c.SkipCreateSnapshot = true
 			},
 			WantRequests: []mockutil.Request{
 				{
-					Method: "GET", Path: "/server_types?name=cpx11",
+					Method: "GET", Path: "/server_types?name=cpx22",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 9, "name": "cpx11", "architecture": "x86"}]
+						"server_types": [{ "id": 109, "name": "cpx22", "architecture": "x86"}]
 					}`,
 				},
 				{
-					Method: "GET", Path: "/server_types?name=cpx21",
+					Method: "GET", Path: "/server_types?name=cpx32",
 					Status: 200,
 					JSONRaw: `{
-						"server_types": [{ "id": 10, "name": "cpx21", "architecture": "x86"}]
+						"server_types": [{ "id": 110, "name": "cpx32", "architecture": "x86"}]
 					}`,
 				},
 			},
@@ -176,7 +176,7 @@ func TestStepPreValidate(t *testing.T) {
 			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
 				serverType, ok := state.Get(StateServerType).(*hcloud.ServerType)
 				assert.True(t, ok)
-				assert.Equal(t, hcloud.ServerType{ID: 9, Name: "cpx11", Architecture: "x86"}, *serverType)
+				assert.Equal(t, hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"}, *serverType)
 			},
 		},
 	})
