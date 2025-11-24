@@ -58,7 +58,7 @@ jobs:
 
       - uses: hashicorp/setup-packer@v3.1.0
         with:
-          version: 1.14.2 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
+          version: 1.14.3 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
       - run: make testacc
 
@@ -90,7 +90,7 @@ jobs:
 
       - uses: hashicorp/setup-packer@v3.1.0
         with:
-          version: 1.14.2 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
+          version: 1.14.3 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
       - run: packer init .
       - run: packer validate .
