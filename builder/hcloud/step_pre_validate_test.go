@@ -40,7 +40,7 @@ func TestStepPreValidate(t *testing.T) {
 					}`,
 				},
 				{
-					Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
+					Method: "GET", Path: "/images?architecture=x86&page=1&per_page=50&type=snapshot",
 					Status: 200,
 					JSONRaw: `{
 						"images": []
@@ -82,7 +82,7 @@ func TestStepPreValidate(t *testing.T) {
 					}`,
 				},
 				{
-					Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
+					Method: "GET", Path: "/images?architecture=x86&page=1&per_page=50&type=snapshot",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 1, "description": "dummy-snapshot"}]
@@ -129,7 +129,7 @@ func TestStepPreValidate(t *testing.T) {
 					}`,
 				},
 				{
-					Method: "GET", Path: "/images?architecture=x86&page=1&type=snapshot",
+					Method: "GET", Path: "/images?architecture=x86&page=1&per_page=50&type=snapshot",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 1, "description": "dummy-snapshot"}]
