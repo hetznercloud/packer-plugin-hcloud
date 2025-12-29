@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.7.1](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.7.1)
+
+### Bug Fixes
+
+- update dependencies
+
 ## [v1.7.0](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.7.0)
 
 ### Features
