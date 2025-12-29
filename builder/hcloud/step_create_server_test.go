@@ -63,7 +63,7 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -139,7 +139,7 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -209,7 +209,7 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -310,7 +310,7 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -416,7 +416,7 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&status=running",
+				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
