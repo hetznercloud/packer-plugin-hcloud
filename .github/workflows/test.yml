@@ -56,7 +56,7 @@ jobs:
 
       - uses: hetznercloud/tps-action@main
 
-      - uses: hashicorp/setup-packer@v3.1.0
+      - uses: hashicorp/setup-packer@v3.2.0
         with:
           version: 1.14.3 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
@@ -88,7 +88,7 @@ jobs:
 
       - uses: hetznercloud/tps-action@main
 
-      - uses: hashicorp/setup-packer@v3.1.0
+      - uses: hashicorp/setup-packer@v3.2.0
         with:
           version: 1.14.3 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
