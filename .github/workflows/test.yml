@@ -31,7 +31,7 @@ jobs:
 
       - run: make test
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: >
           !startsWith(github.head_ref, 'renovate/') &&
           !startsWith(github.head_ref, 'releaser-pleaser--')
@@ -62,7 +62,7 @@ jobs:
 
       - run: make testacc
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: >
           !startsWith(github.head_ref, 'renovate/') &&
           !startsWith(github.head_ref, 'releaser-pleaser--')
