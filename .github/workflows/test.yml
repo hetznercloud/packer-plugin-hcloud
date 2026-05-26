@@ -24,14 +24,14 @@ jobs:
 
     runs-on: ${{ matrix.runs-on }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version-file: go.mod
 
       - run: make test
 
-      - uses: codecov/codecov-action@v6
+      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6
         if: >
           !startsWith(github.head_ref, 'renovate/') &&
           !startsWith(github.head_ref, 'releaser-pleaser--')
@@ -49,20 +49,20 @@ jobs:
 
     runs-on: ${{ matrix.runs-on }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version-file: go.mod
 
-      - uses: hetznercloud/tps-action@main
+      - uses: hetznercloud/tps-action@dc6d67c5768ca43b840429b6c7409cda61cf4092 # main
 
-      - uses: hashicorp/setup-packer@v3.2.0
+      - uses: hashicorp/setup-packer@c3d53c525d422944e50ee27b840746d6522b08de # v3.2.0
         with:
           version: 1.15.2 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
       - run: make testacc
 
-      - uses: codecov/codecov-action@v6
+      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6
         if: >
           !startsWith(github.head_ref, 'renovate/') &&
           !startsWith(github.head_ref, 'releaser-pleaser--')
@@ -84,11 +84,11 @@ jobs:
       PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - uses: hetznercloud/tps-action@main
+      - uses: hetznercloud/tps-action@dc6d67c5768ca43b840429b6c7409cda61cf4092 # main
 
-      - uses: hashicorp/setup-packer@v3.2.0
+      - uses: hashicorp/setup-packer@c3d53c525d422944e50ee27b840746d6522b08de # v3.2.0
         with:
           version: 1.15.2 # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=v(?<version>.+)
 
