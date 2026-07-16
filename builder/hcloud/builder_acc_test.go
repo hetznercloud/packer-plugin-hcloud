@@ -49,7 +49,7 @@ const testBuilderAccBasic = `
 	"builders": [{
 		"type": "hcloud",
 		"location": "hel1",
-		"server_type": "cpx22",
+		"server_type": "cpx12",
 		"image": "debian-13",
 		"user_data": "",
 		"user_data_file": "",
