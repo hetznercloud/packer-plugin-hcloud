@@ -32,6 +32,9 @@ The builder will connect to the server using the first available IP, in the foll
 - `private_ipv4`: If the server is attached to private networks, the private IPv4 of the
   first private network will be used.
 
+You can override this automatic selection with `ssh_interface`. Valid values
+are `public_ipv4`, `public_ipv6`, and `private_ipv4`.
+
 ## Configuration Reference
 
 There are many configuration options available for the builder. They are
@@ -131,6 +134,11 @@ builder.
 
 - `networks` (array of integers) - List of Network IDs which should be
   attached to the server private network interface at creation time.
+
+- `ssh_interface` (string) - Selects which server IP address the communicator
+  should use. Valid values are `public_ipv4`, `public_ipv6`, and
+  `private_ipv4`. When unset, the builder uses the first available IP in the
+  default order described above.
 
 - `public_ipv4` (string) - ID, name or IP address of a pre-allocated Hetzner
   Primary IPv4 address to use for the created server.
