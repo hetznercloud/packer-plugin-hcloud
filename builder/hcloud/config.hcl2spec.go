@@ -85,6 +85,7 @@ type FlatConfig struct {
 	SSHKeys                   []string          `mapstructure:"ssh_keys" cty:"ssh_keys" hcl:"ssh_keys"`
 	SSHKeysLabels             map[string]string `mapstructure:"ssh_keys_labels" cty:"ssh_keys_labels" hcl:"ssh_keys_labels"`
 	Networks                  []int64           `mapstructure:"networks" cty:"networks" hcl:"networks"`
+	SSHInterface              *string           `mapstructure:"ssh_interface" cty:"ssh_interface" hcl:"ssh_interface"`
 	PublicIPv4                *string           `mapstructure:"public_ipv4" cty:"public_ipv4" hcl:"public_ipv4"`
 	PublicIPv4Disabled        *bool             `mapstructure:"public_ipv4_disabled" cty:"public_ipv4_disabled" hcl:"public_ipv4_disabled"`
 	PublicIPv6                *string           `mapstructure:"public_ipv6" cty:"public_ipv6" hcl:"public_ipv6"`
@@ -180,6 +181,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"ssh_keys":                     &hcldec.AttrSpec{Name: "ssh_keys", Type: cty.List(cty.String), Required: false},
 		"ssh_keys_labels":              &hcldec.AttrSpec{Name: "ssh_keys_labels", Type: cty.Map(cty.String), Required: false},
 		"networks":                     &hcldec.AttrSpec{Name: "networks", Type: cty.List(cty.Number), Required: false},
+		"ssh_interface":                &hcldec.AttrSpec{Name: "ssh_interface", Type: cty.String, Required: false},
 		"public_ipv4":                  &hcldec.AttrSpec{Name: "public_ipv4", Type: cty.String, Required: false},
 		"public_ipv4_disabled":         &hcldec.AttrSpec{Name: "public_ipv4_disabled", Type: cty.Bool, Required: false},
 		"public_ipv6":                  &hcldec.AttrSpec{Name: "public_ipv6", Type: cty.String, Required: false},

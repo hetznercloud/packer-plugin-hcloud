@@ -87,10 +87,11 @@ func TestStepCreateServer(t *testing.T) {
 			},
 		},
 		{
-			Name: "happy with firewall",
+			Name: "happy with firewall and public ipv6 communicator",
 			Step: &stepCreateServer{},
 			SetupConfigFunc: func(c *Config) {
 				c.Firewalls = []string{"allow-ssh"}
+				c.SSHInterface = "public_ipv6"
 			},
 			SetupStateFunc: func(state multistep.StateBag) {
 				state.Put(StateSSHKeyID, int64(1))
@@ -126,7 +127,7 @@ func TestStepCreateServer(t *testing.T) {
 					},
 					Status: 201,
 					JSONRaw: `{
-						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "127.0.0.1" }, "ipv6": { "ip": "::1" }}},
+						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "127.0.0.1" }, "ipv6": { "ip": "2a01:4f8:1c19:1403::/64" }}},
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
@@ -160,6 +161,10 @@ func TestStepCreateServer(t *testing.T) {
 				instanceID, ok := state.Get(StateInstanceID).(int64)
 				assert.True(t, ok)
 				assert.Equal(t, int64(8), instanceID)
+
+				serverIP, ok := state.Get(StateServerIP).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "2a01:4f8:1c19:1403::1", serverIP)
 			},
 		},
 		{
@@ -631,6 +636,15 @@ func TestStepCreateServer(t *testing.T) {
 }
 
 func TestFirstAvailableIP(t *testing.T) {
+	server := &hcloud.Server{
+		PublicNet: hcloud.ServerPublicNetFromSchema(schema.ServerPublicNet{
+			IPv4: schema.ServerPublicNetIPv4{ID: 1, IP: "1.2.3.4"},
+			IPv6: schema.ServerPublicNetIPv6{ID: 2, IP: "2a01:4f8:1c19:1403::/64"},
+		}),
+		PrivateNet: []hcloud.ServerPrivateNet{
+			hcloud.ServerPrivateNetFromSchema(schema.ServerPrivateNet{Network: 3, IP: "10.0.0.1"}),
+		},
+	}
 	testCases := []struct {
 		name   string
 		server *hcloud.Server
@@ -642,17 +656,9 @@ func TestFirstAvailableIP(t *testing.T) {
 			want:   "",
 		},
 		{
-			name: "public_ipv4",
-			server: &hcloud.Server{
-				PublicNet: hcloud.ServerPublicNetFromSchema(schema.ServerPublicNet{
-					IPv4: schema.ServerPublicNetIPv4{ID: 1, IP: "1.2.3.4"},
-					IPv6: schema.ServerPublicNetIPv6{ID: 2, IP: "2a01:4f8:1c19:1403::/64"},
-				}),
-				PrivateNet: []hcloud.ServerPrivateNet{
-					hcloud.ServerPrivateNetFromSchema(schema.ServerPrivateNet{Network: 3, IP: "10.0.0.1"}),
-				},
-			},
-			want: "1.2.3.4",
+			name:   "public_ipv4",
+			server: server,
+			want:   "1.2.3.4",
 		},
 		{
 			name: "public_ipv6",
@@ -679,6 +685,59 @@ func TestFirstAvailableIP(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			result := firstAvailableIP(testCase.server)
+			assert.Equal(t, testCase.want, result)
+		})
+	}
+}
+
+func TestSelectedServerIP(t *testing.T) {
+	server := &hcloud.Server{
+		PublicNet: hcloud.ServerPublicNetFromSchema(schema.ServerPublicNet{
+			IPv4: schema.ServerPublicNetIPv4{ID: 1, IP: "1.2.3.4"},
+			IPv6: schema.ServerPublicNetIPv6{ID: 2, IP: "2a01:4f8:1c19:1403::/64"},
+		}),
+		PrivateNet: []hcloud.ServerPrivateNet{
+			hcloud.ServerPrivateNetFromSchema(schema.ServerPrivateNet{Network: 3, IP: "10.0.0.1"}),
+		},
+	}
+	testCases := []struct {
+		name         string
+		sshInterface string
+		want         string
+	}{
+		{
+			name:         "default",
+			sshInterface: "",
+			want:         "1.2.3.4",
+		},
+		{
+			name:         "public_ipv4",
+			sshInterface: "public_ipv4",
+			want:         "1.2.3.4",
+		},
+		{
+			name:         "public_ipv6",
+			sshInterface: "public_ipv6",
+			want:         "2a01:4f8:1c19:1403::1",
+		},
+		{
+			name:         "private_ipv4",
+			sshInterface: "private_ipv4",
+			want:         "10.0.0.1",
+		},
+		{
+			name:         "missing selected ip",
+			sshInterface: "private_ipv4",
+			want:         "",
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			testServer := server
+			if testCase.name == "missing selected ip" {
+				testServer = &hcloud.Server{}
+			}
+			result := selectedServerIP(testServer, testCase.sshInterface)
 			assert.Equal(t, testCase.want, result)
 		})
 	}
