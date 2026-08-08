@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 
+	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/mockutil"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud/schema"
@@ -25,19 +26,22 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "POST", Path: "/servers",
+				{
+					Method: "POST", Path: "/servers",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
@@ -54,7 +58,8 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -63,7 +68,8 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
+				{
+					Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -97,25 +103,29 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls?name=allow-ssh",
+				{
+					Method: "GET", Path: "/firewalls?name=allow-ssh",
 					Status: 200,
 					JSONRaw: `{
 						"firewalls": [{ "id": 986532, "name": "allow-ssh" }]
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "POST", Path: "/servers",
+				{
+					Method: "POST", Path: "/servers",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
@@ -130,7 +140,8 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -139,7 +150,8 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
+				{
+					Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -173,19 +185,22 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "POST", Path: "/servers",
+				{
+					Method: "POST", Path: "/servers",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
@@ -200,7 +215,8 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -209,7 +225,8 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
+				{
+					Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -245,19 +262,22 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=permanent-packer-ipv4",
+				{
+					Method: "GET", Path: "/primary_ips?name=permanent-packer-ipv4",
 					Status: 200,
 					JSONRaw: `{
 						"primary_ips": [
@@ -270,7 +290,8 @@ func TestStepCreateServer(t *testing.T) {
 						]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=permanent-packer-ipv6",
+				{
+					Method: "GET", Path: "/primary_ips?name=permanent-packer-ipv6",
 					Status: 200,
 					JSONRaw: `{
 						"primary_ips": [
@@ -283,7 +304,8 @@ func TestStepCreateServer(t *testing.T) {
 						]
 					}`,
 				},
-				{Method: "POST", Path: "/servers",
+				{
+					Method: "POST", Path: "/servers",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
@@ -301,7 +323,8 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -310,7 +333,8 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
+				{
+					Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -345,23 +369,27 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?name=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
-				{Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
 					Status: 200,
 					JSONRaw: `{
 						"primary_ips": [
@@ -373,11 +401,13 @@ func TestStepCreateServer(t *testing.T) {
 						]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=%3A%3A1",
+				{
+					Method: "GET", Path: "/primary_ips?name=%3A%3A1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
-				{Method: "GET", Path: "/primary_ips?ip=%3A%3A1",
+				{
+					Method: "GET", Path: "/primary_ips?ip=%3A%3A1",
 					Status: 200,
 					JSONRaw: `{
 						"primary_ips": [
@@ -389,7 +419,8 @@ func TestStepCreateServer(t *testing.T) {
 						]
 					}`,
 				},
-				{Method: "POST", Path: "/servers",
+				{
+					Method: "POST", Path: "/servers",
 					Want: func(t *testing.T, req *http.Request) {
 						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
 						assert.Equal(t, "dummy-server", payload.Name)
@@ -407,7 +438,8 @@ func TestStepCreateServer(t *testing.T) {
 						"action": { "id": 3, "status": "running" }
 					}`,
 				},
-				{Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [
@@ -416,7 +448,8 @@ func TestStepCreateServer(t *testing.T) {
 						"meta": { "pagination": { "page": 1 }}
 					}`,
 				},
-				{Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
+				{
+					Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
 					Status: 200,
 					JSONRaw: `{
 						"actions": [],
@@ -440,6 +473,93 @@ func TestStepCreateServer(t *testing.T) {
 			},
 		},
 		{
+			Name: "happy with deprecated image",
+			Step: &stepCreateServer{},
+			SetupStateFunc: func(state multistep.StateBag) {
+				state.Put(StateSSHKeyID, int64(1))
+				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
+				state.Put(StateUI, &packersdk.MockUi{})
+			},
+			WantRequests: []mockutil.Request{
+				{
+					Method: "GET", Path: "/ssh_keys/1",
+					Status: 200,
+					JSONRaw: `{
+						"ssh_key": { "id": 1 }
+					}`,
+				},
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+					Status: 200,
+					JSONRaw: `{
+						"images": [{ 
+							"id": 114690387,
+							"name": "debian-12",
+							"description": "Debian 12",
+							"architecture": "x86",
+							"deprecated": "2999-01-01T00:00:00+00:00"
+						}]
+					}`,
+				},
+				{
+					Method: "POST", Path: "/servers",
+					Want: func(t *testing.T, req *http.Request) {
+						payload := decodeJSONBody(t, req.Body, &schema.ServerCreateRequest{})
+						assert.Equal(t, "dummy-server", payload.Name)
+						assert.Equal(t, int64(114690387), payload.Image.ID)
+						assert.Equal(t, "nbg1", payload.Location)
+						assert.Equal(t, "cpx22", payload.ServerType.Name)
+						assert.True(t, payload.PublicNet.EnableIPv4)
+						assert.True(t, payload.PublicNet.EnableIPv6)
+						assert.Nil(t, payload.Networks)
+					},
+					Status: 201,
+					JSONRaw: `{
+						"server": { "id": 8, "name": "dummy-server", "public_net": { "ipv4": { "ip": "1.2.3.4" }}},
+						"action": { "id": 3, "status": "running" }
+					}`,
+				},
+				{
+					Method: "GET", Path: "/actions?id=3&page=1&sort=status&sort=id",
+					Status: 200,
+					JSONRaw: `{
+						"actions": [
+							{ "id": 3, "status": "success" }
+						],
+						"meta": { "pagination": { "page": 1 }}
+					}`,
+				},
+				{
+					Method: "GET", Path: "/firewalls/actions?page=1&per_page=50&status=running",
+					Status: 200,
+					JSONRaw: `{
+						"actions": [],
+						"meta": { "pagination": { "page": 1 }}
+					}`,
+				},
+			},
+			WantStepAction: multistep.ActionContinue,
+			WantStateFunc: func(t *testing.T, state multistep.StateBag) {
+				serverID, ok := state.Get(StateServerID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), serverID)
+
+				instanceID, ok := state.Get(StateInstanceID).(int64)
+				assert.True(t, ok)
+				assert.Equal(t, int64(8), instanceID)
+
+				serverIP, ok := state.Get(StateServerIP).(string)
+				assert.True(t, ok)
+				assert.Equal(t, "1.2.3.4", serverIP)
+
+				ui, ok := state.Get(StateUI).(*packersdk.MockUi)
+				assert.True(t, ok)
+				assert.True(t, ui.ErrorCalled)
+				assert.NotEmpty(t, ui.ErrorMessage, "ui error message should not be empty")
+				assert.Contains(t, ui.ErrorMessage, "debian-12", "ui error should contain the image name")
+			},
+		},
+		{
 			Name: "fail to get for primary ip by address",
 			Step: &stepCreateServer{},
 			SetupConfigFunc: func(c *Config) {
@@ -450,23 +570,27 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?name=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
-				{Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
@@ -490,23 +614,27 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?name=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
-				{Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
 					Status: 500,
 				},
 			},
@@ -529,23 +657,27 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?name=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
-				{Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
@@ -569,23 +701,27 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": [{ "id": 114690387, "name": "debian-12", "description": "Debian 12", "architecture": "x86" }]
 					}`,
 				},
-				{Method: "GET", Path: "/primary_ips?name=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?name=127.0.0.1",
 					Status:  200,
 					JSONRaw: `{ "primary_ips": [] }`,
 				},
-				{Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
+				{
+					Method: "GET", Path: "/primary_ips?ip=127.0.0.1",
 					Status: 500,
 				},
 			},
@@ -606,13 +742,15 @@ func TestStepCreateServer(t *testing.T) {
 				state.Put(StateServerType, &hcloud.ServerType{ID: 109, Name: "cpx22", Architecture: "x86"})
 			},
 			WantRequests: []mockutil.Request{
-				{Method: "GET", Path: "/ssh_keys/1",
+				{
+					Method: "GET", Path: "/ssh_keys/1",
 					Status: 200,
 					JSONRaw: `{
 						"ssh_key": { "id": 1 }
 					}`,
 				},
-				{Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
+				{
+					Method: "GET", Path: "/images?architecture=x86&include_deprecated=true&name=debian-12",
 					Status: 200,
 					JSONRaw: `{
 						"images": []
