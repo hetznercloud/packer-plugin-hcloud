@@ -51,6 +51,13 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 			return errorHandler(state, ui, "", fmt.Errorf("Could not find upgrade server type '%s'", c.UpgradeServerType))
 		}
 
+		if msg, isUnavailable := deprecationutil.ServerTypeMessage(upgradeServerType, c.Location); msg != "" {
+			if isUnavailable {
+				return errorHandler(state, ui, "", errors.New(msg))
+			}
+			ui.Errorf(msg)
+		}
+
 		if serverType.Architecture != upgradeServerType.Architecture {
 			// This is also validated by API, but if we validate it here, its faster and we never have to create
 			// a server in the first place. Saving users to first hour of billing.
