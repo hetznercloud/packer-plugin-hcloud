@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/deprecationutil"
 )
 
 type stepCreateServer struct {
@@ -81,11 +82,9 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 		}
 	}
 	ui.Say(fmt.Sprintf("Using image '%d'", image.ID))
-	if image.IsDeprecated() {
-		ui.Errorf(
-			"The image '%d' is deprecated since the %s and will soon be unavailable",
-			image.ID, image.Deprecated.Format("2006-01-02"),
-		)
+
+	if msg, _ := deprecationutil.ImageMessage(image); msg != "" {
+		ui.Error(msg)
 	}
 
 	state.Put(StateSourceImageID, image.ID)
@@ -338,7 +337,8 @@ func firstAvailableIP(server *hcloud.Server) string {
 }
 
 func getServerRunningActions(ctx context.Context, client *hcloud.Client, server *hcloud.Server) ([]*hcloud.Action, error) {
-	actions, err := client.Firewall.Action.All(ctx,
+	actions, err := client.Firewall.Action.All(
+		ctx,
 		hcloud.ActionListOpts{
 			Status: []hcloud.ActionStatus{
 				hcloud.ActionStatusRunning,

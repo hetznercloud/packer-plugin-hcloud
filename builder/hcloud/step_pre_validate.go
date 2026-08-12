@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud/exp/deprecationutil"
 )
 
 // StepPreValidate provides an opportunity to pre-validate any configuration for
@@ -33,6 +34,13 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	state.Put(StateServerType, serverType)
 
+	if msg, isUnavailable := deprecationutil.ServerTypeMessage(serverType, c.Location); msg != "" {
+		if isUnavailable {
+			return errorHandler(state, ui, "", errors.New(msg))
+		}
+		ui.Errorf(msg)
+	}
+
 	if c.UpgradeServerType != "" {
 		ui.Say(fmt.Sprintf("Validating upgrade server types: %s", c.UpgradeServerType))
 		upgradeServerType, _, err := client.ServerType.Get(ctx, c.UpgradeServerType)
@@ -41,6 +49,13 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 		if upgradeServerType == nil {
 			return errorHandler(state, ui, "", fmt.Errorf("Could not find upgrade server type '%s'", c.UpgradeServerType))
+		}
+
+		if msg, isUnavailable := deprecationutil.ServerTypeMessage(upgradeServerType, c.Location); msg != "" {
+			if isUnavailable {
+				return errorHandler(state, ui, "", errors.New(msg))
+			}
+			ui.Errorf(msg)
 		}
 
 		if serverType.Architecture != upgradeServerType.Architecture {
