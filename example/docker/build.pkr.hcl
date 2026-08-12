@@ -32,6 +32,7 @@ source "hcloud" "docker" {
   EOF
 
   ssh_username = "root"
+  ssh_interface = "public_ipv6"
 
   snapshot_name = "docker-{{ timestamp }}"
   snapshot_labels = {
