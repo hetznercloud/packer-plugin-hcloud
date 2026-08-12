@@ -159,7 +159,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	// instance id inside of the provisioners, used in step_provision.
 	state.Put(StateInstanceID, server.ID)
 
-	serverIP := selectedServerIP(server, c.SSHInterface)
+	serverIP := firstAvailableIP(server)
 	if serverIP == "" {
 		return errorHandler(state, ui, "", fmt.Errorf("Could not find available ip"))
 	}
@@ -324,53 +324,16 @@ func getPrimaryIP(ctx context.Context, client *hcloud.Client, publicIP string) (
 func firstAvailableIP(server *hcloud.Server) string {
 	switch {
 	case !server.PublicNet.IPv4.IsUnspecified():
-		return publicIPv4(server)
+		return server.PublicNet.IPv4.IP.String()
 	case !server.PublicNet.IPv6.IsUnspecified():
-		return publicIPv6(server)
+		network, ok := netip.AddrFromSlice(server.PublicNet.IPv6.IP)
+		if ok {
+			return network.Next().String()
+		}
 	case len(server.PrivateNet) > 0:
-		return privateIPv4(server)
+		return server.PrivateNet[0].IP.String()
 	}
 	return ""
-}
-
-func selectedServerIP(server *hcloud.Server, sshInterface string) string {
-	switch sshInterface {
-	case "":
-		return firstAvailableIP(server)
-	case "public_ipv4":
-		return publicIPv4(server)
-	case "public_ipv6":
-		return publicIPv6(server)
-	case "private_ipv4":
-		return privateIPv4(server)
-	default:
-		return ""
-	}
-}
-
-func publicIPv4(server *hcloud.Server) string {
-	if server.PublicNet.IPv4.IsUnspecified() {
-		return ""
-	}
-	return server.PublicNet.IPv4.IP.String()
-}
-
-func publicIPv6(server *hcloud.Server) string {
-	if server.PublicNet.IPv6.IsUnspecified() {
-		return ""
-	}
-	network, ok := netip.AddrFromSlice(server.PublicNet.IPv6.IP)
-	if !ok {
-		return ""
-	}
-	return network.Next().String()
-}
-
-func privateIPv4(server *hcloud.Server) string {
-	if len(server.PrivateNet) == 0 {
-		return ""
-	}
-	return server.PrivateNet[0].IP.String()
 }
 
 func getServerRunningActions(ctx context.Context, client *hcloud.Client, server *hcloud.Server) ([]*hcloud.Action, error) {
