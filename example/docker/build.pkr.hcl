@@ -31,7 +31,7 @@ source "hcloud" "docker" {
     resize_rootfs: false
   EOF
 
-  ssh_username = "root"
+  ssh_username  = "root"
   ssh_interface = "public_ipv6"
 
   snapshot_name = "docker-{{ timestamp }}"

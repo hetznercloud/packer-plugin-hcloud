@@ -24,7 +24,8 @@ source "hcloud" "example" {
   server_type = "cpx12"
   server_name = "example-{{ timestamp }}"
 
-  ssh_username = "root"
+  ssh_username  = "root"
+  ssh_interface = "public_ipv6"
 
   snapshot_name = "example-{{ timestamp }}"
   snapshot_labels = {
