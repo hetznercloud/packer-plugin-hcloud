@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.8.0](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.8.0)
+
+[Compare to previous version](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.7.2...v1.8.0)
+
+### Features
+
+- show warning message on deprecated server types (#389) ([faedc14](https://github.com/hetznercloud/packer-plugin-hcloud/commit/faedc14d71e3a5053ef37f352913d00cf566fc0d))
+
 ## [v1.7.2](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.7.2)
 
 ### Bug Fixes
