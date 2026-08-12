@@ -49,6 +49,7 @@ type Config struct {
 	SSHKeysLabels      map[string]string `mapstructure:"ssh_keys_labels"`
 
 	Networks           []int64  `mapstructure:"networks"`
+	SSHInterface       string   `mapstructure:"ssh_interface"`
 	PublicIPv4         string   `mapstructure:"public_ipv4"`
 	PublicIPv4Disabled bool     `mapstructure:"public_ipv4_disabled"`
 	PublicIPv6         string   `mapstructure:"public_ipv6"`
@@ -151,6 +152,14 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 		if _, err := os.Stat(c.UserDataFile); err != nil {
 			errs = packersdk.MultiErrorAppend(
 				errs, fmt.Errorf("user_data_file not found: %s", c.UserDataFile))
+		}
+	}
+	if c.SSHInterface != "" {
+		switch c.SSHInterface {
+		case "public_ipv4", "public_ipv6", "private_ipv4":
+		default:
+			errs = packersdk.MultiErrorAppend(
+				errs, errors.New("ssh_interface must be one of public_ipv4, public_ipv6, or private_ipv4"))
 		}
 	}
 
