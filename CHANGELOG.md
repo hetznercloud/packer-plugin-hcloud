@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.8.1](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.8.1)
+
+[Compare to previous version](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.8.0...v1.8.1)
+
+### Bug Fixes
+
+- update dependencies ([5ad184d](https://github.com/hetznercloud/packer-plugin-hcloud/commit/5ad184d7eb87bfcc5817ae66dbd2715b16378d89))
+
 ## [v1.8.0](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.8.0)
 
 [Compare to previous version](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.7.2...v1.8.0)
