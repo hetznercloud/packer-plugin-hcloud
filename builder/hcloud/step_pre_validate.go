@@ -38,7 +38,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		if isUnavailable {
 			return errorHandler(state, ui, "", errors.New(msg))
 		}
-		ui.Errorf(msg)
+		ui.Error(msg)
 	}
 
 	if c.UpgradeServerType != "" {
@@ -55,7 +55,7 @@ func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 			if isUnavailable {
 				return errorHandler(state, ui, "", errors.New(msg))
 			}
-			ui.Errorf(msg)
+			ui.Error(msg)
 		}
 
 		if serverType.Architecture != upgradeServerType.Architecture {
