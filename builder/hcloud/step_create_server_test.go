@@ -497,7 +497,10 @@ func TestStepCreateServer(t *testing.T) {
 							"name": "debian-12",
 							"description": "Debian 12",
 							"architecture": "x86",
-							"deprecated": "2999-01-01T00:00:00+00:00"
+							"deprecation": {
+								"announced": "2026-01-02T10:00:00Z",
+								"unavailable_after": "2099-04-02T10:00:00Z"
+							}
 						}]
 					}`,
 				},
