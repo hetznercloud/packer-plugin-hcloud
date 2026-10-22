@@ -18,7 +18,7 @@ func TestArtifact_Impl(t *testing.T) {
 }
 
 func TestArtifactId(t *testing.T) {
-	generatedData := make(map[string]interface{})
+	generatedData := make(map[string]any)
 	a := &Artifact{"packer-foobar", 42, nil, generatedData}
 	expected := "42"
 
@@ -28,7 +28,7 @@ func TestArtifactId(t *testing.T) {
 }
 
 func TestArtifactString(t *testing.T) {
-	generatedData := make(map[string]interface{})
+	generatedData := make(map[string]any)
 	a := &Artifact{"packer-foobar", 42, nil, generatedData}
 	expected := "A snapshot was created: 'packer-foobar' (ID: 42)"
 
@@ -40,7 +40,7 @@ func TestArtifactString(t *testing.T) {
 func TestArtifactState_StateData(t *testing.T) {
 	expectedData := "this is the data"
 	artifact := &Artifact{
-		StateData: map[string]interface{}{"state_data": expectedData},
+		StateData: map[string]any{"state_data": expectedData},
 	}
 
 	// Valid state
@@ -67,7 +67,7 @@ func TestArtifactState_hcpPackerRegistryMetadata(t *testing.T) {
 	artifact := &Artifact{
 		snapshotId:   167438588,
 		snapshotName: "test-image",
-		StateData: map[string]interface{}{
+		StateData: map[string]any{
 			"source_image":    "ubuntu-24.04",
 			"source_image_id": int64(161547269),
 			"server_type":     "cpx22",

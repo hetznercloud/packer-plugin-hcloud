@@ -31,7 +31,7 @@ func (s *stepCreateSnapshot) Run(ctx context.Context, state multistep.StateBag) 
 	result, _, err := client.Server.CreateImage(ctx, &hcloud.Server{ID: serverID}, &hcloud.ServerCreateImageOpts{
 		Type:        hcloud.ImageTypeSnapshot,
 		Labels:      c.SnapshotLabels,
-		Description: hcloud.Ptr(c.SnapshotName),
+		Description: new(c.SnapshotName),
 	})
 	if err != nil {
 		return errorHandler(state, ui, "Could not create snapshot", err)

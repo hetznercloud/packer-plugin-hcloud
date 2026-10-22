@@ -133,7 +133,7 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	if c.UpgradeServerType != "" {
-		serverCreateOpts.StartAfterCreate = hcloud.Ptr(false)
+		serverCreateOpts.StartAfterCreate = new(false)
 	}
 
 	serverCreateResult, _, err := client.Server.Create(ctx, serverCreateOpts)
