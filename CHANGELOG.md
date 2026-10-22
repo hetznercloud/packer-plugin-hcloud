@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.8.2](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.8.2)
+
+[Compare to previous version](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.8.1...v1.8.2)
+
+### Bug Fixes
+
+- update Go to mitigate CVE-2026-111943 (#410) ([e6f01ef](https://github.com/hetznercloud/packer-plugin-hcloud/commit/e6f01ef992ba5cc2feb5da6c2b20440f464a9c20))
+
 ## [v1.8.1](https://github.com/hetznercloud/packer-plugin-hcloud/releases/tag/v1.8.1)
 
 [Compare to previous version](https://github.com/hetznercloud/packer-plugin-hcloud/compare/v1.8.0...v1.8.1)
