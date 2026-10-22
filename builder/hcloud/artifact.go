@@ -26,7 +26,7 @@ type Artifact struct {
 
 	// StateData should store data such as GeneratedData
 	// to be shared with post-processors
-	StateData map[string]interface{}
+	StateData map[string]any
 }
 
 func (*Artifact) BuilderId() string {
@@ -45,14 +45,14 @@ func (a *Artifact) String() string {
 	return fmt.Sprintf("A snapshot was created: '%v' (ID: %v)", a.snapshotName, a.snapshotId)
 }
 
-func (a *Artifact) State(name string) interface{} {
+func (a *Artifact) State(name string) any {
 	if name == registryimage.ArtifactStateURI {
 		return a.stateHCPPackerRegistryMetadata()
 	}
 	return a.StateData[name]
 }
 
-func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
+func (a *Artifact) stateHCPPackerRegistryMetadata() any {
 	labels := make(map[string]string)
 
 	// Those labels contains the value the user specified in their template

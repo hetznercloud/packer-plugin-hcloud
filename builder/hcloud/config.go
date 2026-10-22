@@ -65,7 +65,7 @@ type imageFilter struct {
 	MostRecent   bool     `mapstructure:"most_recent"`
 }
 
-func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
+func (c *Config) Prepare(raws ...any) ([]string, error) {
 	var md mapstructure.Metadata
 	err := config.Decode(c, &config.DecodeOpts{
 		Metadata:           &md,

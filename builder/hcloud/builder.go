@@ -29,7 +29,7 @@ type Builder struct {
 
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
-func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
+func (b *Builder) Prepare(raws ...any) ([]string, []string, error) {
 	warnings, errs := b.config.Prepare(raws...)
 	if errs != nil {
 		return nil, warnings, errs
@@ -102,7 +102,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		snapshotName: state.Get(StateSnapshotName).(string),
 		snapshotId:   state.Get(StateSnapshotID).(int64),
 		hcloudClient: b.hcloudClient,
-		StateData: map[string]interface{}{
+		StateData: map[string]any{
 			"generated_data":  state.Get(StateGeneratedData),
 			"source_image":    b.config.Image,
 			"source_image_id": state.Get(StateSourceImageID),
