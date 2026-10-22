@@ -1,6 +1,6 @@
 module github.com/hetznercloud/packer-plugin-hcloud
 
-go 1.26.8
+go 1.26.10
 
 toolchain go1.27.3
 
